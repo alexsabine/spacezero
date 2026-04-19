@@ -103,18 +103,31 @@ function registerCanvas(canvas) {
 
 function setupCanvas(canvas, cssW, cssH) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width  = cssW * dpr;
-  canvas.height = cssH * dpr;
-  canvas.style.width  = cssW + 'px';
-  canvas.style.height = cssH + 'px';
+
+  /* Read the canvas's actual rendered size from CSS. If no stylesheet has
+   * touched it yet (naked canvas, no rules matching), getBoundingClientRect
+   * returns the HTML-attribute size. If CSS has sized it (max-width, width:
+   * 100%, aspect-ratio etc.), we get that instead. Either way, we size the
+   * drawing buffer to the actual display dimensions × DPR. Fall back to the
+   * passed-in cssW/cssH if the canvas is hidden or not yet laid out. */
+  const rect = canvas.getBoundingClientRect();
+  const displayW = rect.width  > 0 ? rect.width  : cssW;
+  const displayH = rect.height > 0 ? rect.height : cssH;
+
+  canvas.width  = Math.round(displayW * dpr);
+  canvas.height = Math.round(displayH * dpr);
+  /* Intentionally do NOT set canvas.style.width/height — CSS already controls
+   * the display size. Setting inline styles here would override responsive
+   * rules and cause aspect-ratio mismatches on narrow viewports. */
+
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
   const off = document.createElement('canvas');
-  off.width  = cssW * dpr;
-  off.height = cssH * dpr;
+  off.width  = Math.round(displayW * dpr);
+  off.height = Math.round(displayH * dpr);
   const offCtx = off.getContext('2d');
   offCtx.scale(dpr, dpr);
-  return { ctx, offCtx, off, dpr, W: cssW, H: cssH };
+  return { ctx, offCtx, off, dpr, W: displayW, H: displayH };
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
