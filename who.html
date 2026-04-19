@@ -17,7 +17,20 @@
   border-bottom: 1px solid var(--rule);
 }
 .who-intro .mini-logo { display: flex; justify-content: center; margin-bottom: 32px; }
-.who-intro .mini-logo canvas { max-width: 280px; height: auto; }
+.who-intro .mini-logo canvas {
+  display: block;
+  max-width: 100%;        /* only shrink on narrow screens */
+  width: 360px;           /* native size on desktop */
+  height: 240px;          /* paired with width — preserves 3:2 aspect */
+}
+@media (max-width: 400px) {
+  /* On very narrow screens, scale both dimensions together via aspect-ratio */
+  .who-intro .mini-logo canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+}
 .who-intro h1 {
   font-size: clamp(1.8rem, 3.5vw, 2.4rem);
   font-weight: 400; margin: 0 0 18px;
