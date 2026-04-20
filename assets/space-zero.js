@@ -1180,10 +1180,10 @@ function renderAesthetics(canvas) {
  * ═════════════════════════════════════════════════════════════════════════ */
 
 const NAV = [
-  { href: 'index.html',      label: 'Why',          key: 'why' },
-  { href: 'what.html',       label: 'What',         key: 'what' },
-  { href: 'who.html',        label: 'Who',          key: 'who' },
-  { href: 'when-where.html', label: 'When & Where', key: 'when-where' },
+  { href: 'index.html',       label: 'Why',          key: 'why' },
+  { href: 'what.html',        label: 'What',         key: 'what' },
+  { href: 'who.html',         label: 'Who',          key: 'who' },
+  { href: 'get-involved.html', label: 'Get Involved', key: 'get-involved' },
 ];
 
 function renderHeader(currentPage) {
@@ -1206,7 +1206,7 @@ function renderFooter() {
   <div class="footer-inner">
     <div class="footer-brand">
       <canvas id="footerLogo" width="360" height="240"></canvas>
-      <p>A not-for-profit space for somatic and embodied practice, adjacent to HUM Lab on the Northern California coast.</p>
+      <p>A not-for-profit space for somatic and embodied practice on the Northern California coast.</p>
     </div>
     <div class="footer-col">
       <h4>Visit</h4>
@@ -1214,7 +1214,6 @@ function renderFooter() {
         <li><span class="placeholder">[Street address]</span></li>
         <li><span class="placeholder">[Crescent City, CA]</span></li>
         <li><span class="placeholder">[Postal code]</span></li>
-        <li><a href="when-where.html" class="mono">Directions &rarr;</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -1226,11 +1225,11 @@ function renderFooter() {
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Adjacent</h4>
+      <h4>Follow</h4>
       <ul>
-        <li><a href="#">HUM Lab &rarr;</a></li>
-        <li><span class="placeholder">[Partner 1]</span></li>
-        <li><span class="placeholder">[Partner 2]</span></li>
+        <li><span class="placeholder">[Newsletter]</span></li>
+        <li><span class="placeholder">[Instagram]</span></li>
+        <li><span class="placeholder">[Substack]</span></li>
       </ul>
     </div>
   </div>
