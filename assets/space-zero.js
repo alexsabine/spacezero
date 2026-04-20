@@ -1206,7 +1206,7 @@ function renderFooter() {
   <div class="footer-inner">
     <div class="footer-brand">
       <canvas id="footerLogo" width="360" height="240"></canvas>
-      <p>A not-for-profit space for relational and embodied practice on the Northern California coast.</p>
+      <p>Space Zero is a pioneering initiative and physical laboratory designed to dissolve the barrier between spiritual practice and technological innovation.</p>
     </div>
     <div class="footer-col">
       <h4>Visit</h4>
