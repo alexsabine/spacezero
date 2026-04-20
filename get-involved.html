@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Space Zero &middot; Get Involved</title>
+<meta name="description" content="Ways to join Space Zero — mailing list, partnership, and donations toward our 501(c)(3) mission.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/space-zero.css">
+<style>
+/* ── Intro ── */
+.gi-intro {
+  padding: 140px 40px 60px;
+  text-align: center;
+}
+.gi-intro .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.24em; color: var(--muted);
+  margin-bottom: 20px;
+}
+.gi-intro h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 400; margin: 0 0 22px;
+  letter-spacing: 0.005em; line-height: 1.2;
+}
+.gi-intro .lede {
+  max-width: 620px; margin: 0 auto;
+  font-size: 19px; color: var(--ink-soft);
+  line-height: 1.7; font-weight: 300;
+  font-style: italic;
+}
+
+/* ── Shared: every involvement section ── */
+.involve {
+  border-top: 1px solid var(--rule);
+}
+.involve:nth-of-type(even) {
+  background: rgba(237, 230, 212, 0.35);
+}
+.involve-grid {
+  max-width: 960px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  align-items: flex-start;
+}
+.involve-left .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.22em; color: var(--muted);
+  margin-bottom: 16px;
+}
+.involve-left h2 {
+  font-size: clamp(1.7rem, 3vw, 2.1rem);
+  font-weight: 400; margin: 0 0 20px;
+  letter-spacing: 0.005em; line-height: 1.2;
+}
+.involve-left .tagline {
+  font-size: 17px; color: var(--muted);
+  line-height: 1.65; margin: 0;
+  font-style: italic;
+  font-weight: 300;
+}
+.involve-right p {
+  font-size: 17px; color: var(--ink-soft);
+  line-height: 1.7; margin: 0 0 18px;
+  font-weight: 300;
+}
+.involve-right p:last-child { margin-bottom: 0; }
+.involve-right em { font-style: italic; color: var(--ink); }
+
+/* ── Mailing list ── */
+.mailing-box {
+  margin-top: 22px;
+  padding: 28px 28px;
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+}
+.mailing-box .field-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--muted);
+  margin-bottom: 12px;
+}
+.mailing-box .placeholder-field {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; color: var(--muted-light);
+  letter-spacing: 0.03em;
+  padding: 16px 18px;
+  border: 1px dashed var(--rule-strong);
+  margin-bottom: 14px;
+  background: rgba(244, 241, 235, 0.5);
+}
+.mailing-box .note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* ── Partner block ── */
+.partner-audience {
+  margin-top: 24px;
+  padding: 22px 26px;
+  background: var(--parchment);
+  border-left: 2px solid var(--iceplant);
+  font-size: 16px; color: var(--ink-soft);
+  line-height: 1.7; font-weight: 300;
+}
+.partner-audience strong {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.2em; color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.partner-contact {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--muted);
+  letter-spacing: 0.03em;
+}
+.partner-contact .placeholder {
+  color: var(--muted-light);
+}
+
+/* ── Donate block ── */
+.donate-box {
+  margin-top: 22px;
+  padding: 28px;
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+}
+.donate-placeholder {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; color: var(--muted-light);
+  letter-spacing: 0.03em;
+  padding: 22px 20px;
+  border: 1px dashed var(--rule-strong);
+  text-align: center;
+  margin-bottom: 18px;
+}
+.donate-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.donate-meta .label {
+  display: block;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+/* ── Closing ── */
+.closing {
+  border-top: 1px solid var(--rule);
+  background: rgba(237, 230, 212, 0.4);
+  text-align: center;
+}
+.closing blockquote {
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  font-style: italic; font-weight: 400;
+  max-width: 680px; margin: 0 auto;
+  color: var(--ink-soft); line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .gi-intro { padding: 100px 22px 40px; }
+  .involve-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+</style>
+</head>
+<body data-page="get-involved">
+
+<div id="site-header"></div>
+
+<section class="gi-intro">
+  <div class="eyebrow">Get involved</div>
+  <h1>Ways to join</h1>
+  <p class="lede">Space Zero is held by the people who show up for it. Here are the current ways to do so &mdash; each at its own pace, each welcome.</p>
+</section>
+
+<!-- ── 01 Mailing list ── -->
+<section class="section involve">
+  <div class="involve-grid">
+    <div class="involve-left">
+      <div class="eyebrow">&mdash; 01</div>
+      <h2>Keep in touch</h2>
+      <p class="tagline">A quiet, occasional note &mdash; news of what is unfolding at Space Zero.</p>
+    </div>
+    <div class="involve-right">
+      <p>Subscribe to the Space Zero mailing list to hear about upcoming gatherings, visiting speakers, and reflections from the practice. We write when there is something worth writing about &mdash; and no more often than that.</p>
+      <p>No tracking, no advertising, and easy to leave whenever you wish.</p>
+
+      <div class="mailing-box">
+        <div class="field-label">Email</div>
+        <div class="placeholder-field">[ you@example.com &middot; newsletter signup placeholder ]</div>
+        <p class="note">&mdash; signup form to be connected</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 Partner ── -->
+<section class="section involve">
+  <div class="involve-grid">
+    <div class="involve-left">
+      <div class="eyebrow">&mdash; 02</div>
+      <h2>Become a partner</h2>
+      <p class="tagline">An invitation to visiting philosophers, technologists, and thinkers to share the work.</p>
+    </div>
+    <div class="involve-right">
+      <p>Our offerings &mdash; the <em>Practice Centre</em>, <em>Wisdom in Residence</em>, <em>Ecosystem Collaboration</em>, and <em>Emergent Gatherings</em> &mdash; are held in partnership with those who bring their own lineage of practice or thought to the coast.</p>
+      <p>If you are a practitioner, researcher, or artisan whose work meets the body, the ecology, or the present question, we would welcome a conversation. The same invitation extends to organisations, studios, and collectives whose work is adjacent to ours.</p>
+
+      <div class="partner-audience">
+        <strong>We particularly welcome</strong>
+        Visiting philosophers and contemplative teachers &middot; technologists working at the edge of AI and ecological design &middot; artists and writers whose practice includes the body &middot; scientists tending to complex living systems.
+      </div>
+
+      <div class="partner-contact">
+        To propose a residency, talk, or collaboration, write to
+        <span class="placeholder">[partnerships@...]</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 Donate ── -->
+<section class="section involve">
+  <div class="involve-grid">
+    <div class="involve-left">
+      <div class="eyebrow">&mdash; 03</div>
+      <h2>Donate</h2>
+      <p class="tagline">Space Zero is a 501(c)(3) nonprofit. Philanthropic support keeps the doors open.</p>
+    </div>
+    <div class="involve-right">
+      <p>Donations support the space itself, the practitioners who hold it, and the offerings that run within it. Because Space Zero is organised as a 501(c)(3) nonprofit, contributions from US donors may be tax-deductible to the extent allowed by law.</p>
+      <p>Gifts of every size help. In-kind contributions, volunteer time, and introductions to aligned philanthropists are also welcomed &mdash; sometimes more than money.</p>
+
+      <div class="donate-box">
+        <div class="donate-placeholder">[ donation platform &middot; placeholder ]</div>
+        <div class="donate-meta">
+          <span class="label">Legal</span>
+          Space Zero is registered as a 501(c)(3) public charity.<br>
+          EIN: <span style="color: var(--muted-light);">[placeholder]</span> &middot;
+          Receipts issued for gifts above <span style="color: var(--muted-light);">[amount]</span>.
+        </div>
+      </div>
+
+      <p style="margin-top: 22px; font-size: 15px; color: var(--muted); font-style: italic;">
+        Please consult a nonprofit attorney and your tax advisor before publishing final donation language or processing live contributions.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Closing ── -->
+<section class="section closing">
+  <div class="section-inner">
+    <blockquote>The door is open. Come however you arrive.</blockquote>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="assets/space-zero.js" defer></script>
+</body>
+</html>
