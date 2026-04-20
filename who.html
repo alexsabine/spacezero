@@ -4,152 +4,137 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Space Zero &middot; Who</title>
-<meta name="description" content="Space Zero is the somatic sibling of HUM Lab on the Northern California coast.">
+<meta name="description" content="Space Zero is a 501(c)(3) holding somatic and embodied practice on the Northern California coast. Directed by Yen Chen.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/space-zero.css">
 <style>
-/* Small intro logo at top */
+/* ── Intro ── */
 .who-intro {
-  padding: 120px 40px 80px;
+  padding: 120px 40px 70px;
   text-align: center;
-  border-bottom: 1px solid var(--rule);
 }
-.who-intro .mini-logo { display: flex; justify-content: center; margin-bottom: 32px; }
+.who-intro .mini-logo {
+  display: flex; justify-content: center;
+  margin-bottom: 34px;
+}
 .who-intro .mini-logo canvas {
   display: block;
-  max-width: 100%;        /* only shrink on narrow screens */
-  width: 360px;           /* native size on desktop */
-  height: 240px;          /* paired with width — preserves 3:2 aspect */
+  max-width: 100%;
+  width: 360px;
+  height: 240px;
 }
 @media (max-width: 400px) {
-  /* On very narrow screens, scale both dimensions together via aspect-ratio */
   .who-intro .mini-logo canvas {
     width: 100%;
     height: auto;
     aspect-ratio: 3 / 2;
   }
 }
-.who-intro h1 {
-  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-  font-weight: 400; margin: 0 0 18px;
-  letter-spacing: 0.005em; line-height: 1.25;
+.who-intro .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.24em; color: var(--muted);
+  margin-bottom: 18px;
 }
-.who-intro p {
+.who-intro h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 400; margin: 0 0 22px;
+  letter-spacing: 0.005em; line-height: 1.2;
+}
+.who-intro .lede {
   max-width: 620px; margin: 0 auto;
   font-size: 19px; color: var(--ink-soft);
   line-height: 1.7; font-weight: 300;
   font-style: italic;
 }
 
-/* Adjacency — the two-column story */
-.adjacency {
+/* ── Identity ── */
+.identity {
+  border-top: 1px solid var(--rule);
   background: rgba(237, 230, 212, 0.35);
-  border-bottom: 1px solid var(--rule);
 }
-.adjacency-grid {
+.identity-body {
+  max-width: 680px; margin: 0 auto;
+  text-align: center;
+}
+.identity-body p {
+  font-size: 20px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  font-weight: 300;
+  margin: 0 0 26px;
+}
+.identity-body p:last-child { margin-bottom: 0; }
+.identity-body em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* ── Director ── */
+.director {
+  border-top: 1px solid var(--rule);
+}
+.director-inner {
+  max-width: 900px; margin: 0 auto;
+}
+.director-card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
   align-items: flex-start;
-  margin-top: 16px;
-}
-.adj-col {
-  padding: 36px 32px;
+  padding: 48px 44px;
   background: var(--parchment);
   border: 1px solid var(--rule);
+  margin-top: 16px;
 }
-.adj-col .tag {
-  display: inline-block;
+.director-left {
+  border-right: 1px solid var(--rule);
+  padding-right: 44px;
+}
+.director-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.22em; color: var(--muted);
+  margin-bottom: 18px;
+}
+.director-name {
+  font-size: 34px; font-weight: 400;
+  letter-spacing: 0.005em; line-height: 1.15;
+  margin: 0 0 14px;
+}
+.director-byline {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; text-transform: uppercase;
   letter-spacing: 0.18em; color: var(--muted);
-  margin-bottom: 16px;
+  line-height: 1.7;
 }
-.adj-col h3 {
-  font-size: 24px; font-weight: 500;
-  margin: 0 0 18px; letter-spacing: 0.005em;
-}
-.adj-col p {
-  font-size: 17px; color: var(--ink-soft);
-  line-height: 1.7; margin: 0 0 14px;
-  font-weight: 300;
-}
-.adj-col p:last-child { margin-bottom: 0; }
-
-.between {
-  margin-top: 60px; text-align: center;
-  max-width: 700px; margin-left: auto; margin-right: auto;
-}
-.between p {
-  font-size: 19px; color: var(--ink-soft);
-  line-height: 1.7; font-weight: 300;
-  font-style: italic;
-}
-
-/* People */
-.people { border-bottom: 1px solid var(--rule); }
-.people-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-}
-.person {
-  padding: 28px 24px;
-  border: 1px solid var(--rule);
-  background: var(--parchment);
-}
-.person-role {
+.director-byline .line { display: block; }
+.director-right .label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; text-transform: uppercase;
-  letter-spacing: 0.16em; color: var(--muted);
-  margin-bottom: 12px;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.2em; color: var(--muted);
+  margin-bottom: 14px;
 }
-.person-name {
-  font-size: 20px; font-weight: 500;
-  margin: 0 0 10px; letter-spacing: 0.005em;
-}
-.person-bio {
-  font-size: 14px; color: var(--ink-soft);
-  line-height: 1.65; margin: 0;
+.director-bio {
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.7;
   font-weight: 300;
+  margin: 0 0 16px;
 }
-.person-placeholder {
+.director-bio:last-child { margin-bottom: 0; }
+.director-bio.placeholder-bio {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px; color: var(--muted-light);
-  letter-spacing: 0.04em;
+  font-size: 14px; color: var(--muted-light);
+  letter-spacing: 0.03em;
+  padding: 20px 22px;
+  border: 1px dashed var(--rule-strong);
+  font-style: normal;
 }
 
-/* Values strip */
-.values { }
-.values-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  margin-top: 24px;
-}
-.value {
-  text-align: left;
-  padding-top: 24px;
-  border-top: 1px solid var(--rule-strong);
-}
-.value-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px; letter-spacing: 0.2em;
-  color: var(--muted); margin-bottom: 10px;
-}
-.value-name {
-  font-size: 20px; font-weight: 500;
-  margin: 0 0 10px; letter-spacing: 0.005em;
-}
-.value-body {
-  font-size: 16px; color: var(--ink-soft);
-  line-height: 1.65; margin: 0;
-  font-weight: 300;
-}
-
-/* Closing */
+/* ── Closing ── */
 .closing {
   border-top: 1px solid var(--rule);
   background: rgba(237, 230, 212, 0.4);
@@ -167,11 +152,21 @@
   letter-spacing: 0.22em; color: var(--muted);
 }
 
+/* ── Responsive ── */
 @media (max-width: 900px) {
-  .adjacency-grid { grid-template-columns: 1fr; gap: 32px; }
-  .people-grid { grid-template-columns: 1fr; gap: 24px; }
-  .values-grid { grid-template-columns: 1fr; gap: 24px; }
-  .who-intro { padding: 100px 22px 60px; }
+  .who-intro { padding: 100px 22px 50px; }
+  .director-card {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 36px 28px;
+  }
+  .director-left {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding-right: 0;
+    padding-bottom: 28px;
+  }
+  .director-name { font-size: 28px; }
 }
 </style>
 </head>
@@ -181,85 +176,44 @@
 
 <section class="who-intro">
   <div class="mini-logo"><canvas id="miniLogo" width="360" height="240"></canvas></div>
-  <h1>Two practices, one coastline</h1>
-  <p>Space Zero is the somatic sibling of HUM Lab. Adjacent, not subsidiary &mdash; different work, one shared coastline, one shared concern for living well with attention.</p>
+  <div class="eyebrow">Who</div>
+  <h1>Who we are</h1>
+  <p class="lede">Space Zero is a physical and relational space on the Northern California coast &mdash; a community of practice, held with care, open to whoever arrives.</p>
 </section>
 
-<section class="section adjacency">
+<section class="section identity">
   <div class="section-inner">
-    <div class="section-label">Adjacency</div>
+    <div class="section-label">About</div>
     <div class="section-rule"></div>
-    <h2 class="section-title">Space Zero &amp; HUM Lab</h2>
-
-    <div class="adjacency-grid">
-      <div class="adj-col">
-        <span class="tag">Space Zero</span>
-        <h3>Somatic &amp; embodied</h3>
-        <p>Meditation, breath, shared creativity, movement, silence. Visiting speakers, group activities, and regular Emergent events where the agenda is set by whoever arrives.</p>
-        <p>The work of remembering that the body is where attention actually lives.</p>
-        <p>A not-for-profit 501(c)(3), volunteer-led, open to change by the people who make it.</p>
-      </div>
-      <div class="adj-col">
-        <span class="tag">HUM Lab &middot; adjacent</span>
-        <h3>Cognitive &amp; technical</h3>
-        <p>AI alignment research, ecological awareness, and a solutions-focussed orientation toward the world's present problems. Theory, tools, collaborations.</p>
-        <p>The work of building technology that serves the long now.</p>
-        <p>HUM Lab operates as a distinct organisation on the same coastline; we collaborate often, but each holds its own character.</p>
-      </div>
-    </div>
-
-    <div class="between">
-      <p>We believe the technical questions and the somatic questions are the same question, asked from different directions. The work of alignment &mdash; human, technical, ecological &mdash; is continuous with the work of learning to inhabit a body.</p>
+    <div class="identity-body">
+      <p>Space Zero holds <em>somatic experiences</em>. Meditation, breath, shared creativity, silence, movement. The work of remembering that attention lives in a body, and that a body lives in a world.</p>
+      <p>We believe in <em>alignment between all living systems</em> &mdash; between people, between species, between the slow rhythms of place and the faster ones we impose on it. In an age shaped by artificial intelligence, that kind of alignment is not a technical question only; it is a lived one. We practise the lived side.</p>
+      <p>Space Zero is organised as a 501(c)(3) nonprofit. Volunteer-led, community-shaped, deliberately open to change.</p>
     </div>
   </div>
 </section>
 
-<section class="section people">
-  <div class="section-inner">
+<section class="section director">
+  <div class="section-inner director-inner">
     <div class="section-label">Held by</div>
     <div class="section-rule"></div>
-    <h2 class="section-title">People</h2>
+    <h2 class="section-title">Director</h2>
 
-    <div class="people-grid">
-      <div class="person">
-        <div class="person-role">Founder &middot; Director</div>
-        <h3 class="person-name person-placeholder">[Name]</h3>
-        <p class="person-bio">Brief biographical note about the founder or directing steward of the space. A few sentences on background, motivation, and what they hold here.</p>
+    <div class="director-card">
+      <div class="director-left">
+        <div class="director-role">Director</div>
+        <h3 class="director-name">Yen Chen</h3>
+        <div class="director-byline">
+          <span class="line">Space Zero</span>
+          <span class="line">Crescent City &middot; California</span>
+        </div>
       </div>
-      <div class="person">
-        <div class="person-role">Board</div>
-        <h3 class="person-name person-placeholder">[Name]</h3>
-        <p class="person-bio">Role and brief context. Volunteer board members who support the 501(c)(3) structure and help hold governance.</p>
-      </div>
-      <div class="person">
-        <div class="person-role">Practitioners &middot; facilitators</div>
-        <h3 class="person-name person-placeholder">[Name]</h3>
-        <p class="person-bio">The people who lead sits, workshops, or gatherings. Rotating, invited, local and visiting.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="section values">
-  <div class="section-inner">
-    <div class="section-label">How we hold the work</div>
-    <div class="section-rule"></div>
-    <h2 class="section-title">Commitments</h2>
-    <div class="values-grid">
-      <div class="value">
-        <div class="value-num">&mdash; 01</div>
-        <h3 class="value-name">Open to change</h3>
-        <p class="value-body">The space is shaped by whoever shows up. We expect to be different next year than we are this year, and we treat that as healthy.</p>
-      </div>
-      <div class="value">
-        <div class="value-num">&mdash; 02</div>
-        <h3 class="value-name">Care before capability</h3>
-        <p class="value-body">We prefer a small thing done with care over an impressive thing done hastily. We hold that preference across meditation, creativity, and technology alike.</p>
-      </div>
-      <div class="value">
-        <div class="value-num">&mdash; 03</div>
-        <h3 class="value-name">All bodies welcome</h3>
-        <p class="value-body">Backgrounds, abilities, beliefs, levels of familiarity. Quietness is a welcome. Showing up matters more than knowing what to do.</p>
+      <div class="director-right">
+        <div class="label">About</div>
+        <p class="director-bio placeholder-bio">
+          [ Short biographical note about Yen &mdash; background, practice lineage, what drew her to hold this place. Two or three paragraphs, conversational in tone. Replace this block when ready. ]
+        </p>
       </div>
     </div>
   </div>
@@ -267,7 +221,7 @@
 
 <section class="section closing">
   <div class="section-inner">
-    <blockquote>We are the people who happen to be in this room, on this coast, for this particular stretch of years. That is enough.</blockquote>
+    <blockquote>A place is not a building. A place is the attention people bring to it, season after season.</blockquote>
     <div class="attrib">&mdash; Space Zero, 2026</div>
   </div>
 </section>
