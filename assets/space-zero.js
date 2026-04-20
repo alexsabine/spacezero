@@ -1206,7 +1206,7 @@ function renderFooter() {
   <div class="footer-inner">
     <div class="footer-brand">
       <canvas id="footerLogo" width="360" height="240"></canvas>
-      <p>A not-for-profit space for somatic and embodied practice on the Northern California coast.</p>
+      <p>A not-for-profit space for relational and embodied practice on the Northern California coast.</p>
     </div>
     <div class="footer-col">
       <h4>Visit</h4>
