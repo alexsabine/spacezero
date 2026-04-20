@@ -12,8 +12,25 @@
 <style>
 /* ── Intro ── */
 .gi-intro {
-  padding: 140px 40px 60px;
+  padding: 120px 40px 60px;
   text-align: center;
+}
+.gi-intro .mini-logo {
+  display: flex; justify-content: center;
+  margin-bottom: 34px;
+}
+.gi-intro .mini-logo canvas {
+  display: block;
+  max-width: 100%;
+  width: 360px;
+  height: 240px;
+}
+@media (max-width: 400px) {
+  .gi-intro .mini-logo canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
 }
 .gi-intro .eyebrow {
   font-family: 'JetBrains Mono', monospace;
@@ -187,6 +204,7 @@
 <div id="site-header"></div>
 
 <section class="gi-intro">
+  <div class="mini-logo"><canvas id="miniLogo" width="360" height="240"></canvas></div>
   <div class="eyebrow">Get involved</div>
   <h1>Ways to join</h1>
   <p class="lede">Space Zero is held by the people who show up for it. Here are the current ways to do so &mdash; each at its own pace, each welcome.</p>
