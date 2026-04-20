@@ -96,25 +96,13 @@
   line-height: 1.65; margin: 0 0 18px;
   font-weight: 300;
 }
-.practice-detail {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px; color: var(--muted);
-  line-height: 1.7; margin: 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--rule);
-  letter-spacing: 0.01em;
-}
-.practice-detail .label {
-  color: var(--ink-soft); text-transform: uppercase;
-  letter-spacing: 0.14em; font-size: 11px;
-  display: block; margin-bottom: 4px;
-}
+.practice-lede:last-child { margin-bottom: 0; }
 
-/* Rhythm — weekly flow */
+/* Rhythm — illustrative weekly flow (no committed timings) */
 .rhythm { border-top: 1px solid var(--rule); }
 .rhythm-inner { max-width: 780px; margin: 0 auto; }
 .rhythm-note {
-  max-width: 560px; margin: 0 auto 40px;
+  max-width: 580px; margin: 0 auto 40px;
   text-align: center;
   font-size: 18px; line-height: 1.7;
   color: var(--ink-soft); font-weight: 300;
@@ -126,23 +114,19 @@
 }
 .rhythm-row {
   display: grid;
-  grid-template-columns: 180px 1fr auto;
-  gap: 24px; align-items: baseline;
+  grid-template-columns: 280px 1fr;
+  gap: 28px; align-items: baseline;
   padding: 22px 0;
   border-bottom: 1px solid var(--rule);
 }
 .rhythm-when {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px; text-transform: uppercase;
-  letter-spacing: 0.18em; color: var(--ink-soft);
+  letter-spacing: 0.16em; color: var(--ink-soft);
 }
 .rhythm-what {
-  font-size: 19px; font-weight: 400;
-  color: var(--ink);
-}
-.rhythm-who {
-  font-size: 14px; color: var(--muted);
-  font-style: italic; white-space: nowrap;
+  font-size: 18px; color: var(--ink);
+  font-weight: 400;
 }
 
 /* Closing pull-quote */
@@ -160,8 +144,7 @@
 
 @media (max-width: 900px) {
   .practices-grid { grid-template-columns: 1fr; gap: 32px; }
-  .rhythm-row { grid-template-columns: 1fr; gap: 6px; }
-  .rhythm-who { white-space: normal; }
+  .rhythm-row { grid-template-columns: 1fr; gap: 4px; }
   .what-hero-image { max-height: 52vh; }
 }
 </style>
@@ -200,42 +183,26 @@
     <div class="practices-grid">
       <div class="practice-card">
         <div class="practice-num">&mdash; 01</div>
-        <h3 class="practice-name">Meditation</h3>
-        <p class="practice-lede">Silent sits, guided practice, and contemplative walks along the coast. We hold space for the kind of attention that notices itself noticing &mdash; without agenda, without performance.</p>
-        <p class="practice-detail">
-          <span class="label">Typical rhythm</span>
-          Mornings, 7:00&ndash;7:45. Longer monthly sits. Occasional silent retreat days.
-        </p>
+        <h3 class="practice-name">Practice Centre</h3>
+        <p class="practice-lede">Somatic practices &mdash; meditation, yoga, breath, sound baths &mdash; alongside shared creative exercises and the quiet work of exploring open possibility together. The ground on which everything else stands.</p>
       </div>
 
       <div class="practice-card">
         <div class="practice-num">&mdash; 02</div>
-        <h3 class="practice-name">Shared creativity</h3>
-        <p class="practice-lede">Writing, drawing, sound, and making together. No performance, no judgement, no finished product required. The practice is the room and the hours and the company of other people attending to their materials.</p>
-        <p class="practice-detail">
-          <span class="label">Typical rhythm</span>
-          Evenings, 7:00&ndash;9:00. Weekly. Occasional all-day making sessions.
-        </p>
+        <h3 class="practice-name">Wisdom in Residence</h3>
+        <p class="practice-lede">Visiting thinkers, teachers, and practitioners sharing their work through guest lectures, facilitated discussion, and open reflection. Conversation more than performance &mdash; thinking out loud, together.</p>
       </div>
 
       <div class="practice-card">
         <div class="practice-num">&mdash; 03</div>
-        <h3 class="practice-name">Visiting speakers</h3>
-        <p class="practice-lede">Practitioners, researchers, and craftspeople whose work meets the body, the ecology, or the present question. Conversations more than lectures &mdash; we value thinking out loud, together.</p>
-        <p class="practice-detail">
-          <span class="label">Typical rhythm</span>
-          Monthly or as visitors pass through. Announced via the newsletter.
-        </p>
+        <h3 class="practice-name">Ecosystem Collaboration</h3>
+        <p class="practice-lede">Shared sustainability and educational practice with local and global partners, including nature immersion and the simple work of being together in a place. The coast is a teacher; we pay attention.</p>
       </div>
 
       <div class="practice-card">
         <div class="practice-num">&mdash; 04</div>
-        <h3 class="practice-name">Emergent events</h3>
-        <p class="practice-lede">Gatherings with no fixed agenda. The room decides what it needs. Held with care by the people in attendance &mdash; facilitated but not led, shaped in the moment, remembered afterward.</p>
-        <p class="practice-detail">
-          <span class="label">Typical rhythm</span>
-          Quarterly, or whenever a seed is planted. Bring what you arrive with.
-        </p>
+        <h3 class="practice-name">Emergent Gatherings</h3>
+        <p class="practice-lede">A rhythm of collaborative events through the year &mdash; shaped in the moment by whoever arrives, facilitated with care, held without a fixed agenda.</p>
       </div>
     </div>
   </div>
@@ -243,35 +210,30 @@
 
 <section class="section rhythm">
   <div class="section-inner rhythm-inner">
-    <div class="section-label">A week at Space Zero</div>
+    <div class="section-label">A sense of the rhythm</div>
     <div class="section-rule"></div>
-    <h2 class="section-title">The working rhythm</h2>
-    <p class="rhythm-note">The schedule below is a template. Specific timings shift with the seasons and with what the community brings.</p>
+    <h2 class="section-title">How a week unfolds</h2>
+    <p class="rhythm-note">This is illustrative &mdash; a shape the week tends to take. Specific gatherings and timings are announced as they take form.</p>
     <div class="rhythm-list">
       <div class="rhythm-row">
-        <div class="rhythm-when">Mon &mdash; Fri &middot; AM</div>
-        <div class="rhythm-what">Morning sit</div>
-        <div class="rhythm-who">&mdash; open to all</div>
+        <div class="rhythm-when">A morning practice</div>
+        <div class="rhythm-what">Quiet sits and contemplative walks</div>
       </div>
       <div class="rhythm-row">
-        <div class="rhythm-when">Tuesday &middot; PM</div>
-        <div class="rhythm-what">Shared creativity</div>
-        <div class="rhythm-who">&mdash; materials provided</div>
+        <div class="rhythm-when">An evening in the week</div>
+        <div class="rhythm-what">Shared creativity &mdash; making together</div>
       </div>
       <div class="rhythm-row">
-        <div class="rhythm-when">Thursday &middot; PM</div>
-        <div class="rhythm-what">Visiting speaker or open study</div>
-        <div class="rhythm-who">&mdash; see newsletter</div>
+        <div class="rhythm-when">A gathering each month</div>
+        <div class="rhythm-what">Visiting thinkers and open study</div>
       </div>
       <div class="rhythm-row">
-        <div class="rhythm-when">Saturday &middot; AM</div>
-        <div class="rhythm-what">Long sit &amp; coastal walk</div>
-        <div class="rhythm-who">&mdash; weather permitting</div>
+        <div class="rhythm-when">A coastal walk at weekends</div>
+        <div class="rhythm-what">Long sit and time outdoors</div>
       </div>
       <div class="rhythm-row">
-        <div class="rhythm-when">One Sunday / month</div>
-        <div class="rhythm-what">Emergent</div>
-        <div class="rhythm-who">&mdash; bring what you bring</div>
+        <div class="rhythm-when">An Emergent Sunday, now and then</div>
+        <div class="rhythm-what">Gatherings shaped by whoever arrives</div>
       </div>
     </div>
   </div>
@@ -279,7 +241,7 @@
 
 <section class="section closing">
   <div class="section-inner">
-    <blockquote>The best practices, in the end, are the ones we keep returning to without being asked.</blockquote>
+    <blockquote>All of this begins, again and again, from zero &mdash; the space where new things become possible.</blockquote>
   </div>
 </section>
 
