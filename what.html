@@ -119,14 +119,15 @@
 }
 .mandala-figure {
   position: relative;
-  /* Truly edge-to-edge: no cap, no viewport padding. The mycelium
-     network runs from one side of the page to the other, so the
-     "reaching outward to the wider world" metaphor is literal.
-     Height is clamped so on ultrawide displays the figure becomes
-     landscape rather than occupying ~2000px vertical. */
+  /* Edge-to-edge width. Height capped at 720px — comfortably fits
+     most laptop viewports (including 14" MacBook, 1366×768, and
+     1440×900 Retina) at 100% browser zoom without scrolling.
+     On ultrawide displays the 100vw cap still prevents ~2000px
+     vertical. Labels scale with the figure since their positions
+     derive from canvas geometry. */
   width: 100vw;
   margin: 0 auto;
-  height: min(100vw, 900px);
+  height: min(100vw, 720px);
 }
 .mandala-figure canvas {
   position: absolute;
@@ -427,28 +428,6 @@
   .mandala-label.is-centre .label-sub { font-size: 12.5px; }
   .practice-detail { grid-template-columns: 1fr; gap: 6px; }
   .rhythm-row { grid-template-columns: 1fr; gap: 4px; }
-}
-
-/* ─── Short-viewport height clamp ───
-   When the browser viewport is shorter than 900px tall (common on
-   laptops), the 900px mandala won't fit on screen. This query
-   proportionally shrinks BOTH the figure and the labels so everything
-   stays in balance — labels don't crowd the pools on smaller figures,
-   and the overall composition remains viewable at 100% without scroll.
-   On tall displays (>= 900px viewport) nothing changes. */
-@media (min-width: 901px) and (max-height: 900px) {
-  .mandala-figure { height: min(100vw, 85vh); }
-  .mandala-label { font-size: 26px; width: 210px; }
-  .mandala-label.is-centre { width: 175px; }
-  .mandala-label.is-centre .label-name { font-size: 19px; }
-  .mandala-label.is-centre .label-sub { font-size: 13px; }
-}
-@media (min-width: 901px) and (max-height: 760px) {
-  .mandala-figure { height: min(100vw, 82vh); }
-  .mandala-label { font-size: 22px; width: 185px; }
-  .mandala-label.is-centre { width: 155px; }
-  .mandala-label.is-centre .label-name { font-size: 17px; }
-  .mandala-label.is-centre .label-sub { font-size: 12px; }
 }
 @media (max-width: 560px) {
   .mandala-figure { width: 100vw; }
