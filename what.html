@@ -28,13 +28,13 @@
 }
 .what-hero-overlay {
   position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center;
-  /* Positioned ~65% down so the caption sits over the sea rather
-     than cutting across the horizon line and the sun. Flex-end +
-     bottom padding scales cleanly across viewport heights. */
-  justify-content: flex-end;
-  padding: 56px 32px 16%;
+  /* Caption positioned at 70% from top — puts it below the horizon
+     (which sits around 50% in the seascape image) and onto the sea.
+     Using 'top' with percentage is predictable across viewport
+     heights: the caption always sits at the same relative point
+     in the image. */
+  display: block;
+  text-align: center;
   background: linear-gradient(
     to bottom,
     rgba(0,0,0,0.18) 0%,
@@ -42,8 +42,23 @@
     rgba(0,0,0,0.32) 100%
   );
   color: #fff;
-  text-align: center;
   pointer-events: none;
+}
+.what-hero-overlay .what-hero-caption,
+.what-hero-overlay .what-hero-sub {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 820px;
+  padding: 0 32px;
+  box-sizing: border-box;
+}
+.what-hero-overlay .what-hero-caption {
+  top: 62%;
+}
+.what-hero-overlay .what-hero-sub {
+  top: 82%;
 }
 .what-hero-caption {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -104,18 +119,14 @@
 }
 .mandala-figure {
   position: relative;
-  /* Edge-to-edge width, with height triple-clamped:
-     (a) never taller than the viewport-width square (100vw)
-     (b) never taller than 900px (comfortable desktop scale)
-     (c) never taller than 85% of viewport height (fits on screen)
-     The third clamp is what lets the whole composition render on
-     a single viewport without the user needing to scroll.
-     Everything downstream (mycelium simulation, pool geometry,
-     labels) scales automatically since all positions derive from
-     canvas dimensions. */
+  /* Truly edge-to-edge: no cap, no viewport padding. The mycelium
+     network runs from one side of the page to the other, so the
+     "reaching outward to the wider world" metaphor is literal.
+     Height is clamped so on ultrawide displays the figure becomes
+     landscape rather than occupying ~2000px vertical. */
   width: 100vw;
   margin: 0 auto;
-  height: min(100vw, 900px, 85vh);
+  height: min(100vw, 900px);
 }
 .mandala-figure canvas {
   position: absolute;
@@ -416,6 +427,28 @@
   .mandala-label.is-centre .label-sub { font-size: 12.5px; }
   .practice-detail { grid-template-columns: 1fr; gap: 6px; }
   .rhythm-row { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* ─── Short-viewport height clamp ───
+   When the browser viewport is shorter than 900px tall (common on
+   laptops), the 900px mandala won't fit on screen. This query
+   proportionally shrinks BOTH the figure and the labels so everything
+   stays in balance — labels don't crowd the pools on smaller figures,
+   and the overall composition remains viewable at 100% without scroll.
+   On tall displays (>= 900px viewport) nothing changes. */
+@media (min-width: 901px) and (max-height: 900px) {
+  .mandala-figure { height: min(100vw, 85vh); }
+  .mandala-label { font-size: 26px; width: 210px; }
+  .mandala-label.is-centre { width: 175px; }
+  .mandala-label.is-centre .label-name { font-size: 19px; }
+  .mandala-label.is-centre .label-sub { font-size: 13px; }
+}
+@media (min-width: 901px) and (max-height: 760px) {
+  .mandala-figure { height: min(100vw, 82vh); }
+  .mandala-label { font-size: 22px; width: 185px; }
+  .mandala-label.is-centre { width: 155px; }
+  .mandala-label.is-centre .label-name { font-size: 17px; }
+  .mandala-label.is-centre .label-sub { font-size: 12px; }
 }
 @media (max-width: 560px) {
   .mandala-figure { width: 100vw; }
