@@ -221,6 +221,11 @@ body { background: var(--parchment, #f4f1eb); }
   margin-top: 6px;
   line-height: 1.25;
 }
+/* Conditional line break inside the centre sub-text. Hidden on
+   desktop (sub reads as one italic line), shown on phone (breaks at
+   the comma into two compact lines, so neither half bleeds past the
+   pool boundary into the Emergent Gathering's text zone beside it). */
+.sub-break { display: none; }
 
 /* ─── Detail panels ─── */
 .practice-details {
@@ -455,6 +460,9 @@ body { background: var(--parchment, #f4f1eb); }
   .mandala-label.is-centre { width: 100px; }
   .mandala-label.is-centre .label-name { font-size: 12px; }
   .mandala-label.is-centre .label-sub { font-size: 9.5px; margin-top: 3px; }
+  /* Break the centre sub at the comma so neither half spills past
+     the centre pool into the neighbouring Emergent Gathering text. */
+  .sub-break { display: inline; }
 }
 @media (max-width: 380px) {
   /* Very narrow phones (iPhone SE, small Android). Pools shrink further,
@@ -640,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'ecosystem', name: 'Ecosystem Collaboration',    idx: '04',
       meta: 'Collective Flourishing' },
   ];
-  const CENTRE = { key: 'daily', idx: '00', name: 'Daily Embodied Practice', sub: 'Open attention, before ideas' };
+  const CENTRE = { key: 'daily', idx: '00', name: 'Daily Embodied Practice', sub: 'Open attention,<br class="sub-break"> before ideas' };
 
   // ─── Create HTML labels positioned absolutely over the figure ───
   // Every label carries a consistent "— NN" index above its name.
