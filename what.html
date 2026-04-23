@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Space Zero &middot; What</title>
-<meta name="description" content="What happens at Space Zero — five practices gathered around a shared centre of attention.">
+<meta name="description" content="What happens at Space Zero: five practices gathered around a shared centre of attention.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -138,65 +138,35 @@ body { background: var(--parchment, #f4f1eb); }
 .mandala-label {
   position: absolute;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 600;
   letter-spacing: 0.005em;
   color: var(--ink);
   text-align: center;
-  width: 240px;
+  width: 180px;
   transform: translate(-50%, -50%);
   pointer-events: auto;
   cursor: default;
-  line-height: 1.1;
-}
-.mandala-label .label-index {
-  display: block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.26em;
-  color: var(--muted);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  font-weight: 500;
+  line-height: 1.15;
 }
 .mandala-label .label-name {
   display: block;
   transition: color 0.25s ease;
-}
-.mandala-label .label-meta {
-  display: block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.20em;
-  color: var(--muted);
-  margin-top: 8px;
-  text-transform: uppercase;
-  font-weight: 500;
 }
 .mandala-label:hover .label-name,
 .mandala-label.is-active .label-name {
   color: var(--iceplant);
 }
 
-/* Centre label */
+/* Centre label — sits inside the (larger) Space circle */
 .mandala-label.is-centre {
-  width: 200px;
+  width: 240px;
 }
 .mandala-label.is-centre .label-name {
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 600;
   letter-spacing: 0.01em;
 }
-.mandala-label.is-centre .label-sub {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 15px;
-  color: var(--muted);
-  margin-top: 6px;
-  line-height: 1.25;
-}
-.sub-break { display: none; }
 
 /* ─── Detail panels ─── */
 .practice-details {
@@ -206,22 +176,12 @@ body { background: var(--parchment, #f4f1eb); }
 .practice-detail {
   padding: 28px 0;
   border-top: 1px solid var(--rule);
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 28px;
+  display: block;
   align-items: baseline;
 }
 .practice-detail:last-child { border-bottom: 1px solid var(--rule); }
 .practice-detail.is-active .practice-detail-name {
   color: var(--iceplant);
-}
-.practice-detail-meta {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-top: 4px;
 }
 .practice-detail-name {
   font-size: 22px;
@@ -231,36 +191,14 @@ body { background: var(--parchment, #f4f1eb); }
   transition: color 0.25s ease;
 }
 
-/* Ø glyph — CSS-constructed so it reads cleanly across font weights. */
-.slashed-o {
-  display: inline-block;
-  position: relative;
-  width: 0.68em;
-  height: 0.68em;
-  border: 0.07em solid currentColor;
-  border-radius: 50%;
-  vertical-align: -0.04em;
-  margin: 0 0.02em;
-}
-.slashed-o::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -0.08em;
-  width: 0.07em;
-  height: calc(100% + 0.16em);
-  background: currentColor;
-  transform: translateX(-50%) rotate(30deg);
-  transform-origin: center;
-}
-
 .practice-detail-lede {
   font-size: 17px;
   color: var(--ink-soft);
   line-height: 1.7;
-  margin: 0;
+  margin: 0 0 16px;
   font-weight: 300;
 }
+.practice-detail-lede:last-child { margin-bottom: 0; }
 .practice-detail-subtitle {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
@@ -284,9 +222,6 @@ body { background: var(--parchment, #f4f1eb); }
   background: rgba(237, 230, 212, 0.45);
   padding: 28px 24px;
   margin-top: 8px;
-}
-.practice-detail.is-centre .practice-detail-meta {
-  color: var(--ink-soft);
 }
 .practice-detail.is-centre .practice-detail-name {
   display: flex;
@@ -396,32 +331,21 @@ body { background: var(--parchment, #f4f1eb); }
 /* ─── Responsive ─── */
 @media (max-width: 900px) {
   .mandala-figure { width: 100vw; max-width: none; }
-  .mandala-label { font-size: 20px; width: 170px; }
-  .mandala-label .label-index { font-size: 10.5px; letter-spacing: 0.22em; }
-  .mandala-label .label-meta { font-size: 9.5px; letter-spacing: 0.18em; }
-  .mandala-label.is-centre { width: 160px; }
-  .mandala-label.is-centre .label-name { font-size: 16px; }
-  .mandala-label.is-centre .label-sub { font-size: 12.5px; }
-  .practice-detail { grid-template-columns: 1fr; gap: 6px; }
+  .mandala-label { font-size: 18px; width: 140px; }
+  .mandala-label.is-centre { width: 200px; }
+  .mandala-label.is-centre .label-name { font-size: 24px; }
   .rhythm-row { grid-template-columns: 1fr; gap: 4px; }
 }
 @media (max-width: 560px) {
   .mandala-figure { width: 100vw; }
-  .mandala-label { font-size: 14px; width: 100px; }
-  .mandala-label .label-index { font-size: 8.5px; letter-spacing: 0.20em; margin-bottom: 3px; }
-  .mandala-label .label-meta { font-size: 8px; letter-spacing: 0.14em; margin-top: 4px; }
-  .mandala-label.is-centre { width: 100px; }
-  .mandala-label.is-centre .label-name { font-size: 12px; }
-  .mandala-label.is-centre .label-sub { font-size: 9.5px; margin-top: 3px; }
-  .sub-break { display: inline; }
+  .mandala-label { font-size: 12px; width: 90px; }
+  .mandala-label.is-centre { width: 130px; }
+  .mandala-label.is-centre .label-name { font-size: 16px; }
 }
 @media (max-width: 380px) {
-  .mandala-label { font-size: 13px; width: 90px; }
-  .mandala-label .label-index { font-size: 8px; }
-  .mandala-label .label-meta { font-size: 7.5px; letter-spacing: 0.12em; }
-  .mandala-label.is-centre { width: 90px; }
-  .mandala-label.is-centre .label-name { font-size: 11px; }
-  .mandala-label.is-centre .label-sub { font-size: 9px; }
+  .mandala-label { font-size: 11px; width: 80px; }
+  .mandala-label.is-centre { width: 110px; }
+  .mandala-label.is-centre .label-name { font-size: 14px; }
 }
 </style>
 </head>
@@ -446,8 +370,8 @@ body { background: var(--parchment, #f4f1eb); }
     <div class="section-label">Practice</div>
     <div class="section-rule"></div>
     <div class="what-intro-body">
-      <p>Space Zero is a place of <em>gathered attention</em>. The things we do here are simple &mdash; sitting together, breathing, making, listening, noticing &mdash; and the simplicity is the point.</p>
-      <p>All practices are open to any level of familiarity, and most are offered without cost. Donations support the space and the practitioners.</p>
+      <p>Space Zero is a physical and relational space designed to make outer impact through cultivating embodied relationship with self, others, and the living system. As a 501(c)(3) nonprofit, we support the collective flourishing of both local and global communities through shared kindness and creativity.</p>
+      <p><em>The Space is designed for change.</em></p>
     </div>
   </div>
 </section>
@@ -462,49 +386,54 @@ body { background: var(--parchment, #f4f1eb); }
     <div class="mandala-wrap">
       <div class="mandala-figure" id="mandalaFigure">
         <canvas id="mandalaCanvas" width="640" height="640"
-                aria-label="A circular diagram showing five practices arranged around a central zero. Four practices sit at the cardinal directions; the fifth — Daily Embodied Practice — sits at the centre."></canvas>
+                aria-label="A circular diagram showing four practices arranged around The Space at the centre; a physical place of daily embodied practice that grounds them."></canvas>
         <!-- Labels injected by JS -->
       </div>
     </div>
 
     <div class="practice-details" id="practiceDetails">
       <div class="practice-detail" data-practice="lab">
-        <div class="practice-detail-meta">&mdash; 01</div>
         <div class="practice-detail-body">
-          <h3 class="practice-detail-name">Lab&thinsp;<span class="slashed-o"></span> <span class="practice-detail-subtitle">Science, Nature &amp; Technology</span></h3>
-          <p class="practice-detail-lede">Careful, open-ended inquiry into the conditions of attention, creativity, and human flourishing &mdash; held alongside the sciences of nature and the tools of our time. Rigour and curiosity in the same hand; no question too ordinary or too strange to take seriously.</p>
+          <h3 class="practice-detail-name">Lab Zero <span class="practice-detail-subtitle">Science, Nature &amp; Technology</span></h3>
+          <p class="practice-detail-lede">At the edge of the Pacific, where the known meets the unknowable, we turn scientific attention toward the questions that matter at the root level. What is the source of love? How does creativity arise in a body, a mind, a community? How does interdependence move through all living things?</p>
+          <p class="practice-detail-lede">Lab Zero gathers biologists, mathematicians, neuroscientists, physicists, and consciousness researchers to inquire across the boundaries that usually keep disciplines apart, and across the boundaries between ways of knowing.</p>
+          <p class="practice-detail-lede">We study what the redwood already knows. What starlings practice. What iceplant along the Battery Point cliffs makes effortless. Nature has always been the longer experiment; we are learning to read it.</p>
         </div>
       </div>
 
       <div class="practice-detail" data-practice="emergent">
-        <div class="practice-detail-meta">&mdash; 02</div>
         <div class="practice-detail-body">
           <h3 class="practice-detail-name">The Emergent Gathering <span class="practice-detail-subtitle">Humans, AI &amp; More-than-Human</span></h3>
-          <p class="practice-detail-lede">An interdisciplinary gathering given to the question of benevolent emergent intelligence &mdash; and to the shape of a future good for human and non-human life alike. Discussion allowed to find its own form.</p>
+          <p class="practice-detail-lede">Something new is arriving; we do not yet know its shape. Large language models. Collective intelligences. Ecosystems held in our care, or thrown off balance by it. None of these is the thing it was a decade ago, and the next decade will not resemble this one.</p>
+          <p class="practice-detail-lede">The Emergent Gathering brings together technologists, philosophers, ecologists, and practitioners of attention to ask: what does benevolent emergence look like? How do we build with AI rather than against what it flattens? What would a future genuinely good for human and more-than-human life require of us, now?</p>
+          <p class="practice-detail-lede">We meet without an agenda and let the conversation find its form. Sometimes that means a lecture, sometimes a walk, sometimes silence. The question is the discipline.</p>
         </div>
       </div>
 
       <div class="practice-detail" data-practice="wisdom">
-        <div class="practice-detail-meta">&mdash; 03</div>
         <div class="practice-detail-body">
           <h3 class="practice-detail-name">Wisdom in Residence <span class="practice-detail-subtitle">Spirit, Art &amp; Philosophy</span></h3>
-          <p class="practice-detail-lede">Spiritual teachers, artists, and philosophers in residence &mdash; living alongside researchers and the local community, letting wisdom take root in place rather than only in pages. Conversation more than performance.</p>
+          <p class="practice-detail-lede">Knowledge written down stays on the page; wisdom happens between people and places. Space Zero holds residencies for spiritual teachers, artists, and philosophers who live here for a time: cooking, walking, working, teaching when asked, staying quiet when that is what the moment wants.</p>
+          <p class="practice-detail-lede">We believe in embodied transmission. A zen teacher sitting every morning in the same room changes the room. A poet writing for two months on the coast leaves something in the fog. These are not metaphors; this is how cultures have always cultivated the subtle.</p>
+          <p class="practice-detail-lede">Past residents arrive from contemplative lineages, from studios, from universities. What they share is a willingness to be present to ordinary life, to let wisdom take root in a place rather than only in pages.</p>
         </div>
       </div>
 
       <div class="practice-detail" data-practice="ecosystem">
-        <div class="practice-detail-meta">&mdash; 04</div>
         <div class="practice-detail-body">
-          <h3 class="practice-detail-name">Ecosystem Collaboration &amp; Collective Flourishing</h3>
-          <p class="practice-detail-lede">Local in place, open to the wider world. We share what we learn, attend to how groups move in concert, and study the quiet conditions of being together well &mdash; attunement, entrainment, the felt sense of moving in time with others.</p>
+          <h3 class="practice-detail-name">Ecosystem Collaboration <span class="practice-detail-subtitle">Collective Flourishing</span></h3>
+          <p class="practice-detail-lede">No practice flourishes alone. Space Zero is local to Crescent City; it is also woven into a wider fabric of researchers, teachers, communities, and ecologies that stretch from the redwoods to the Pacific Rim and beyond.</p>
+          <p class="practice-detail-lede">We share what we learn. We host gatherings with partners further afield. We study how groups move together well: attunement, entrainment, the quiet conditions under which collaboration becomes effortless and care becomes structural rather than heroic.</p>
+          <p class="practice-detail-lede">Collective flourishing is not an aggregate of individual flourishing. It is a property of the between. That is the work here.</p>
         </div>
       </div>
 
       <div class="practice-detail is-centre" data-practice="daily">
-        <div class="practice-detail-meta">&mdash; 00</div>
         <div class="practice-detail-body">
-          <h3 class="practice-detail-name">Daily Embodied Practice <span class="practice-detail-tag">&mdash; The Zero Space</span></h3>
-          <p class="practice-detail-lede">The ground the others stand on. Sitting, breathing, moving, tending &mdash; the daily return to a state of open attention, before ideas, before labels.</p>
+          <h3 class="practice-detail-name">The Space <span class="practice-detail-tag">A contemplative venue on the Crescent City coast</span></h3>
+          <p class="practice-detail-lede">The Space is the physical heart of everything else on this page. A real building, on real ground, on the Crescent City coast of northern California, between the Pacific and the redwoods.</p>
+          <p class="practice-detail-lede">It is where people sit in the mornings. Where teachers give talks in the evenings. Where meals are shared, where the library lives, where the gardens are tended. The four practices above are all offered here, and each returns to this room at the end of the day.</p>
+          <p class="practice-detail-lede">A daily embodied practice is the ground everything else on this page stands on; and zero, in the mathematics we care about, is not nothing. It is the point from which new things become possible.</p>
         </div>
       </div>
     </div>
@@ -528,7 +457,7 @@ body { background: var(--parchment, #f4f1eb); }
     <div class="section-label">A sense of the rhythm</div>
     <div class="section-rule"></div>
     <h2 class="section-title">How a week unfolds</h2>
-    <p class="rhythm-note">This is illustrative &mdash; a shape the week tends to take. Specific gatherings and timings are announced as they take form.</p>
+    <p class="rhythm-note">This is illustrative. A shape the week tends to take. Specific gatherings and timings are announced as they take form.</p>
     <div class="rhythm-list">
       <div class="rhythm-row">
         <div class="rhythm-when">A morning practice</div>
@@ -536,7 +465,7 @@ body { background: var(--parchment, #f4f1eb); }
       </div>
       <div class="rhythm-row">
         <div class="rhythm-when">An evening in the week</div>
-        <div class="rhythm-what">Shared making &mdash; working together</div>
+        <div class="rhythm-what">Shared making, working together</div>
       </div>
       <div class="rhythm-row">
         <div class="rhythm-when">A gathering each month</div>
@@ -557,7 +486,7 @@ body { background: var(--parchment, #f4f1eb); }
 <!-- ═══ CLOSING ═══ -->
 <section class="section closing">
   <div class="section-inner">
-    <blockquote>All of this begins, again and again, from zero &mdash; the space where new things become possible.</blockquote>
+    <blockquote>All of this begins, again and again, from zero: the space where new things become possible.</blockquote>
   </div>
 </section>
 
@@ -584,31 +513,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── Practices ───────────────────────────────────────────────────────
   const OUTER = [
-    { key: 'lab',       name: 'Lab&thinsp;<span class="slashed-o"></span>', idx: '01',
-      meta: 'Science &middot; Nature &middot; Tech' },
-    { key: 'emergent',  name: 'The Emergent Gathering',     idx: '02',
-      meta: 'Humans &middot; AI &middot; More-than-Human' },
-    { key: 'wisdom',    name: 'Wisdom in Residence',        idx: '03',
-      meta: 'Spirit &middot; Art &middot; Philosophy' },
-    { key: 'ecosystem', name: 'Ecosystem Collaboration',    idx: '04',
-      meta: 'Collective Flourishing' },
+    { key: 'lab',       name: 'Lab Zero' },
+    { key: 'emergent',  name: 'The Emergent Gathering' },
+    { key: 'wisdom',    name: 'Wisdom in Residence' },
+    { key: 'ecosystem', name: 'Ecosystem Collaboration' },
   ];
   const CENTRE = {
-    key: 'daily', idx: '00',
-    name: 'Daily Embodied Practice',
-    sub: 'Open attention,<br class="sub-break"> before ideas'
+    key: 'daily',
+    name: 'The Space',
   };
 
   // ─── Build HTML labels, positioned absolutely over the figure ───────
+  // Just the name — the subheadings live in the detail panels below.
   const labels = OUTER.map(p => {
     const el = document.createElement('div');
     el.className = 'mandala-label';
     el.dataset.practice = p.key;
-    const metaLine = p.meta ? `<span class="label-meta">${p.meta}</span>` : '';
-    el.innerHTML = `
-      <span class="label-index">&mdash; ${p.idx}</span>
-      <span class="label-name">${p.name}</span>
-      ${metaLine}`;
+    el.innerHTML = `<span class="label-name">${p.name}</span>`;
     figure.appendChild(el);
     return el;
   });
@@ -617,10 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const centreLabel = document.createElement('div');
   centreLabel.className = 'mandala-label is-centre';
   centreLabel.dataset.practice = CENTRE.key;
-  centreLabel.innerHTML = `
-    <span class="label-index">&mdash; ${CENTRE.idx}</span>
-    <span class="label-name">${CENTRE.name}</span>
-    <span class="label-sub">${CENTRE.sub}</span>`;
+  centreLabel.innerHTML = `<span class="label-name">${CENTRE.name}</span>`;
   figure.appendChild(centreLabel);
   labels.push(centreLabel);
 
@@ -647,29 +565,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ─── Palette ────────────────────────────────────────────────────────
+  // Pulled from the shared runtime (SpaceZero.PAL) when available, so
+  // the diagram uses exactly the same colours as the logo. Fallback
+  // covers the cases when space-zero.js hasn't loaded yet, listing only
+  // the colours this script actually uses.
   const PAL = (window.SpaceZero && window.SpaceZero.PAL) || {
     ink:            [ 26,  22,  18],
     parchment:      [244, 241, 235],
     parchmentWarm:  [237, 230, 212],
     muted:          [122, 111,  95],
+    amberCream:     [248, 216, 168],
+    amberWarm:      [200, 145,  91],
+    russet:         [176, 102,  60],
+    iceplantBright: [218, 100, 176],
+    iceplantPale:   [240, 188, 216],
+    waterCobalt:    [ 60, 155, 157],
+    waterAqua:      [ 45, 140, 125],
+    waterEmerald:   [ 75, 155, 130],
+    waterJade:      [ 90, 170, 145],
+    lichenOchre:    [200, 170, 115],
   };
   const rgba = (c, a) => `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
-
-  // Per-practice accent colours (muted, weathered) — used as a soft
-  // tint inside each pool. Ready to be enriched later.
-  const PRACTICE_COLOURS = {
-    lab:       [172,  98, 148],   // dusty plum
-    emergent:  [148, 102,  88],   // weathered redwood bark
-    wisdom:    [ 96, 140, 138],   // overcast river
-    ecosystem: [112, 138, 104],   // lichen green
-    centre:    [248, 240, 225],   // luminous pearl
-  };
-  const OUTER_COLOURS = [
-    PRACTICE_COLOURS.lab,
-    PRACTICE_COLOURS.emergent,
-    PRACTICE_COLOURS.wisdom,
-    PRACTICE_COLOURS.ecosystem,
-  ];
 
   // ─── Canvas setup, DPR-aware ────────────────────────────────────────
   const ctx = canvas.getContext('2d');
@@ -703,19 +619,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const cx = W / 2, cy = H / 2;
     const margin = 40;
 
-    // Fraction of rho used as outer-circle radius. Lower = more space
-    // between circles. 0.48 gives visible gap between neighbours and
-    // between each outer circle and the centre.
-    const CIRCLE_FRAC = 0.48;
+    // The centre (The Space) is the physical venue and the largest pod.
+    // Outer practices are smaller circles arranged around it.
+    // CENTRE_FRAC > OUTER_FRAC so the centre clearly dominates.
+    // Constraints:
+    //   OUTER_FRAC + CENTRE_FRAC < 1   (outers must not overlap centre)
+    //   (OUTER_FRAC + CENTRE_FRAC) × rho + margin ≤ figure half-width
+    const OUTER_FRAC  = 0.36;
+    const CENTRE_FRAC = 0.52;
 
-    // Figure perimeter must contain rho + outerR.
-    let rho = (size / 2 - margin) / (1 + CIRCLE_FRAC);
+    // rho solves: rho × (1 + OUTER_FRAC) = size/2 - margin
+    // (the figure must contain rho + outerR)
+    let rho = (size / 2 - margin) / (1 + OUTER_FRAC);
     rho = Math.max(rho, 80);
 
-    const outerR  = rho * CIRCLE_FRAC;
-    const centreR = rho * 0.32;               // clearly separate from outers
+    const outerR  = rho * OUTER_FRAC;
+    const centreR = rho * CENTRE_FRAC;            // larger than outers
     const outerBoundaryR = rho + outerR;
-    const labelRho = rho;                     // label sits at circle centre
+    const labelRho = rho;                         // label sits at circle centre
 
     return {
       cx, cy, rho, outerR, centreR,
@@ -748,17 +669,17 @@ document.addEventListener('DOMContentLoaded', () => {
     centre.style.top  = `${(g.cy / H) * 100}%`;
   }
 
-  // ─── CRR star network — Zero Space at centre, 4 practices in cohesion ─
+  // ─── CRR star network — The Space at centre, four in cohesion ─
   //
-  // TOPOLOGY: Star graph K₁,₄ — Daily Embodied Practice at the hub, the
-  // four practices as leaves. The Zero Space is the somatic ground every
-  // practice returns to; practices don't communicate laterally, they meet
-  // through the centre.
+  // TOPOLOGY: Star graph K₁,₄ — The Space at the hub, the four
+  // practices as leaves. The Space is the somatic ground every
+  // practice returns to; practices don't communicate laterally, they
+  // meet through the centre.
   //
-  // In FEP terms, Daily Embodied Practice is the shared Markov blanket of
-  // the whole network. Every prediction error passes through the body.
-  // Coherence accumulates in each practice and resolves by returning to
-  // the ground — then the ground, held, regenerates the practices.
+  // In FEP terms, The Space is the shared Markov blanket of the
+  // whole network. Every prediction error passes through the body.
+  // Coherence accumulates in each practice and resolves by returning
+  // to the ground — then the ground, held, regenerates the practices.
   //
   // CRR MECHANICS:
   //   - Centre and each outer pod run SO(2) coherence cycles.
@@ -806,16 +727,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.max(0, Math.min(1, b / B_MAX));
   }
 
-  // Colour mix (averaging in RGB — good enough for the palette chosen)
-  function mixCol(a, b, t) {
-    t = t == null ? 0.5 : t;
-    return [
-      a[0] + (b[0] - a[0]) * t,
-      a[1] + (b[1] - a[1]) * t,
-      a[2] + (b[2] - a[2]) * t,
-    ];
-  }
-
   // ── Draw a flowing pulse along a spoke ─────────────────────────────
   // Not a dot — a soft elongated stream of light, shaped by the Beauty
   // function as it travels. The stream has a head (at position u) and
@@ -861,49 +772,26 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.restore();
   }
 
-  // ── Draw the static spoke (very faint ink line) ────────────────────
-  // Barely visible on its own — it exists so the eye reads continuity
-  // along the path the pulse will travel, not as a feature in itself.
+  // ── Draw the static spoke (ink line) ───────────────────────────────
+  // A real line between practice and ground. Legible without a pulse,
+  // confident at both endpoints (the relationship doesn't taper to
+  // nothing at the pod boundaries), but modest in the middle so the
+  // travelling pulses still carry the eye.
   function drawSpokeBase(ax, ay, bx, by, breath) {
     ctx.save();
-    const alpha = 0.035 + 0.025 * breath;
+    const alpha = 0.14 + 0.05 * breath;
     const grad = ctx.createLinearGradient(ax, ay, bx, by);
-    grad.addColorStop(0.00, rgba(PAL.ink, 0));
-    grad.addColorStop(0.15, rgba(PAL.ink, alpha * 0.6));
+    grad.addColorStop(0.00, rgba(PAL.ink, alpha * 0.60));
+    grad.addColorStop(0.20, rgba(PAL.ink, alpha * 0.92));
     grad.addColorStop(0.50, rgba(PAL.ink, alpha));
-    grad.addColorStop(0.85, rgba(PAL.ink, alpha * 0.6));
-    grad.addColorStop(1.00, rgba(PAL.ink, 0));
+    grad.addColorStop(0.80, rgba(PAL.ink, alpha * 0.92));
+    grad.addColorStop(1.00, rgba(PAL.ink, alpha * 0.60));
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 0.8;
+    ctx.lineWidth = 1.1;
     ctx.beginPath();
     ctx.moveTo(ax, ay);
     ctx.lineTo(bx, by);
     ctx.stroke();
-    ctx.restore();
-  }
-
-  // ── Cohesion halo ──────────────────────────────────────────────────
-  // A single very large, very soft ring around the whole group. This
-  // isn't a drawn boundary — it's an atmospheric breath that suggests
-  // the four practices share a field without bisecting the composition
-  // with edges. Opacity low enough to read as ambient warmth, not
-  // geometry. Breathes on the centre's slow cycle.
-  function drawCohesionField(cx, cy, rhoField, breath) {
-    ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    const alpha = 0.045 + 0.025 * breath;
-    const grad = ctx.createRadialGradient(
-      cx, cy, rhoField * 0.55,
-      cx, cy, rhoField * 1.08
-    );
-    grad.addColorStop(0.00, rgba(PAL.parchmentWarm, 0));
-    grad.addColorStop(0.55, rgba(PAL.parchmentWarm, alpha));
-    grad.addColorStop(0.85, rgba(PAL.parchmentWarm, alpha * 0.7));
-    grad.addColorStop(1.00, rgba(PAL.parchmentWarm, 0));
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, rhoField * 1.08, 0, TAU);
-    ctx.fill();
     ctx.restore();
   }
 
@@ -924,7 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Pod list helper (kept tight — no ports/angles table needed for star)
+  // Pod positions — four outer pods at N/E/S/W + one centre.
   function buildPods(g) {
     const pods = [];
     for (let i = 0; i < 4; i++) {
@@ -934,76 +822,13 @@ document.addEventListener('DOMContentLoaded', () => {
         x: g.cx + g.rho * Math.cos(theta),
         y: g.cy + g.rho * Math.sin(theta),
         r: g.outerR,
-        col: OUTER_COLOURS[i],
       });
     }
     pods.push({
       i: 4,
       x: g.cx, y: g.cy, r: g.centreR,
-      col: PRACTICE_COLOURS.centre,
     });
     return pods;
-  }
-
-  // ─── Vibrant sun centre ─────────────────────────────────────────────
-  // Replaces the subtle pearl glow. Warm white core with a golden halo
-  // reaching outward — as present as the coloured outer pools, but its
-  // vibrancy is luminous rather than pigmented. Breathes on daily's
-  // slow cycle (T ≈ 21s).
-  function drawSunCentre(cx, cy, r, breath, isActive) {
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-
-    // Warm white core — the still point
-    const coreCol    = [255, 248, 232];
-    // Golden-hour rim — Beauty function peak colour, sun at most beautiful
-    const goldRim    = [255, 214, 158];
-    // Softer gold extending further out
-    const goldOuter  = [245, 196, 140];
-
-    const active = isActive ? 1 : 0;
-
-    // 1. Bright core — confidently present, not ghostly
-    const coreAlpha = (0.72 + 0.10 * breath) * (1 + active * 0.15);
-    const coreR = r * (0.62 + 0.06 * breath);
-    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-    core.addColorStop(0.00, rgba(coreCol, coreAlpha));
-    core.addColorStop(0.55, rgba(coreCol, coreAlpha * 0.75));
-    core.addColorStop(1.00, rgba(coreCol, 0));
-    ctx.fillStyle = core;
-    ctx.beginPath();
-    ctx.arc(cx, cy, coreR, 0, TAU);
-    ctx.fill();
-
-    // 2. Inner halo — the pod itself reads as light, not a gap
-    const haloAlpha = (0.50 + 0.08 * breath) * (1 + active * 0.20);
-    const haloR = r * (1.05 + 0.04 * breath);
-    const halo = ctx.createRadialGradient(cx, cy, r * 0.3, cx, cy, haloR);
-    halo.addColorStop(0.00, rgba(coreCol, haloAlpha * 0.95));
-    halo.addColorStop(0.55, rgba(goldRim, haloAlpha * 0.55));
-    halo.addColorStop(0.85, rgba(goldRim, haloAlpha * 0.25));
-    halo.addColorStop(1.00, rgba(goldRim, 0));
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(cx, cy, haloR, 0, TAU);
-    ctx.fill();
-
-    // 3. Extended corona — soft warm light reaching into the gap between
-    //    centre and outer pools. Capped so it fills the gap with warmth
-    //    without overshooting into the outer pod zones.
-    const coronaAlpha = (0.20 + 0.06 * breath) * (1 + active * 0.25);
-    const coronaR = r * (1.50 + 0.08 * breath);
-    const corona = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, coronaR);
-    corona.addColorStop(0.00, rgba(goldRim, 0));
-    corona.addColorStop(0.45, rgba(goldRim, coronaAlpha));
-    corona.addColorStop(0.78, rgba(goldOuter, coronaAlpha * 0.45));
-    corona.addColorStop(1.00, rgba(goldOuter, 0));
-    ctx.fillStyle = corona;
-    ctx.beginPath();
-    ctx.arc(cx, cy, coronaR, 0, TAU);
-    ctx.fill();
-
-    ctx.restore();
   }
 
   // ─── Draw the star network ──────────────────────────────────────────
@@ -1011,8 +836,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // alternates between practice→centre (return to ground) and
   // centre→practice (ground radiates out). Brightness follows the
   // Beauty function — pulse blooms as it nears its destination.
+  //
+  // All pulses use the same warm amber as the lighthouse beams inside
+  // each Zero circle. The whole composition reads as one quality of
+  // light moving through different places, not as four different
+  // colours competing for attention.
   function drawStarNetwork(pods, t) {
     const centre = pods[4];
+    const pulseCol = PAL.amberCream;
     for (let i = 0; i < 4; i++) {
       const outer = pods[i];
       const { ax, ay, bx, by } = spokeEndpoints(outer, centre);
@@ -1028,60 +859,405 @@ document.addEventListener('DOMContentLoaded', () => {
       const lineBreath = 0.5 + 0.5 * Math.sin(t / bp * TAU + SPOKE_OFFSETS[i] * TAU);
       drawSpokeBase(ax, ay, bx, by, lineBreath);
 
-      // Pulse: direction alternates every cycle.
-      // Even cycle: practice → centre (return to ground)
-      // Odd cycle:  centre → practice (ground radiates out)
+      // Pulse direction alternates every cycle:
+      //   Even cycle: practice → centre (return to ground)
+      //   Odd cycle:  centre → practice (ground radiates out)
       const returning = (cycleN % 2) === 0;
-      // u-position along the path: when returning, pulse starts at outer
-      // (at u≈0 near pod A) and heads to centre (u≈1 near pod B).
-      // When radiating, reverse: pulse starts at centre and heads out.
       const pathU = returning ? u : (1 - u);
 
-      // Pulse colour: returning pulses carry the practice's colour (it
-      // brings its character home). Radiating pulses carry centre-gold
-      // (ground sends warmth outward). Blend near midpoint so colours
-      // meet smoothly rather than flipping.
-      const centreGold = [255, 228, 180];
-      const outerCol = outer.col;
-      // Blend: 0 at u=0 (pure source), 0.35 at u=1 (touch of destination)
-      const blendT = pathU * 0.35;
-      const col = returning
-        ? mixCol(outerCol, centreGold, blendT)
-        : mixCol(centreGold, outerCol, blendT);
-
-      drawSpokePulse(ax, ay, bx, by, pathU, brightness, col);
+      drawSpokePulse(ax, ay, bx, by, pathU, brightness, pulseCol);
     }
   }
 
-  // ─── Render helpers (pools, tints) ──────────────────────────────────
+  // ─── Visual layer — Zero-circles and watercolour centre ─────────────
   let t0 = performance.now();
 
-  function drawPool(cx, cy, r, strength) {
-    const pool = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r);
-    pool.addColorStop(0.00, rgba(PAL.parchment, strength));
-    pool.addColorStop(0.60, rgba(PAL.parchment, strength * 0.94));
-    pool.addColorStop(0.90, rgba(PAL.parchment, strength * 0.30));
-    pool.addColorStop(1.00, rgba(PAL.parchment, 0));
-    ctx.fillStyle = pool;
+  // ── Zero-style circle ──────────────────────────────────────────────
+  // Each of the four outer pods is rendered in the same visual idiom
+  // as the Zero in the Space Zero logo: parchment fill, ink rim, with
+  // its own lighthouse dot orbiting the circumference and a warm beam
+  // shining from the dot inward toward the circle's centre.
+  //
+  // The four dots are phase-offset by 1/4 cycle each, so there is a
+  // wave of attention travelling clockwise around the whole figure.
+  // Each pod looks inward; as time passes, attention hands off from
+  // one pod to the next. The practices circling; the lighthouse of
+  // attention visiting each.
+  //
+  // All four circles share the same palette (parchment, ink, amber):
+  // this is the logo's motif, repeated four times around the ground.
+  //
+  // Based on drawZero() from space-zero.js. Periods, colours, and
+  // proportions are taken from there so the idiom is consistent.
+  // ── Ocean-palette cycling ──────────────────────────────────────────
+  // The Space Zero logo's coastal palette, cycled smoothly. Given a
+  // normalised phase u ∈ [0, 1), returns a colour blended between
+  // adjacent palette entries. As the lighthouse orbits its rim, the
+  // trailing swirl moves through these colours, picking up a different
+  // face of the coastal palette at each position. This ties each pod
+  // visually to the watercolour centre — same palette, different
+  // rhythm.
+  const OCEAN_PALETTE = [
+    PAL.waterCobalt,
+    PAL.waterAqua,
+    PAL.waterEmerald,
+    PAL.waterJade,
+    PAL.iceplantBright,
+    PAL.amberWarm,
+  ];
+  function oceanColourAt(u) {
+    const n = OCEAN_PALETTE.length;
+    const idx = ((u % 1) + 1) % 1 * n;                 // wrap to [0, n)
+    const i0 = Math.floor(idx) % n;
+    const i1 = (i0 + 1) % n;
+    const f  = idx - Math.floor(idx);
+    const a = OCEAN_PALETTE[i0];
+    const b = OCEAN_PALETTE[i1];
+    return [
+      a[0] + (b[0] - a[0]) * f,
+      a[1] + (b[1] - a[1]) * f,
+      a[2] + (b[2] - a[2]) * f,
+    ];
+  }
+
+  // ── Lighthouse trail — paint dragged by the brush ──────────────────
+  // The orange dot is the brush; the trail is the ink it leaves on
+  // the water. The band lives centred on the dot's orbit (r × 0.94),
+  // spanning roughly the brush width either side, so the stroke sits
+  // within the ring between the rim and the faint inner contour
+  // (r × 0.89) — not spilling across it.
+  //
+  // Structure:
+  //   - Annular band from r × 0.89 (inner contour edge) to r × 0.995
+  //     (just inside the rim).
+  //   - Conic-gradient conic fade: invisible at the tail, peaking
+  //     right behind the dot, cliff-dropping to zero in front.
+  //   - Radial feather so both edges of the band fade into parchment
+  //     rather than ending hard.
+  //   - Ocean-palette colour, slow-cycling with phase.
+  function drawLighthouseTrail(cx, cy, r, lighthousePhase) {
+    const TRAIL_ARC  = PI * 0.40;                      // ~72° sweep
+    const R_OUTER    = r * 0.995;                      // just inside rim
+    const R_INNER    = r * 0.89;                       // at inner contour
+    const dotAngle   = lighthousePhase - PI / 2;
+    const trailStart = dotAngle - TRAIL_ARC;
+    const trailCol   = oceanColourAt(lighthousePhase / TAU);
+
+    // Conic gradient: 0-angle aligned with the trail's tail. Alpha
+    // builds smoothly from invisible at the tail, peaks right behind
+    // the brush, then cliff-drops to zero so nothing shows ahead.
+    const trailFrac = TRAIL_ARC / TAU;
+    const grad = ctx.createConicGradient(trailStart, cx, cy);
+    grad.addColorStop(0.00,              rgba(trailCol, 0));
+    grad.addColorStop(trailFrac * 0.30,  rgba(trailCol, 0.12));
+    grad.addColorStop(trailFrac * 0.65,  rgba(trailCol, 0.48));
+    grad.addColorStop(trailFrac * 0.90,  rgba(trailCol, 0.85));
+    grad.addColorStop(trailFrac,         rgba(trailCol, 0.95));
+    grad.addColorStop(Math.min(1, trailFrac + 0.001), rgba(trailCol, 0));
+    grad.addColorStop(1.00,              rgba(trailCol, 0));
+
+    ctx.save();
+
+    // Clip to pod interior so nothing leaks past the rim.
+    ctx.beginPath();
+    ctx.arc(cx, cy, R_OUTER, 0, TAU);
+    ctx.clip();
+
+    // Multiply so the wash tints parchment rather than sitting on top.
+    ctx.globalCompositeOperation = 'multiply';
+
+    // Annular sector hugging the rim.
+    ctx.beginPath();
+    ctx.arc(cx, cy, R_OUTER, trailStart, dotAngle, false);
+    ctx.arc(cx, cy, R_INNER, dotAngle, trailStart, true);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Feather both edges of the band. Gradient stops at both the
+    // inner boundary and just outside the outer boundary, with the
+    // middle of the band kept clear — so only the rim-adjacent and
+    // inner-contour-adjacent edges soften.
+    ctx.globalCompositeOperation = 'source-over';
+    const feather = ctx.createRadialGradient(cx, cy, R_INNER, cx, cy, R_OUTER);
+    feather.addColorStop(0.00, rgba(PAL.parchment, 0.55));
+    feather.addColorStop(0.30, rgba(PAL.parchment, 0.06));
+    feather.addColorStop(0.70, rgba(PAL.parchment, 0.06));
+    feather.addColorStop(1.00, rgba(PAL.parchment, 0.25));
+    ctx.beginPath();
+    ctx.arc(cx, cy, R_OUTER, trailStart, dotAngle, false);
+    ctx.arc(cx, cy, R_INNER, dotAngle, trailStart, true);
+    ctx.closePath();
+    ctx.fillStyle = feather;
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawZeroCircle(cx, cy, r, lighthousePhase, isActive) {
+    const rimW = Math.max(1.3, r * 0.026);
+
+    // 1. Parchment fill with subtle amber inner glow.
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.993, 0, TAU);
+    ctx.fillStyle = rgba(PAL.parchment, 1.0);
+    ctx.fill();
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.98);
+    const glowAmt = isActive ? 0.14 : 0.06;
+    glow.addColorStop(0.00, rgba(PAL.amberCream, glowAmt));
+    glow.addColorStop(0.55, rgba(PAL.amberCream, glowAmt * 0.35));
+    glow.addColorStop(1.00, rgba(PAL.amberCream, 0));
+    ctx.fillStyle = glow;
+    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    ctx.restore();
+
+    // 2. Ink rim.
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, TAU);
+    ctx.strokeStyle = rgba(PAL.ink, isActive ? 0.92 : 0.86);
+    ctx.lineWidth = rimW;
+    ctx.stroke();
+
+    // 3. Faint inner contour, like the logo.
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.89, 0, TAU);
+    ctx.strokeStyle = rgba(PAL.ink, 0.14);
+    ctx.lineWidth = rimW * 0.36;
+    ctx.stroke();
+
+    // 4. Lighthouse trail — watercolour wake behind the dot, filling
+    //    the outer band of the pod interior.
+    drawLighthouseTrail(cx, cy, r, lighthousePhase);
+
+    // 5. Lighthouse dot + inward beam.
+    const dotR = r * 0.058;
+    const orbit = r * 0.94;
+    const dotX = cx + Math.cos(lighthousePhase - PI / 2) * orbit;
+    const dotY = cy + Math.sin(lighthousePhase - PI / 2) * orbit;
+
+    // Soft flare behind the dot
+    const flareR = dotR * 5.5;
+    const dotGlow = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, flareR);
+    dotGlow.addColorStop(0.00, rgba(PAL.amberCream, 0.60));
+    dotGlow.addColorStop(0.40, rgba(PAL.russet,     0.24));
+    dotGlow.addColorStop(1.00, 'rgba(0,0,0,0)');
+    ctx.fillStyle = dotGlow;
+    ctx.fillRect(dotX - flareR, dotY - flareR, flareR * 2, flareR * 2);
+
+    // Inward beam, clipped to circle interior
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.97, 0, TAU);
+    ctx.clip();
+    ctx.save();
+    ctx.translate(dotX, dotY);
+    ctx.rotate(Math.atan2(cy - dotY, cx - dotX));
+    const innerBeamLen = r * 2.1, innerBeamHalf = 0.13;
+    const innerGrad = ctx.createLinearGradient(0, 0, innerBeamLen, 0);
+    innerGrad.addColorStop(0.00, rgba(PAL.amberCream, 0.22));
+    innerGrad.addColorStop(0.30, rgba(PAL.amberCream, 0.10));
+    innerGrad.addColorStop(0.70, rgba(PAL.amberCream, 0.025));
+    innerGrad.addColorStop(1.00, rgba(PAL.amberCream, 0));
+    ctx.globalCompositeOperation = 'screen';
+    ctx.fillStyle = innerGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, innerBeamLen, -innerBeamHalf, innerBeamHalf);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    ctx.restore();
+
+    // The dot itself
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, dotR, 0, TAU);
+    ctx.fillStyle = rgba(PAL.russet, 0.92);
     ctx.fill();
   }
 
-  function drawPoolTint(cx, cy, r, col, breath, isActive) {
+  // ── Watercolour centre — the crescent of Crescent City ─────────────
+  // The centre circle is The Space, a physical venue on the coast.
+  // It is rendered as the same drifting watercolour wash that gives
+  // the main Space Zero logo its crescent body: patches of ocean colour
+  // (cobalt, aqua, emerald, jade) with touches of iceplant and amber,
+  // drifting slowly over rough paper, breathing with CRR dynamics.
+  //
+  // The shape is a full circle (not a crescent), but the palette and
+  // behaviour are identical to the logo — so the centre of this diagram
+  // reads as the same place the logo depicts: the Crescent City coast.
+  //
+  // Ported from space-zero.js / buildLogoPatchStates + renderCrescentBody.
+  const WATERCOLOUR_PATCHES = [
+    { col: PAL.waterCobalt,    weight: 1.10, rSpread: 0.52, omega: 1 / (PI * PHI) },
+    { col: PAL.waterAqua,      weight: 1.05, rSpread: 0.48, omega: 1 / (2 * PI)   },
+    { col: PAL.waterEmerald,   weight: 0.95, rSpread: 0.50, omega: 1 / (PI * PHI) },
+    { col: PAL.waterJade,      weight: 0.80, rSpread: 0.56, omega: 1 / (PI * PHI) },
+    { col: PAL.iceplantBright, weight: 0.85, rSpread: 0.38, omega: 1 / (2 * PI)   },
+    { col: PAL.amberCream,     weight: 0.78, rSpread: 0.50, omega: 1 / (PI * PHI) },
+    { col: PAL.lichenOchre,    weight: 0.70, rSpread: 0.42, omega: 1 / (2 * PI)   },
+  ];
+
+  // Rough-paper texture cache, keyed by (W, H).
+  // Low-resolution multi-octave noise, upscaled; matches the logo runtime.
+  let _paperTex = null;
+  let _paperKey = '';
+  function getPaperTexture(w, h) {
+    const key = `${w}x${h}`;
+    if (_paperKey === key && _paperTex) return _paperTex;
+    const lowScale = 3;
+    const lowW = Math.ceil(w / lowScale);
+    const lowH = Math.ceil(h / lowScale);
+    let s = 4141 >>> 0;
+    const rnd = () => {
+      s = (s + 0x6D2B79F5) >>> 0;
+      let tt = s;
+      tt = Math.imul(tt ^ (tt >>> 15), tt | 1);
+      tt ^= tt + Math.imul(tt ^ (tt >>> 7), tt | 61);
+      return ((tt ^ (tt >>> 14)) >>> 0) / 4294967296;
+    };
+    const octaves = [{ f: 1.0, a: 0.35 }, { f: 2.2, a: 0.30 },
+                     { f: 5.5, a: 0.20 }, { f: 12, a: 0.15 }];
+    const fields = octaves.map(oct => {
+      const gw = Math.max(2, Math.ceil(lowW * oct.f / 20));
+      const gh = Math.max(2, Math.ceil(lowH * oct.f / 20));
+      const grid = new Float32Array(gw * gh);
+      for (let i = 0; i < grid.length; i++) grid[i] = rnd();
+      return { grid, gw, gh, amp: oct.a };
+    });
+    const imgData = new ImageData(lowW, lowH);
+    const sigmaF = 0.22;
+    for (let y = 0; y < lowH; y++) {
+      for (let x = 0; x < lowW; x++) {
+        const u = x / lowW, v = y / lowH;
+        let accum = 0, totalA = 0;
+        for (const f of fields) {
+          const gx = u * (f.gw - 1), gy = v * (f.gh - 1);
+          const gx0 = Math.floor(gx), gx1 = Math.min(gx0 + 1, f.gw - 1);
+          const gy0 = Math.floor(gy), gy1 = Math.min(gy0 + 1, f.gh - 1);
+          const fx = gx - gx0, fy = gy - gy0;
+          const sx = fx * fx * (3 - 2 * fx);
+          const sy = fy * fy * (3 - 2 * fy);
+          const v00 = f.grid[gy0 * f.gw + gx0];
+          const v10 = f.grid[gy0 * f.gw + gx1];
+          const v01 = f.grid[gy1 * f.gw + gx0];
+          const v11 = f.grid[gy1 * f.gw + gx1];
+          const vx0 = v00 * (1 - sx) + v10 * sx;
+          const vx1 = v01 * (1 - sx) + v11 * sx;
+          accum  += (vx0 * (1 - sy) + vx1 * sy) * f.amp;
+          totalA += f.amp;
+        }
+        const val = accum / totalA;
+        const gVal = Math.max(0, Math.min(255,
+          Math.floor((0.5 + (val - 0.5) * (sigmaF * 4)) * 255)));
+        const idx = (y * lowW + x) * 4;
+        imgData.data[idx] = gVal; imgData.data[idx+1] = gVal;
+        imgData.data[idx+2] = gVal; imgData.data[idx+3] = 255;
+      }
+    }
+    const low = document.createElement('canvas');
+    low.width = lowW; low.height = lowH;
+    low.getContext('2d').putImageData(imgData, 0, 0);
+    const full = document.createElement('canvas');
+    full.width = w; full.height = h;
+    const fCtx = full.getContext('2d');
+    fCtx.imageSmoothingEnabled = true;
+    fCtx.imageSmoothingQuality = 'high';
+    fCtx.drawImage(low, 0, 0, w, h);
+    _paperKey = key;
+    _paperTex = { canvas: full };
+    return _paperTex;
+  }
+
+  // Patch drift dynamics: each patch wanders around the circle's interior
+  // on its own CRR cycle. Positions breathe with Ω-dependent period.
+  const T_BREATH_BASE = 2 * PI * PI / PHI;
+  const T_DRIFT_BASE  = 2 * PI * PI;
+  function buildWatercolourPatchStates(cx, cy, r, t) {
+    const states = [];
+    const nPatches = WATERCOLOUR_PATCHES.length;
+    for (let i = 0; i < nPatches; i++) {
+      const p = WATERCOLOUR_PATCHES[i];
+      const T_drift  = T_DRIFT_BASE  * (1 + 0.15 * Math.sin(i * 2.1));
+      const T_breath = T_BREATH_BASE * (1 + 0.22 * Math.cos(i * 1.7));
+      const phase0   = ((i * PHI) % 1) * TAU;
+      const driftPhase = (t / T_drift) * TAU + phase0;
+      const tremor    = (t / (T_drift * 0.31)) * TAU + phase0 * 1.3;
+      // Patches spread evenly around the circle, drift slowly, tremor finely
+      const angBase  = (i + 0.5) / nPatches * TAU;
+      const angSweep = 0.085 * TAU * Math.sin(driftPhase);
+      const angTremor = 0.012 * TAU * Math.sin(tremor);
+      const ang = angBase + angSweep + angTremor;
+      // Radial position: roughly halfway out, oscillating in and out
+      const rMid = r * 0.55;
+      const rAmp = r * 0.22;
+      const rOsc = rAmp * Math.sin(driftPhase * 0.6 + phase0 * 1.3);
+      const rr = rMid + rOsc;
+      // Breath modulates patch intensity via CRR Beauty function
+      const breathPh = (t * TAU / T_breath) + phase0;
+      const bRaw = Math.cos(breathPh);
+      const breath = 0.4 + 0.6 * bRaw * bRaw;
+      const crrWeight = Math.exp(breath / p.omega) / Math.exp(1 / p.omega);
+      const x = cx + Math.cos(ang) * rr;
+      const y = cy + Math.sin(ang) * rr;
+      const sigma = p.rSpread * r * 0.75;
+      states.push({ x, y, sigma, col: p.col, crrWeight, baseWeight: p.weight });
+    }
+    return states;
+  }
+
+  function drawWatercolourCentre(cx, cy, r, t) {
+    // 1. Parchment fill so the centre is a definite disc, not a hole
     ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    const ringAlpha = (isActive ? 0.40 : 0.30) * (0.85 + 0.15 * breath);
-    const ring = ctx.createRadialGradient(cx, cy, r * 0.25, cx, cy, r);
-    ring.addColorStop(0.00, rgba(col, 0));
-    ring.addColorStop(0.55, rgba(col, ringAlpha * 0.4));
-    ring.addColorStop(0.80, rgba(col, ringAlpha));
-    ring.addColorStop(1.00, rgba(col, 0));
-    ctx.fillStyle = ring;
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.arc(cx, cy, r * 0.993, 0, TAU);
+    ctx.fillStyle = rgba(PAL.parchment, 1.0);
     ctx.fill();
     ctx.restore();
+
+    // 2. Watercolour patches, clipped to the circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.97, 0, TAU);
+    ctx.clip();
+
+    const states = buildWatercolourPatchStates(cx, cy, r, t);
+    for (const s of states) {
+      const a = 0.34 * s.baseWeight * s.crrWeight;
+      const grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.sigma);
+      grad.addColorStop(0.00, rgba(s.col, a));
+      grad.addColorStop(0.45, rgba(s.col, a * 0.55));
+      grad.addColorStop(1.00, rgba(s.col, 0));
+      ctx.fillStyle = grad;
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.sigma, 0, TAU);
+      ctx.fill();
+    }
+
+    // 3. Rough-paper grain as a subtle overlay
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.globalAlpha = 0.16;
+    const paper = getPaperTexture(W, H);
+    ctx.drawImage(paper.canvas, 0, 0, W, H);
+    ctx.globalAlpha = 1.0;
+
+    ctx.restore();
+
+    // 4. Ink rim, matching the four outer circles so the whole
+    //    composition reads as five Zeros in the same hand.
+    const rimW = Math.max(1.3, r * 0.026);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.strokeStyle = rgba(PAL.ink, 0.86);
+    ctx.lineWidth = rimW;
+    ctx.stroke();
+    // Faint inner contour
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.89, 0, TAU);
+    ctx.strokeStyle = rgba(PAL.ink, 0.14);
+    ctx.lineWidth = rimW * 0.36;
+    ctx.stroke();
   }
 
   // ─── Main render loop ───────────────────────────────────────────────
@@ -1095,28 +1271,28 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.fillStyle = rgba(PAL.parchment, 1);
     ctx.fillRect(0, 0, W, H);
 
-    // 1. Cohesion field — large soft halo binding the four practices.
-    //    Breathes on daily's slow cycle. Laid down before pools so it
-    //    reads as ambient ground warmth, not an overlay.
-    const dailyBreath = 0.5 + 0.5 * Math.sin(t / POD_PERIODS[4] * TAU);
-    drawCohesionField(g.cx, g.cy, g.rho + g.outerR * 0.6, dailyBreath);
-
-    // 2. Four outer pools (parchment + lineage tint)
+    // 1. Four outer Zero circles. Each has its own lighthouse dot
+    //    orbiting the rim. The dots are phase-offset by 1/4 cycle
+    //    each, so a wave of attention sweeps clockwise around the
+    //    composition every 24 seconds (matching the logo's orbit).
+    const LIGHTHOUSE_PERIOD = 24;                   // seconds per full orbit
+    const basePhase = (t * TAU / LIGHTHOUSE_PERIOD); // advances at 2π/24s
     for (let i = 0; i < 4; i++) {
-      const breath = 0.5 + 0.5 * Math.sin(t / 11 + i * 1.3);
       const isActive = activeKey === OUTER[i].key;
-      drawPool(pods[i].x, pods[i].y, g.outerR, isActive ? 0.96 : 0.93);
-      drawPoolTint(pods[i].x, pods[i].y, g.outerR, pods[i].col, breath, isActive);
+      // Pod i's lighthouse is offset by i × (τ/4) so at any moment the
+      // four dots are at N/E/S/W relative positions on their own rims.
+      const lightPhase = basePhase + i * (TAU / 4);
+      drawZeroCircle(pods[i].x, pods[i].y, g.outerR, lightPhase, isActive);
     }
 
-    // 3. Centre pod — Daily Embodied Practice as vibrant sun.
-    //    Parchment pool beneath so labels sit on paper, then the sun
-    //    glow layered via screen blend on top.
-    const isDailyActive = activeKey === CENTRE.key;
-    drawPool(g.cx, g.cy, g.centreR, 0.95);
-    drawSunCentre(g.cx, g.cy, g.centreR, dailyBreath, isDailyActive);
+    // 2. The Space — watercolour centre, same palette and drift
+    //    dynamics as the logo's crescent body. The physical venue
+    //    rendered as Crescent City water and iceplant.
+    drawWatercolourCentre(g.cx, g.cy, g.centreR, t);
 
-    // 4. Star network — four spokes with flowing pulses
+    // 3. Star network — four spokes with amber pulses flowing
+    //    practice↔centre, articulating the CRR relationship between
+    //    each practice and the ground it returns to.
     drawStarNetwork(pods, t);
 
     requestAnimationFrame(draw);
