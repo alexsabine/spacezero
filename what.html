@@ -4,17 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Space Zero &middot; What</title>
-<meta name="description" content="What happens at Space Zero — five practices gathered around a shared centre of attention, at the threshold of the knowable and the unknowable.">
+<meta name="description" content="What happens at Space Zero — five practices gathered around a shared centre of attention.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/space-zero.css">
 <style>
-/* ─── CSS variable fallbacks ──────────────────────────────────────────
-   space-zero.css defines the shared palette variables. On mobile with
-   slow/cached connections, that file can be late or missing. These
-   fallbacks declare the same tones directly so this page renders with
-   its parchment identity even when the shared CSS is unavailable. */
+/* ─── CSS variable fallbacks ─────────────────────────────────────────
+   space-zero.css defines the shared palette. These fallbacks ensure the
+   page renders with its parchment identity even when the shared CSS is
+   unavailable. */
 :root {
   --parchment: #f4f1eb;
   --parchment-warm: #ede6d4;
@@ -22,11 +21,12 @@
   --ink-soft: #3a3530;
   --muted: #7a6f5f;
   --rule: rgba(26, 22, 18, 0.12);
+  --rule-strong: rgba(26, 22, 18, 0.22);
   --iceplant: #da58a8;
 }
 body { background: var(--parchment, #f4f1eb); }
 
-/* ─── Page hero: seascape with superimposed threshold text ─── */
+/* ─── Page hero ─── */
 .what-hero {
   margin-top: 64px;
   position: relative;
@@ -44,11 +44,6 @@ body { background: var(--parchment, #f4f1eb); }
 }
 .what-hero-overlay {
   position: absolute; inset: 0;
-  /* Caption positioned at 70% from top — puts it below the horizon
-     (which sits around 50% in the seascape image) and onto the sea.
-     Using 'top' with percentage is predictable across viewport
-     heights: the caption always sits at the same relative point
-     in the image. */
   display: block;
   text-align: center;
   background: linear-gradient(
@@ -70,12 +65,9 @@ body { background: var(--parchment, #f4f1eb); }
   padding: 0 32px;
   box-sizing: border-box;
 }
-.what-hero-overlay .what-hero-caption {
-  top: 62%;
-}
-.what-hero-overlay .what-hero-sub {
-  top: 82%;
-}
+.what-hero-overlay .what-hero-caption { top: 62%; }
+.what-hero-overlay .what-hero-sub     { top: 82%; }
+
 .what-hero-caption {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.5rem, 3.4vw, 2.6rem);
@@ -108,9 +100,6 @@ body { background: var(--parchment, #f4f1eb); }
 .what-intro-body em { font-style: italic; color: var(--ink); }
 
 /* ─── Mandala section ─── */
-/* No tinted background — the section reads as the same paper as the rest
-   of the page, so the mycelium appears to be drawn on the same paper
-   rather than floating inside a lighter pane. */
 .mandala-section {
   background: var(--parchment);
   border-top: 1px solid var(--rule);
@@ -122,10 +111,8 @@ body { background: var(--parchment, #f4f1eb); }
   gap: 44px;
   align-items: center;
   margin-top: 20px;
-  /* Break out of the section-inner 960px cap so the mandala can span
-     the full viewport width. Calc-based negative margins pull the grid
-     back out to viewport edges; inner content (like .practice-details)
-     re-centres within the standard 720px text column below. */
+  /* Break out of the section-inner cap so the mandala can span the full
+     viewport width. Inner text content re-centres within its own column. */
   width: 100vw;
   position: relative;
   left: 50%;
@@ -135,11 +122,6 @@ body { background: var(--parchment, #f4f1eb); }
 }
 .mandala-figure {
   position: relative;
-  /* Truly edge-to-edge: no cap, no viewport padding. The mycelium
-     network runs from one side of the page to the other, so the
-     "reaching outward to the wider world" metaphor is literal.
-     Height is clamped so on ultrawide displays the figure becomes
-     landscape rather than occupying ~2000px vertical. */
   width: 100vw;
   margin: 0 auto;
   height: min(100vw, 900px);
@@ -151,10 +133,8 @@ body { background: var(--parchment, #f4f1eb); }
   height: 100%;
   display: block;
 }
-/* Labels positioned around the ring — populated in JS but styled here.
-   Labels are the main visual architecture of the composition. The
-   mycelium is a living undercoat, the circles a soft tint, and the
-   labels sit on haloed pads drawn on the canvas beneath them. */
+
+/* ─── Labels (positioned by JS over the figure) ─── */
 .mandala-label {
   position: absolute;
   font-family: 'Cormorant Garamond', serif;
@@ -169,9 +149,6 @@ body { background: var(--parchment, #f4f1eb); }
   cursor: default;
   line-height: 1.1;
 }
-/* No hover ring pseudo-element — the practice circle's own ink ring
-   is the architectural outline for each named practice. Hover is
-   expressed through text colour shift alone (below). */
 .mandala-label .label-index {
   display: block;
   font-family: 'JetBrains Mono', monospace;
@@ -201,9 +178,7 @@ body { background: var(--parchment, #f4f1eb); }
   color: var(--iceplant);
 }
 
-/* Centre label — Daily Embodied Practice at the heart.
-   Uses the same label-index / label-name structure as outer labels
-   so numbering reads consistently (— 00). */
+/* Centre label */
 .mandala-label.is-centre {
   width: 200px;
 }
@@ -221,10 +196,6 @@ body { background: var(--parchment, #f4f1eb); }
   margin-top: 6px;
   line-height: 1.25;
 }
-/* Conditional line break inside the centre sub-text. Hidden on
-   desktop (sub reads as one italic line), shown on phone (breaks at
-   the comma into two compact lines, so neither half bleeds past the
-   pool boundary into the Emergent Gathering's text zone beside it). */
 .sub-break { display: none; }
 
 /* ─── Detail panels ─── */
@@ -252,7 +223,6 @@ body { background: var(--parchment, #f4f1eb); }
   color: var(--muted);
   padding-top: 4px;
 }
-.practice-detail-body { }
 .practice-detail-name {
   font-size: 22px;
   font-weight: 500;
@@ -260,11 +230,8 @@ body { background: var(--parchment, #f4f1eb); }
   letter-spacing: 0.005em;
   transition: color 0.25s ease;
 }
-/* Ø glyph — built with CSS rather than relying on the font's glyph,
-   which was rendering as a flat oval in some weights of Cormorant.
-   Inline-block circle with a border + a single diagonal pseudo-slash.
-   Vertically aligned to sit on the text baseline with the surrounding
-   letters, so "Lab Ø" reads naturally. */
+
+/* Ø glyph — CSS-constructed so it reads cleanly across font weights. */
 .slashed-o {
   display: inline-block;
   position: relative;
@@ -286,9 +253,7 @@ body { background: var(--parchment, #f4f1eb); }
   transform: translateX(-50%) rotate(30deg);
   transform-origin: center;
 }
-.practice-detail-name .slashed-o {
-  /* inherits the circle structure from .slashed-o above */
-}
+
 .practice-detail-lede {
   font-size: 17px;
   color: var(--ink-soft);
@@ -296,7 +261,6 @@ body { background: var(--parchment, #f4f1eb); }
   margin: 0;
   font-weight: 300;
 }
-
 .practice-detail-subtitle {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
@@ -329,16 +293,8 @@ body { background: var(--parchment, #f4f1eb); }
   align-items: baseline;
   gap: 12px;
 }
-.practice-detail.is-centre .practice-detail-name .centre-zero {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 400;
-  color: var(--iceplant);
-  font-size: 28px;
-  line-height: 0.9;
-}
 
-/* ─── River interlude — Crescent City's inland face ─── */
+/* ─── River interlude ─── */
 .river-interlude {
   position: relative;
   padding: 0;
@@ -393,7 +349,7 @@ body { background: var(--parchment, #f4f1eb); }
   text-shadow: 0 1px 6px rgba(0,0,0,0.6);
 }
 
-/* ─── Rhythm section (kept, subtly softened) ─── */
+/* ─── Rhythm section ─── */
 .rhythm { border-top: 1px solid var(--rule); }
 .rhythm-inner { max-width: 780px; margin: 0 auto; }
 .rhythm-note {
@@ -437,8 +393,8 @@ body { background: var(--parchment, #f4f1eb); }
   color: var(--ink-soft); line-height: 1.55;
 }
 
+/* ─── Responsive ─── */
 @media (max-width: 900px) {
-  /* On tablet/small: keep the full-viewport breakout, just narrower. */
   .mandala-figure { width: 100vw; max-width: none; }
   .mandala-label { font-size: 20px; width: 170px; }
   .mandala-label .label-index { font-size: 10.5px; letter-spacing: 0.22em; }
@@ -450,9 +406,6 @@ body { background: var(--parchment, #f4f1eb); }
   .rhythm-row { grid-template-columns: 1fr; gap: 4px; }
 }
 @media (max-width: 560px) {
-  /* Phone: pools shrink to ~129px diameter at 375px viewport. Labels
-     must fit generously inside. Width reduced to 100px gives comfortable
-     margin; font sizes scaled proportionally. */
   .mandala-figure { width: 100vw; }
   .mandala-label { font-size: 14px; width: 100px; }
   .mandala-label .label-index { font-size: 8.5px; letter-spacing: 0.20em; margin-bottom: 3px; }
@@ -460,13 +413,9 @@ body { background: var(--parchment, #f4f1eb); }
   .mandala-label.is-centre { width: 100px; }
   .mandala-label.is-centre .label-name { font-size: 12px; }
   .mandala-label.is-centre .label-sub { font-size: 9.5px; margin-top: 3px; }
-  /* Break the centre sub at the comma so neither half spills past
-     the centre pool into the neighbouring Emergent Gathering text. */
   .sub-break { display: inline; }
 }
 @media (max-width: 380px) {
-  /* Very narrow phones (iPhone SE, small Android). Pools shrink further,
-     labels need to be tighter still. */
   .mandala-label { font-size: 13px; width: 90px; }
   .mandala-label .label-index { font-size: 8px; }
   .mandala-label .label-meta { font-size: 7.5px; letter-spacing: 0.12em; }
@@ -513,7 +462,7 @@ body { background: var(--parchment, #f4f1eb); }
     <div class="mandala-wrap">
       <div class="mandala-figure" id="mandalaFigure">
         <canvas id="mandalaCanvas" width="640" height="640"
-                aria-label="A circular diagram showing five practices arranged around a central zero. Each practice is a porous circle; adjacent practices share an overlap, together forming a shared interior. The outer edge remains open to what lies beyond."></canvas>
+                aria-label="A circular diagram showing five practices arranged around a central zero. Four practices sit at the cardinal directions; the fifth — Daily Embodied Practice — sits at the centre."></canvas>
         <!-- Labels injected by JS -->
       </div>
     </div>
@@ -562,7 +511,7 @@ body { background: var(--parchment, #f4f1eb); }
   </div>
 </section>
 
-<!-- ═══ RIVER INTERLUDE — Crescent City's inland face ═══ -->
+<!-- ═══ RIVER INTERLUDE ═══ -->
 <section class="river-interlude">
   <img class="river-image"
        src="assets/river-pano.jpg"
@@ -617,17 +566,12 @@ body { background: var(--parchment, #f4f1eb); }
 <script src="assets/space-zero.js" defer></script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     MANDALA — four porous practice-circles around a central daily practice.
-
-     Structure:
-     - Four outer practices at N/E/S/W of a square
-     - One centre practice: Daily Embodied Practice (The Zero Space)
-     - Each outer circle overlaps its two adjacent neighbours
-     - The centre circle overlaps all four outer circles — shared ground
-     - All five together form one continuous, permeable region
-     - Outer boundary drawn as dashed/fading — porous to what lies beyond
-     - Each circle breathes gently (slow, out of phase) — shared rhythm
-       with enough variation to prevent enclosure
+     MANDALA — CLEAN TEMPLATE
+     Four practice-circles at N/E/S/W + one centre circle.
+     Circles are well-spaced (no overlap between outer neighbours, clear
+     breathing room between every outer circle and the centre). This is
+     a blank canvas for CRR enhancement — the geometry is in place, the
+     render is deliberately minimal.
      ═══════════════════════════════════════════════════════════════════ -->
 <script defer>
 (function () {
@@ -638,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const figure = document.getElementById('mandalaFigure');
   if (!canvas || !figure) return;
 
+  // ─── Practices ───────────────────────────────────────────────────────
   const OUTER = [
     { key: 'lab',       name: 'Lab&thinsp;<span class="slashed-o"></span>', idx: '01',
       meta: 'Science &middot; Nature &middot; Tech' },
@@ -648,18 +593,18 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'ecosystem', name: 'Ecosystem Collaboration',    idx: '04',
       meta: 'Collective Flourishing' },
   ];
-  const CENTRE = { key: 'daily', idx: '00', name: 'Daily Embodied Practice', sub: 'Open attention,<br class="sub-break"> before ideas' };
+  const CENTRE = {
+    key: 'daily', idx: '00',
+    name: 'Daily Embodied Practice',
+    sub: 'Open attention,<br class="sub-break"> before ideas'
+  };
 
-  // ─── Create HTML labels positioned absolutely over the figure ───
-  // Every label carries a consistent "— NN" index above its name.
-  // The centre practice is index 00 (the zero space).
+  // ─── Build HTML labels, positioned absolutely over the figure ───────
   const labels = OUTER.map(p => {
     const el = document.createElement('div');
     el.className = 'mandala-label';
     el.dataset.practice = p.key;
-    const metaLine = p.meta
-      ? `<span class="label-meta">${p.meta}</span>`
-      : '';
+    const metaLine = p.meta ? `<span class="label-meta">${p.meta}</span>` : '';
     el.innerHTML = `
       <span class="label-index">&mdash; ${p.idx}</span>
       <span class="label-name">${p.name}</span>
@@ -668,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return el;
   });
 
-  // Centre label — sits inside the centre circle
+  // Centre label
   const centreLabel = document.createElement('div');
   centreLabel.className = 'mandala-label is-centre';
   centreLabel.dataset.practice = CENTRE.key;
@@ -679,9 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
   figure.appendChild(centreLabel);
   labels.push(centreLabel);
 
-  // ─── Cross-highlighting with the detail panels below ───
-  // Tracks the currently-hovered practice so the canvas drawing can
-  // highlight the active circle's ring in real time.
+  // ─── Cross-highlighting with the detail panels ──────────────────────
   let activeKey = null;
   const detailEls = Array.from(document.querySelectorAll('.practice-detail'));
   function setActive(key) {
@@ -703,43 +646,32 @@ document.addEventListener('DOMContentLoaded', () => {
     d.addEventListener('mouseleave', clearActive);
   });
 
-  // ─── Pull shared palette from space-zero.js if available ───
+  // ─── Palette ────────────────────────────────────────────────────────
   const PAL = (window.SpaceZero && window.SpaceZero.PAL) || {
-    iceplantBright: [218, 100, 176],
-    iceplantDeep:   [168,  70, 138],
-    iceplantPale:   [240, 188, 216],
     ink:            [ 26,  22,  18],
     parchment:      [244, 241, 235],
     parchmentWarm:  [237, 230, 212],
-    waterCobalt:    [ 60, 155, 157],
-    amberWarm:      [200, 145,  91],
-    moss:           [ 98, 122,  72],
     muted:          [122, 111,  95],
   };
   const rgba = (c, a) => `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
 
-  // ─── Practice colours — the Crescent City palette ──────────────────────
-  // Anchored to specific places and flora of Del Norte County, with
-  // enough saturation to read clearly at the mycelium's low stroke alpha.
+  // Per-practice accent colours (muted, weathered) — used as a soft
+  // tint inside each pool. Ready to be enriched later.
   const PRACTICE_COLOURS = {
-    lab:       [233,  85, 180],   // iceplant flower bloom      (N — head)
-    emergent:  [175,  75,  47],   // redwood bark after rain    (E — hand)
-    wisdom:    [ 55, 162, 150],   // Smith River emerald-aqua   (S — feet)
-    ecosystem: [ 85, 150,  82],   // redwood sorrel with river-cool       (W — hand)
-    centre:    [248, 240, 225],   // luminous pearl-white — Beauty function peak, the light that sources all colour
-    external:  [187, 152,  77],   // Darlingtonia bog yellow-olive
+    lab:       [172,  98, 148],   // dusty plum
+    emergent:  [148, 102,  88],   // weathered redwood bark
+    wisdom:    [ 96, 140, 138],   // overcast river
+    ecosystem: [112, 138, 104],   // lichen green
+    centre:    [248, 240, 225],   // luminous pearl
   };
-
-  // Order matches OUTER: lab, emergent, wisdom, ecosystem.
   const OUTER_COLOURS = [
     PRACTICE_COLOURS.lab,
     PRACTICE_COLOURS.emergent,
     PRACTICE_COLOURS.wisdom,
     PRACTICE_COLOURS.ecosystem,
   ];
-  const CENTRE_COLOUR = PRACTICE_COLOURS.centre;
 
-  // ─── Canvas setup, DPR-aware ───
+  // ─── Canvas setup, DPR-aware ────────────────────────────────────────
   const ctx = canvas.getContext('2d');
   let W = 640, H = 640;
   function resize() {
@@ -750,49 +682,59 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     positionLabels();
-    // Reset the mycelium with the new display size + current geometry.
-    MY.reset(W, H, layout());
   }
 
-  // ─── Geometry ───
-  // Four outer practice circles at N/E/S/W vertices + centre circle.
-  // Labels sit INSIDE each circle; outer boundary encloses the whole.
-  const QUAD_OFFSET = -Math.PI / 2;
+  // ─── Geometry ───────────────────────────────────────────────────────
+  // Four outer circles at N/E/S/W + one centre circle.
+  //
+  // Spacing: each outer circle has radius = rho × CIRCLE_FRAC, and sits
+  // at distance rho from the canvas centre. For NON-OVERLAPPING outer
+  // circles at 90° separation, we need:
+  //     outer-outer gap > 0  ⇒  2 × rho × sin(45°) > 2 × outerR
+  //                          ⇒  CIRCLE_FRAC < sin(45°) ≈ 0.707
+  // Previous version used CIRCLE_FRAC = 0.78 (circles overlapped each
+  // other AND the centre). Reduced to 0.48 so neighbours have generous
+  // breathing room, and the centre circle also sits clear.
+  const QUAD_OFFSET = -Math.PI / 2;          // first vertex at top (N)
   const PI = Math.PI, TAU = 2 * PI;
 
   function layout() {
-    // Labels live INSIDE their circles. Outer boundary = figure perimeter.
-    // Solve: figure radius = rho × (1 + CIRCLE_FRAC) must fit canvas.
     const size = Math.min(W, H);
     const cx = W / 2, cy = H / 2;
     const margin = 40;
 
-    const CIRCLE_FRAC = 0.78;
+    // Fraction of rho used as outer-circle radius. Lower = more space
+    // between circles. 0.48 gives visible gap between neighbours and
+    // between each outer circle and the centre.
+    const CIRCLE_FRAC = 0.48;
+
+    // Figure perimeter must contain rho + outerR.
     let rho = (size / 2 - margin) / (1 + CIRCLE_FRAC);
     rho = Math.max(rho, 80);
 
-    const outerR = rho * CIRCLE_FRAC;
-    const centreR = rho * 0.50;
+    const outerR  = rho * CIRCLE_FRAC;
+    const centreR = rho * 0.32;               // clearly separate from outers
     const outerBoundaryR = rho + outerR;
-    const labelRho = rho;                   // label sits at circle centre
-    const labelHaloR = outerR * 0.82;       // inner region for text
+    const labelRho = rho;                     // label sits at circle centre
 
     return {
       cx, cy, rho, outerR, centreR,
-      labelRho, labelHaloR,
-      outerBoundaryR, size,
+      labelRho, outerBoundaryR, size, W, H,
       QUAD_OFFSET,
     };
   }
 
   function vertex(i, rho, cx, cy) {
     const theta = QUAD_OFFSET + i * TAU / 4;
-    return { x: cx + rho * Math.cos(theta), y: cy + rho * Math.sin(theta), theta };
+    return {
+      x: cx + rho * Math.cos(theta),
+      y: cy + rho * Math.sin(theta),
+      theta,
+    };
   }
 
   function positionLabels() {
     const g = layout();
-    // Four outer labels at N/E/S/W
     for (let i = 0; i < 4; i++) {
       const el = labels[i];
       const theta = QUAD_OFFSET + i * TAU / 4;
@@ -801,1258 +743,386 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.left = `${(x / W) * 100}%`;
       el.style.top  = `${(y / H) * 100}%`;
     }
-    // Centre label at the middle
     const centre = labels[4];
     centre.style.left = `${(g.cx / W) * 100}%`;
     centre.style.top  = `${(g.cy / H) * 100}%`;
   }
 
-  // ─── MYCELIUM NETWORK — CRR growth, from cohere.org.uk/mycelium.html ───
-  // Honest dynamics: coherence accumulates per tip, rupture at C ≥ C* = 1/Ω
-  // triggers branching. Ambient layer — slow DT, small grid, coloured by
-  // origin practice, nutrients shape flow between pools.
-  const MY = (function () {
+  // ─── CRR star network — Zero Space at centre, 4 practices in cohesion ─
+  //
+  // TOPOLOGY: Star graph K₁,₄ — Daily Embodied Practice at the hub, the
+  // four practices as leaves. The Zero Space is the somatic ground every
+  // practice returns to; practices don't communicate laterally, they meet
+  // through the centre.
+  //
+  // In FEP terms, Daily Embodied Practice is the shared Markov blanket of
+  // the whole network. Every prediction error passes through the body.
+  // Coherence accumulates in each practice and resolves by returning to
+  // the ground — then the ground, held, regenerates the practices.
+  //
+  // CRR MECHANICS:
+  //   - Centre and each outer pod run SO(2) coherence cycles.
+  //     Daily period is longest (ground state, slowest breath).
+  //   - Each spoke is a Z₂ Markov blanket. Its period is the mean of the
+  //     two pods' periods, halved (Z₂ runs at twice the SO(2) rate).
+  //   - Each cycle sends a flowing gradient pulse along the spoke.
+  //     Beauty function B(C,Ω) = exp(C/Ω)·(1 − C·Ω) shapes brightness:
+  //     it peaks at C* − Ω (~90% through the cycle), so the pulse blooms
+  //     near its destination — anticipation, not climax.
+  //   - Direction alternates: practice→centre (return to ground),
+  //     then centre→practice (grounding radiates out).
+  //
+  // AESTHETIC: no discrete dots, no pentagon arcs, no rupture flashes.
+  // Just four soft streams of light breathing between centre and rim,
+  // and a faint field of cohesion binding the whole.
+  // ═══════════════════════════════════════════════════════════════════
 
-    // Lineage codes stored in F.col (0=empty, 1-5=practices, 6=external)
-    const EMPTY = 0;
-    const LINEAGE = {
-      LAB: 1, EMERGENT: 2, WISDOM: 3, ECOSYSTEM: 4, SOURCE: 5, EXTERNAL: 6,
+  // PI and TAU already declared in the layout section above.
+  const PHI = (1 + Math.sqrt(5)) / 2;
+
+  // Pod periods in seconds. Daily runs φ times slower than the base —
+  // the golden ratio gives it a natural breath-length relative to the
+  // practices it grounds. Outer periods close but non-commensurate so
+  // the network drifts rather than locks.
+  const T_BASE = 13.0;
+  const POD_PERIODS = [
+    T_BASE,             // 0: lab
+    T_BASE * 1.07,      // 1: emergent
+    T_BASE * 1.15,      // 2: wisdom
+    T_BASE * 1.04,      // 3: ecosystem
+    T_BASE * PHI,       // 4: daily — centre, slowest breath
+  ];
+
+  // Spoke offsets so the four streams don't pulse in unison — the
+  // network reads as a conversation, not a choreography.
+  const SPOKE_OFFSETS = [0.00, 0.25, 0.50, 0.75];
+
+  // ── Beauty function on Z₂ ─────────────────────────────────────────
+  // Ω = 1/π, so 1/Ω = π and C·Ω = C/π.
+  // With u = C/π ∈ [0,1]: B = exp(u·π²)·(1 − u). Peak at u ≈ 0.899.
+  const B_MAX = 720.64;   // precomputed peak for normalisation
+  function beauty(u) {
+    const b = Math.exp(u * PI * PI) * (1 - u);
+    return Math.max(0, Math.min(1, b / B_MAX));
+  }
+
+  // Colour mix (averaging in RGB — good enough for the palette chosen)
+  function mixCol(a, b, t) {
+    t = t == null ? 0.5 : t;
+    return [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+      a[2] + (b[2] - a[2]) * t,
+    ];
+  }
+
+  // ── Draw a flowing pulse along a spoke ─────────────────────────────
+  // Not a dot — a soft elongated stream of light, shaped by the Beauty
+  // function as it travels. The stream has a head (at position u) and
+  // a short tail behind it, so it reads as motion rather than a bead.
+  function drawSpokePulse(ax, ay, bx, by, u, strength, col) {
+    if (strength <= 0.02) return;
+    // Position of pulse head
+    const hx = ax + (bx - ax) * u;
+    const hy = ay + (by - ay) * u;
+    // Tail extends ~8% of spoke length behind the head
+    const spokeLen = Math.hypot(bx - ax, by - ay);
+    const tailU = Math.max(0, u - 0.10);
+    const tx = ax + (bx - ax) * tailU;
+    const ty = ay + (by - ay) * tailU;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+
+    // 1. Stream body: a narrow linear gradient from tail to head
+    const lineGrad = ctx.createLinearGradient(tx, ty, hx, hy);
+    lineGrad.addColorStop(0.00, rgba(col, 0));
+    lineGrad.addColorStop(0.65, rgba(col, 0.35 * strength));
+    lineGrad.addColorStop(1.00, rgba(col, 0.85 * strength));
+    ctx.strokeStyle = lineGrad;
+    ctx.lineWidth = 2.2 + 1.8 * strength;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(hx, hy);
+    ctx.stroke();
+
+    // 2. Head glow — a soft radial halo at the leading edge
+    const glowR = 9 + 10 * strength;
+    const headGlow = ctx.createRadialGradient(hx, hy, 0, hx, hy, glowR);
+    headGlow.addColorStop(0.00, rgba(col, 0.85 * strength));
+    headGlow.addColorStop(0.45, rgba(col, 0.30 * strength));
+    headGlow.addColorStop(1.00, rgba(col, 0));
+    ctx.fillStyle = headGlow;
+    ctx.beginPath();
+    ctx.arc(hx, hy, glowR, 0, TAU);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // ── Draw the static spoke (very faint ink line) ────────────────────
+  // Barely visible on its own — it exists so the eye reads continuity
+  // along the path the pulse will travel, not as a feature in itself.
+  function drawSpokeBase(ax, ay, bx, by, breath) {
+    ctx.save();
+    const alpha = 0.035 + 0.025 * breath;
+    const grad = ctx.createLinearGradient(ax, ay, bx, by);
+    grad.addColorStop(0.00, rgba(PAL.ink, 0));
+    grad.addColorStop(0.15, rgba(PAL.ink, alpha * 0.6));
+    grad.addColorStop(0.50, rgba(PAL.ink, alpha));
+    grad.addColorStop(0.85, rgba(PAL.ink, alpha * 0.6));
+    grad.addColorStop(1.00, rgba(PAL.ink, 0));
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(bx, by);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── Cohesion halo ──────────────────────────────────────────────────
+  // A single very large, very soft ring around the whole group. This
+  // isn't a drawn boundary — it's an atmospheric breath that suggests
+  // the four practices share a field without bisecting the composition
+  // with edges. Opacity low enough to read as ambient warmth, not
+  // geometry. Breathes on the centre's slow cycle.
+  function drawCohesionField(cx, cy, rhoField, breath) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    const alpha = 0.045 + 0.025 * breath;
+    const grad = ctx.createRadialGradient(
+      cx, cy, rhoField * 0.55,
+      cx, cy, rhoField * 1.08
+    );
+    grad.addColorStop(0.00, rgba(PAL.parchmentWarm, 0));
+    grad.addColorStop(0.55, rgba(PAL.parchmentWarm, alpha));
+    grad.addColorStop(0.85, rgba(PAL.parchmentWarm, alpha * 0.7));
+    grad.addColorStop(1.00, rgba(PAL.parchmentWarm, 0));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rhoField * 1.08, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Compute spoke endpoints ────────────────────────────────────────
+  // From outer pod boundary (nearest centre) to centre pod boundary
+  // (nearest outer). These are the *ports* — the spoke lives entirely
+  // in the gap between the two pools.
+  function spokeEndpoints(outerPod, centrePod) {
+    const dx = centrePod.x - outerPod.x;
+    const dy = centrePod.y - outerPod.y;
+    const d = Math.hypot(dx, dy) || 1;
+    const ux = dx / d, uy = dy / d;
+    return {
+      ax: outerPod.x + ux * outerPod.r,
+      ay: outerPod.y + uy * outerPod.r,
+      bx: centrePod.x - ux * centrePod.r,
+      by: centrePod.y - uy * centrePod.r,
     };
-    const LINEAGE_COLOUR = {
-      1: PRACTICE_COLOURS.lab,        2: PRACTICE_COLOURS.emergent,
-      3: PRACTICE_COLOURS.wisdom,     4: PRACTICE_COLOURS.ecosystem,
-      5: PRACTICE_COLOURS.centre,     6: PRACTICE_COLOURS.external,
-    };
+  }
 
-    // CRR canonical — Ω = 1/π (Z₂). G=400 grid for fine-resolution
-    // density field. Physical-scale parameters (sensor, deposit, speed)
-    // scale with G_SCALE so behaviour is independent of grid resolution.
-    const G = 400;
-    const CELLS = G * G;
-    const G_SCALE = G / 200;                // reference = G=200
-    const DT = 1/60 * 0.50;                 // 50% of original speed
-    const CDECAY = 0.9998;
-    const MEM_K = 10, MEM_DR = 0.15;
-    const THRESH = { MILD: 0.3, DMG: 0.6, RUPT: 0.75, LETH: 0.9 };
-    const omega = 1 / PI;
-    const C_STAR = 1 / omega;
-    const MAX_TIPS = 140;                   // canonical density + richness
-
-    const memW = new Float32Array(MEM_K);
-    for (let i = 0; i < MEM_K; i++) memW[i] = Math.exp(-i * MEM_DR);
-
-    // ─── TYPED FIELD ARRAYS ──────────────────────────────────────────────
-    // Matches F from the canonical script; col is our addition for
-    // tracking lineage-per-cell so the render can paint Crescent colours.
-    const F = {
-      coh: new Float32Array(CELLS),
-      den: new Float32Array(CELLS),
-      nut: new Float32Array(CELLS),
-      moi: new Float32Array(CELLS),
-      dec: new Float32Array(CELLS),
-      grw: new Float32Array(CELLS),
-      brn: new Float32Array(CELLS),
-      tmp: new Float32Array(CELLS),
-      col: new Uint8Array(CELLS),          // 0..6 lineage code per cell
-    };
-
-    const tips = [];
-    let frame = 0;
-    let seeded = false;
-    let externalPhaseStarted = false;
-
-    // Offscreen display-resolution canvas — filament strokes + branch
-    // dots accumulate here, composited onto the main canvas each frame.
-    let paintCanvas = null, paintCtx = null;
-
-    // Stored at seed time — the mandala geometry we grow within.
-    let geom = null;
-
-    // Map display coords → grid coords and back.
-    // We map the grid (G×G) onto the entire display canvas, so grid
-    // coordinates roughly correspond to canvas pixels. All of the
-    // algorithm below works in grid space.
-    function dispToGrid(x, y) {
-      return {
-        gx: Math.max(0, Math.min(G - 1, (x / geom.W * G) | 0)),
-        gy: Math.max(0, Math.min(G - 1, (y / geom.H * G) | 0)),
-      };
+  // Pod list helper (kept tight — no ports/angles table needed for star)
+  function buildPods(g) {
+    const pods = [];
+    for (let i = 0; i < 4; i++) {
+      const theta = QUAD_OFFSET + i * TAU / 4;
+      pods.push({
+        i,
+        x: g.cx + g.rho * Math.cos(theta),
+        y: g.cy + g.rho * Math.sin(theta),
+        r: g.outerR,
+        col: OUTER_COLOURS[i],
+      });
     }
-    function gridScaleX() { return geom.W / G; }
-    function gridScaleY() { return geom.H / G; }
+    pods.push({
+      i: 4,
+      x: g.cx, y: g.cy, r: g.centreR,
+      col: PRACTICE_COLOURS.centre,
+    });
+    return pods;
+  }
 
-    // ─── SENSOR / STRESS — we run zero environmental stress here. The
-    //     original mycelium.html has a bioStress model driven by UI
-    //     sliders (temperature, pH, etc). We hold everything at optimum,
-    //     which means stress.combined and stress.max are both 0. All the
-    //     rupture / damage branches reduce to identity transformations,
-    //     leaving the core rupture-at-C* logic fully intact.
-    const STRESS_ZERO = { combined: 0, max: 0, ind: [0,0,0,0,0] };
+  // ─── Vibrant sun centre ─────────────────────────────────────────────
+  // Replaces the subtle pearl glow. Warm white core with a golden halo
+  // reaching outward — as present as the coloured outer pools, but its
+  // vibrancy is luminous rather than pigmented. Breathes on daily's
+  // slow cycle (T ≈ 21s).
+  function drawSunCentre(cx, cy, r, breath, isActive) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
 
-    // ─── HYPHAL TIP ──────────────────────────────────────────────────────
-    //   This Tip class is a direct port of the canonical script's Tip,
-    //   with two additions:
-    //     - `lineage`: a small integer (1..6) identifying which practice
-    //       this tip belongs to, used to stamp F.col at each deposit.
-    //     - `gracePeriod`: a short no-deposit window for tips born at
-    //       the centre, so the centre circle stays visually clear while
-    //       tips travel outward into their target circle.
-    // ─────────────────────────────────────────────────────────────────────
-    function Tip(x, y, par, lineage) {
-      this.x = x;
-      this.y = y;
-      this.vx = (Math.random() - 0.5) * 2;
-      this.vy = (Math.random() - 0.5) * 2;
-      this.age = 0;
-      this.energy = 1;
-      this.gen = par ? par.gen + 1 : 0;
+    // Warm white core — the still point
+    const coreCol    = [255, 248, 232];
+    // Golden-hour rim — Beauty function peak colour, sun at most beautiful
+    const goldRim    = [255, 214, 158];
+    // Softer gold extending further out
+    const goldOuter  = [245, 196, 140];
 
-      const baseDiam = par ? par.diam * 0.8 : 0.7;
-      const localVar = par ? (Math.random() - 0.5) * 0.2 : 0;
-      this.diam = baseDiam * (1 + localVar);
+    const active = isActive ? 1 : 0;
 
-      this.cooldown = 0;
-      this.C = 0;
-      this.phase = 0;
-      this.beauty = 0;
-      this.ruptured = false;
+    // 1. Bright core — confidently present, not ghostly
+    const coreAlpha = (0.72 + 0.10 * breath) * (1 + active * 0.15);
+    const coreR = r * (0.62 + 0.06 * breath);
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+    core.addColorStop(0.00, rgba(coreCol, coreAlpha));
+    core.addColorStop(0.55, rgba(coreCol, coreAlpha * 0.75));
+    core.addColorStop(1.00, rgba(coreCol, 0));
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR, 0, TAU);
+    ctx.fill();
 
-      this.caPhase = Math.random() * TAU;
-      this.caPeriod = 1.8 + Math.random() * 0.8;
-      this.caGlow = 0;
-      this.caInt = 0;
+    // 2. Inner halo — the pod itself reads as light, not a gap
+    const haloAlpha = (0.50 + 0.08 * breath) * (1 + active * 0.20);
+    const haloR = r * (1.05 + 0.04 * breath);
+    const halo = ctx.createRadialGradient(cx, cy, r * 0.3, cx, cy, haloR);
+    halo.addColorStop(0.00, rgba(coreCol, haloAlpha * 0.95));
+    halo.addColorStop(0.55, rgba(goldRim, haloAlpha * 0.55));
+    halo.addColorStop(0.85, rgba(goldRim, haloAlpha * 0.25));
+    halo.addColorStop(1.00, rgba(goldRim, 0));
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(cx, cy, haloR, 0, TAU);
+    ctx.fill();
 
-      this.mem = new Float32Array(MEM_K);
-      this.regAmp = 1;
+    // 3. Extended corona — soft warm light reaching into the gap between
+    //    centre and outer pools. Capped so it fills the gap with warmth
+    //    without overshooting into the outer pod zones.
+    const coronaAlpha = (0.20 + 0.06 * breath) * (1 + active * 0.25);
+    const coronaR = r * (1.50 + 0.08 * breath);
+    const corona = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, coronaR);
+    corona.addColorStop(0.00, rgba(goldRim, 0));
+    corona.addColorStop(0.45, rgba(goldRim, coronaAlpha));
+    corona.addColorStop(0.78, rgba(goldOuter, coronaAlpha * 0.45));
+    corona.addColorStop(1.00, rgba(goldOuter, 0));
+    ctx.fillStyle = corona;
+    ctx.beginPath();
+    ctx.arc(cx, cy, coronaR, 0, TAU);
+    ctx.fill();
 
-      this.lineage = lineage || (par ? par.lineage : EMPTY);
-      this.gracePeriod = par ? 0 : 0;   // set by seed functions as needed
+    ctx.restore();
+  }
 
-      // Previous grid position — used by the renderer to draw a smooth
-      // line segment from (px,py) → (x,y) each frame, in lineage colour.
-      // The line art is what gives the filament look; the grid fields
-      // drive the algorithm, they are no longer pixel-rendered.
-      this.px = this.x;
-      this.py = this.y;
+  // ─── Draw the star network ──────────────────────────────────────────
+  // Four spokes. Each spoke carries one Z₂ blanket cycle; direction
+  // alternates between practice→centre (return to ground) and
+  // centre→practice (ground radiates out). Brightness follows the
+  // Beauty function — pulse blooms as it nears its destination.
+  function drawStarNetwork(pods, t) {
+    const centre = pods[4];
+    for (let i = 0; i < 4; i++) {
+      const outer = pods[i];
+      const { ax, ay, bx, by } = spokeEndpoints(outer, centre);
+
+      // Blanket period: (T_outer + T_centre) / 4
+      const bp = 0.25 * (POD_PERIODS[i] + POD_PERIODS[4]);
+      const raw = t / bp + SPOKE_OFFSETS[i];
+      const cycleN = Math.floor(raw);
+      const u = raw - cycleN;
+      const brightness = beauty(u);
+
+      // Slow breath for the base line
+      const lineBreath = 0.5 + 0.5 * Math.sin(t / bp * TAU + SPOKE_OFFSETS[i] * TAU);
+      drawSpokeBase(ax, ay, bx, by, lineBreath);
+
+      // Pulse: direction alternates every cycle.
+      // Even cycle: practice → centre (return to ground)
+      // Odd cycle:  centre → practice (ground radiates out)
+      const returning = (cycleN % 2) === 0;
+      // u-position along the path: when returning, pulse starts at outer
+      // (at u≈0 near pod A) and heads to centre (u≈1 near pod B).
+      // When radiating, reverse: pulse starts at centre and heads out.
+      const pathU = returning ? u : (1 - u);
+
+      // Pulse colour: returning pulses carry the practice's colour (it
+      // brings its character home). Radiating pulses carry centre-gold
+      // (ground sends warmth outward). Blend near midpoint so colours
+      // meet smoothly rather than flipping.
+      const centreGold = [255, 228, 180];
+      const outerCol = outer.col;
+      // Blend: 0 at u=0 (pure source), 0.35 at u=1 (touch of destination)
+      const blendT = pathU * 0.35;
+      const col = returning
+        ? mixCol(outerCol, centreGold, blendT)
+        : mixCol(centreGold, outerCol, blendT);
+
+      drawSpokePulse(ax, ay, bx, by, pathU, brightness, col);
     }
-
-    Tip.prototype.update = function (stress) {
-      this.age++;
-      const mx = stress.max, ov = stress.combined;
-
-      // Stress-driven rupture (ov == 0 in our setup, so these are no-ops
-      // — kept verbatim for fidelity with the canonical algorithm).
-      if (mx > THRESH.LETH) { this.energy = 0; return null; }
-      if (ov > THRESH.RUPT && Math.random() < (ov - THRESH.RUPT) / (1 - THRESH.RUPT) * 0.8) {
-        this.energy *= 0.7; return null;
-      }
-      if (ov > THRESH.DMG)  this.energy *= 0.98  - (ov - THRESH.DMG)  / (THRESH.RUPT - THRESH.DMG)  * 0.03;
-      if (ov > THRESH.MILD) this.energy *= 0.999 - (ov - THRESH.MILD) / (THRESH.DMG  - THRESH.MILD) * 0.001;
-
-      // Sense environment (6 directions) — grid coords, sense distance 15.
-      // VERBATIM from the canonical CRR mycelium.html sensor. Four
-      // signal terms: nutrients, moisture, density penalty, decay.
-      //
-      // All spatial shaping (circle contours, label safe zones, practice
-      // colour zones) lives in the NUTRIENT field — seeded at start.
-      // The sensor stays honest and simple; the landscape does the work.
-      // This is the first-principles CRR approach — each tip commits to
-      // the single strongest favourable direction each frame, which is
-      // what produces visible FILAMENTS rather than scribbled averages.
-      const sd = 15 * G_SCALE, ns = 6;
-      let bestSig = -1, bestAng = Math.atan2(this.vy, this.vx);
-      let localSig = 0;
-
-      // Track the spread of high-signal directions — used below to
-      // damp the memory kernel near strong gradients, which is where
-      // the ballistic diagonals came from (kernel reinforced recent
-      // one-direction readings into long straight trajectories).
-      let signalSpread = 0, highCount = 0;
-
-      for (let i = 0; i < ns; i++) {
-        const a = i * TAU / ns;
-        const sx = this.x + Math.cos(a) * sd, sy = this.y + Math.sin(a) * sd;
-        if (sx >= 0 && sx < G && sy >= 0 && sy < G) {
-          const sidx = (sx | 0) + (sy | 0) * G;
-          let sig = F.nut[sidx] * 2 + F.moi[sidx] * 0.5 - F.den[sidx] * 0.3
-                  + (1 - F.dec[sidx]) * 0.8;
-          if (i === 0) {
-            this.mem.copyWithin(1, 0, MEM_K - 1);
-            this.mem[0] = sig;
-            localSig = sig;
-          }
-          // Memory kernel weight — full kernel normally, damped when
-          // the environmental gradient is strong (which is exactly the
-          // situation that was producing the long ballistic diagonals).
-          let ms = 0;
-          for (let m = 0; m < MEM_K; m++) ms += this.mem[m] * memW[m];
-          sig = sig * 0.7 + ms * 0.3;
-          if (sig > bestSig) { bestSig = sig; bestAng = a; }
-          if (sig > 1.0) highCount++;
-          signalSpread = Math.max(signalSpread, sig);
-        }
-      }
-
-      // Memory kernel damping near strong gradients. When only one
-      // direction is highly favourable (low highCount + high spread),
-      // the tip is in a "pool-escape" situation — the old memory
-      // reinforces the escape direction for ~10 frames and produces
-      // straight ballistic diagonals. Fading older memory entries
-      // here lets the tip respond to curvature in the gradient rather
-      // than firing off in a line.
-      if (signalSpread > 1.5 && highCount <= 2) {
-        for (let m = 1; m < MEM_K; m++) this.mem[m] *= 0.7;
-      }
-
-      // Spatial coherence → exp(C/Ω) regeneration weight
-      const idx = (this.x | 0) + (this.y | 0) * G;
-      const locC = idx >= 0 && idx < CELLS ? F.coh[idx] : 0;
-      const rw = Math.exp(Math.min(locC / omega, 8));
-      this.regAmp = rw;
-
-      // Honest accumulation: L = local environmental signal
-      const L_local = Math.max(0.05, 0.5 + localSig * 0.1);
-      this.C += L_local * DT;
-
-      this.phase = Math.min(1, this.C / C_STAR);
-      const et = Math.exp(Math.min(this.C / omega, 12));
-      this.beauty = et * Math.max(0, C_STAR - this.C);
-
-      if (this.C >= C_STAR) this.ruptured = true;
-
-      // Ca²⁺ pulse (visual shimmer, very small effect on speed)
-      this.caPhase += TAU / this.caPeriod * DT;
-      const cr = Math.sin(this.caPhase);
-      this.caInt = Math.max(0, cr);
-      this.caGlow *= 0.88;
-      if (cr > 0.95) this.caGlow = 1;
-
-      // Movement — canonical steering (single strongest direction,
-      // 0.3 turn rate) plus a small Brownian jitter for organic wander.
-      // Base speed canonical-matched to physical scale. G_SCALE lifts
-      // grid-unit speed so tips cover display canvas at reasonable
-      // pace, but we scale down 0.7× so tips linger in each
-      // neighbourhood — density builds up around them, density
-      // avoidance kicks in, tips curl organically.
-      const sm = Math.pow(1 - ov, 2), bs = 0.96 * G_SCALE * 0.7;
-      const pb = 1 + this.caInt * 0.4;
-      const spd = bs * rw * sm * pb;
-      const ca = Math.atan2(this.vy, this.vx);
-      const na = ca + normalA(bestAng - ca) * 0.3 * sm;
-      this.px = this.x;
-      this.py = this.y;
-      this.vx = Math.cos(na) * spd;
-      this.vy = Math.sin(na) * spd;
-      this.x += this.vx;
-      this.y += this.vy;
-      this.x = Math.max(3, Math.min(G - 3, this.x));
-      this.y = Math.max(3, Math.min(G - 3, this.y));
-
-      // Deposit density + stamp lineage colour into F.col.
-      // Spatial gates keep text-bearing zones visually clear:
-      //   - the centre circle (Daily Embodied Practice)
-      //   - each of the four outer label halos
-      // Mycelium still senses and moves through these regions; it just
-      // doesn't deposit pigment there. Visually this reads as the
-      // network threading *around* the labels, reinforcing them as
-      // distinct nodes on the living graph.
-      const tipDispX = (this.x / G) * geom.W;
-      const tipDispY = (this.y / G) * geom.H;
-      const dxC = tipDispX - geom.cx;
-      const dyC = tipDispY - geom.cy;
-      const distFromCentre = Math.hypot(dxC, dyC);
-      const insideCentre = distFromCentre < geom.centreR * 1.30;
-
-      let insideLabel = false;
-      if (!insideCentre && geom.labelCenters) {
-        const gateR2 = geom.labelGateR * geom.labelGateR;
-        for (let li = 0; li < geom.labelCenters.length; li++) {
-          const lc = geom.labelCenters[li];
-          const ddx = tipDispX - lc.x;
-          const ddy = tipDispY - lc.y;
-          if (ddx * ddx + ddy * ddy < gateR2) { insideLabel = true; break; }
-        }
-      }
-
-      if (!insideCentre && !insideLabel) {
-        // Deposit radius matches canonical (this.diam + 1, ~1.7 cells).
-        // NOT scaled by G_SCALE — the thin deposit footprint is what
-        // lets tips coil back on themselves (can't coil if you push
-        // yourself away with a fat density trail). Organic curling
-        // requires tight density footprints.
-        deposit(this.x, this.y, this.diam + 1, spd, this.lineage);
-      }
-
-      // Branching on rupture. Canonical frequency — tips that reach
-      // coherence threshold C* = 1/Ω branch freely (5-frame cooldown).
-      // Frequent Y-junctions are part of mycelium's characteristic
-      // topology; without them the network looks sparse.
-      const localDen = idx >= 0 && idx < CELLS ? F.den[idx] : 0;
-      const branchAllowedByDen = localDen < 0.72;
-
-      const genCap = this.lineage === LINEAGE.EXTERNAL ? 4 : 8;
-
-      this.cooldown = Math.max(0, this.cooldown - 1);
-      if (this.ruptured && this.energy > 0.4 && this.cooldown <= 0
-          && this.gen < genCap && tips.length < MAX_TIPS
-          && branchAllowedByDen) {
-        const ba = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * PI * 0.6;
-        const child = new Tip(this.x, this.y, this, this.lineage);
-        child.vx = Math.cos(ba);
-        child.vy = Math.sin(ba);
-        if (idx >= 0 && idx < CELLS) F.brn[idx] = Math.min(1, F.brn[idx] + 0.3 * sm);
-
-        const col = LINEAGE_COLOUR[this.lineage];
-        if (col) queueBranchDot(this.x, this.y, col, this.diam);
-
-        this.C = 0;
-        this.ruptured = false;
-        this.phase = 0;
-        this.cooldown = 5;          // canonical — frequent Y-junctions
-        this.energy *= 0.8;
-        return child;
-      }
-      this.energy *= 0.9995 - ov * 0.002;
-      return null;
-    };
-
-    function normalA(a) { while (a > PI) a -= TAU; while (a < -PI) a += TAU; return a; }
-
-    function deposit(x, y, r, eff, lineage) {
-      const sf = frame >= SETTLE_END_FRAME ? SETTLE_FLOOR
-               : frame < SETTLE_START_FRAME ? 1
-               : 1 - (1 - SETTLE_FLOOR) *
-                 (frame - SETTLE_START_FRAME) / (SETTLE_END_FRAME - SETTLE_START_FRAME);
-      const depEff = eff * sf;
-      const ri = Math.ceil(r);
-      for (let dy = -ri; dy <= ri; dy++) {
-        const py = (y + dy) | 0;
-        if (py < 0 || py >= G) continue;
-        for (let dx = -ri; dx <= ri; dx++) {
-          const px0 = (x + dx) | 0;
-          if (px0 < 0 || px0 >= G) continue;
-          const d2 = dx * dx + dy * dy;
-          if (d2 > r * r) continue;
-          const i = px0 + py * G;
-          const s = Math.exp(-d2 / (r * r));
-          F.den[i] = Math.min(1, F.den[i] + 0.04 * s * depEff);
-          F.grw[i] = Math.min(1, F.grw[i] + 0.30 * s * depEff);
-          F.nut[i] = Math.max(0, F.nut[i] - 0.001 * s * depEff);
-          F.dec[i] = Math.min(1, F.dec[i] + 0.0005 * s * depEff);
-          // Lineage stamp is NOT settled — still writes full colour so
-          // freshly-deposited cells carry their lineage even at low sf.
-          if (s > 0.5 && lineage !== EMPTY) {
-            if (F.col[i] === EMPTY) F.col[i] = lineage;
-            else if (s > 0.92) F.col[i] = lineage;
-          }
-        }
-      }
-    }
-
-    function diffuse(f, rate) {
-      F.tmp.fill(0);
-      for (let y = 1; y < G - 1; y++) {
-        for (let x = 1; x < G - 1; x++) {
-          const i = x + y * G;
-          F.tmp[i] = f[i] + rate * (f[i-1] + f[i+1] + f[i-G] + f[i+G] - 4 * f[i]);
-        }
-      }
-      for (let i = 0; i < CELLS; i++) f[i] = Math.max(0, F.tmp[i]);
-    }
-
-    // ─── NUTRIENT SEEDING ────────────────────────────────────────────────
-    // Shape the nutrient field so tips naturally travel outward from the
-    // centre into their target practice circle. A warm spot at each
-    // outer circle's centre; a trough at the source (centre circle);
-    // uniform baseline everywhere else.
-    function paintGaussian(arr, gx, gy, sigmaCells, amp, additive = true) {
-      const ri = Math.ceil(sigmaCells * 3);
-      for (let dy = -ri; dy <= ri; dy++) {
-        const py = gy + dy;
-        if (py < 0 || py >= G) continue;
-        for (let dx = -ri; dx <= ri; dx++) {
-          const ppx = gx + dx;
-          if (ppx < 0 || ppx >= G) continue;
-          const d2 = dx * dx + dy * dy;
-          const s = Math.exp(-d2 / (sigmaCells * sigmaCells));
-          const i = ppx + py * G;
-          if (additive) arr[i] = Math.min(1, arr[i] + amp * s);
-          else          arr[i] = Math.max(0, arr[i] - amp * s);
-        }
-      }
-    }
-
-    function seedNutrients() {
-      // Landscape encodes all spatial preferences — sensor stays
-      // canonical 4-term. Topology: (a) baseline with vertical
-      // body-energy gradient, (b) contour ridges around circles,
-      // (c) warm pools at circle centres, (d)(e) troughs at the
-      // five pool zones, (f) faint halo beyond the outer boundary.
-
-      // (a) Baseline with a subtle vertical gradient.
-      //
-      // CRR note — body-energy flow: the composition reads as a human
-      // figure (Lab = head, Gathering & Ecosystem = hands, Wisdom =
-      // feet, Daily Practice = heart). A human body has directional
-      // energy — breath rises, roots ground, the figure is grounded
-      // at the feet and aspirational at the head.
-      //
-      // Expressing this in CRR: rather than uniform nutrients, bias
-      // the baseline slightly — denser at the feet (south), lighter
-      // at the head (north). Tips at the south have richer grounding,
-      // their descendants branch more; tips near the head must reach
-      // further and grow thinner. The figure acquires subtle vertical
-      // asymmetry that matches the body-archetype without anyone
-      // consciously noticing why. Pure CRR: the landscape shapes the
-      // life that emerges in it.
-      for (let y = 0; y < G; y++) {
-        // t goes 0 (top/north/head) to 1 (bottom/south/feet)
-        const t = y / (G - 1);
-        // Baseline 0.32 at head, 0.40 at feet — a 25% grounding bias
-        const baseline = 0.32 + 0.08 * t;
-        for (let x = 0; x < G; x++) {
-          F.nut[x + y * G] = baseline;
-        }
-      }
-      for (let i = 0; i < CELLS; i++) F.moi[i] = 0.4;
-
-      const scaleX = gridScaleX();  // display px per grid cell (x)
-      const scaleY = gridScaleY();  // display px per grid cell (y)
-      // In practice scaleX and scaleY differ on non-square canvases.
-      // For distance-based seeding we convert display px → grid units
-      // using whichever axis the feature lives on; Gaussians here use
-      // average scale since they're roughly isotropic in display px.
-      const avgScale = (scaleX + scaleY) * 0.5;
-      const outerR_g = geom.outerR / avgScale;
-      const centreR_g = geom.centreR / avgScale;
-      const rho_g_x = geom.rho / scaleX;
-      const rho_g_y = geom.rho / scaleY;
-      const labelHaloR_g = (geom.labelHaloR || 90) / avgScale;
-      const outerBoundaryR_g = geom.outerBoundaryR / avgScale;
-
-      const centreGrid = dispToGrid(geom.cx, geom.cy);
-
-      // (b) Ridges along each practice-circle contour.
-      // Paint a ring of Gaussians at each vertex's circle boundary,
-      // so the sensor sees elevated nutrients all along the contour.
-      for (let i = 0; i < 4; i++) {
-        const theta = -PI / 2 + i * (PI / 2);
-        const vx_g = centreGrid.gx + rho_g_x * Math.cos(theta);
-        const vy_g = centreGrid.gy + rho_g_y * Math.sin(theta);
-        const ringSteps = 36;
-        for (let s = 0; s < ringSteps; s++) {
-          const phi = s / ringSteps * TAU;
-          const rx = vx_g + outerR_g * Math.cos(phi);
-          const ry = vy_g + outerR_g * Math.sin(phi);
-          paintGaussian(F.nut, rx | 0, ry | 0, outerR_g * 0.18, 0.22, true);
-        }
-      }
-
-      // (c) Warm pool at each practice circle's centre
-      for (let i = 0; i < 4; i++) {
-        const v = vertex(i, geom.rho, geom.cx, geom.cy);
-        const g = dispToGrid(v.x, v.y);
-        paintGaussian(F.nut, g.gx, g.gy, outerR_g * 0.72, 0.70, true);
-      }
-
-      // (d) Trough at the centre — the Zero Space stays bare.
-      // Width matches the pool; depth kept moderate so the gradient
-      // is gentle enough that tips curve around rather than flee in
-      // straight lines. The hard deposit-gate enforces the absolute
-      // pool boundary; the landscape just suggests avoidance.
-      paintGaussian(F.nut, centreGrid.gx, centreGrid.gy, centreR_g * 1.25, 0.45, false);
-      paintGaussian(F.dec, centreGrid.gx, centreGrid.gy, centreR_g * 1.15, 0.35, true);
-
-      // (e) Troughs at each outer label halo — same moderate depth
-      if (geom.labelCenters) {
-        for (const lc of geom.labelCenters) {
-          const lg = dispToGrid(lc.x, lc.y);
-          paintGaussian(F.nut, lg.gx, lg.gy, labelHaloR_g * 0.75, 0.48, false);
-          paintGaussian(F.dec, lg.gx, lg.gy, labelHaloR_g * 0.70, 0.38, true);
-        }
-      }
-
-      // (f) Faint halo of nutrients beyond the outer boundary
-      const haloR_g = outerBoundaryR_g * 1.25;
-      const haloSteps = 48;
-      for (let s = 0; s < haloSteps; s++) {
-        const phi = s / haloSteps * TAU;
-        const hx = centreGrid.gx + haloR_g * Math.cos(phi);
-        const hy = centreGrid.gy + haloR_g * Math.sin(phi);
-        if (hx >= 0 && hx < G && hy >= 0 && hy < G) {
-          paintGaussian(F.nut, hx | 0, hy | 0, outerR_g * 0.22, 0.15, true);
-        }
-      }
-    }
-
-    // ─── SEEDING: three staged waves ────────────────────────────────
-    // Wave 0 (frame 0):   tangential tips around centre → initial O-shape
-    // Wave 1 (frame 180): radial tips outward into each practice circle
-    // Wave 2 (frame 420): tangential tips on each circle's own boundary
-    // Natural branching + nutrient landscape does the rest.
-
-    function seedInitialTips() {
-      seedWaveZero();  // waves 1 and 2 are fired from step() at fixed frames
-    }
-
-    function seedWaveZero() {
-      // 5 lineages around the centre ring: the four practices plus
-      // one centre-source tip. All tangential — they trace the ring.
-      const ringR = geom.centreR * 1.15;
-      const lineages = [
-        LINEAGE.LAB,       // top (N)
-        LINEAGE.EMERGENT,  // right (E)
-        LINEAGE.WISDOM,    // bottom (S)
-        LINEAGE.ECOSYSTEM, // left (W)
-      ];
-      // Place 2 tips per lineage on the ring, 8 tips total, spread
-      // evenly at 45° intervals starting at the cardinal direction of
-      // each lineage's target practice circle.
-      for (let k = 0; k < lineages.length; k++) {
-        const lineage = lineages[k];
-        const centreAng = -PI / 2 + k * (PI / 2); // lineage's cardinal
-        // Two tips per lineage, offset ±0.18 rad from the cardinal —
-        // they'll sweep around the ring in opposite directions.
-        for (let j = 0; j < 2; j++) {
-          const offset = (j === 0 ? -0.18 : 0.18);
-          const posAng = centreAng + offset;
-          const seedX = geom.cx + ringR * Math.cos(posAng);
-          const seedY = geom.cy + ringR * Math.sin(posAng);
-          const seedGrid = dispToGrid(seedX, seedY);
-          const tip = new Tip(seedGrid.gx, seedGrid.gy, null, lineage);
-          // Tangential velocity: perpendicular to radial.
-          // The two tips per lineage go opposite ways around the ring.
-          const tangent = posAng + (j === 0 ? -PI / 2 : +PI / 2);
-          tip.vx = Math.cos(tangent);
-          tip.vy = Math.sin(tangent);
-          tips.push(tip);
-        }
-      }
-    }
-
-    function seedWaveOne() {
-      // Radial tips at the centre ring — each points outward toward
-      // its target practice circle. These are the diffusers: they
-      // reach into the circles and begin filling them with colour.
-      const ringR = geom.centreR * 1.18;
-      const targets = [
-        { lineage: LINEAGE.LAB,       vertex: 0 },
-        { lineage: LINEAGE.EMERGENT,  vertex: 1 },
-        { lineage: LINEAGE.WISDOM,    vertex: 2 },
-        { lineage: LINEAGE.ECOSYSTEM, vertex: 3 },
-      ];
-      const tipsPerTarget = 3;
-      for (const t of targets) {
-        const v = vertex(t.vertex, geom.rho, geom.cx, geom.cy);
-        const outwardAng = Math.atan2(v.y - geom.cy, v.x - geom.cx);
-        for (let k = 0; k < tipsPerTarget; k++) {
-          const arcSpread = 0.5;
-          const tipAng = outwardAng
-                       + (k - (tipsPerTarget - 1) / 2) * arcSpread
-                       + (Math.random() - 0.5) * 0.18;
-          const seedX = geom.cx + ringR * Math.cos(tipAng);
-          const seedY = geom.cy + ringR * Math.sin(tipAng);
-          const seedGrid = dispToGrid(seedX, seedY);
-          const tip = new Tip(seedGrid.gx, seedGrid.gy, null, t.lineage);
-          const velAng = tipAng + (Math.random() - 0.5) * 0.2;
-          tip.vx = Math.cos(velAng);
-          tip.vy = Math.sin(velAng);
-          tips.push(tip);
-        }
-      }
-    }
-
-    function seedWaveTwo() {
-      // Tangential tips on each practice circle's own boundary —
-      // creates an inner "O" within each quadrant in its colour.
-      const circles = [
-        { lineage: LINEAGE.LAB,       vertex: 0 },
-        { lineage: LINEAGE.EMERGENT,  vertex: 1 },
-        { lineage: LINEAGE.WISDOM,    vertex: 2 },
-        { lineage: LINEAGE.ECOSYSTEM, vertex: 3 },
-      ];
-      for (const c of circles) {
-        const v = vertex(c.vertex, geom.rho, geom.cx, geom.cy);
-        // 4 tips around each circle's boundary, at cardinal offsets.
-        for (let k = 0; k < 4; k++) {
-          const posAng = k * (PI / 2) + (Math.random() - 0.5) * 0.2;
-          const ringR = geom.outerR * 0.82;  // just inside the circle
-          const seedX = v.x + ringR * Math.cos(posAng);
-          const seedY = v.y + ringR * Math.sin(posAng);
-          const seedGrid = dispToGrid(seedX, seedY);
-          const tip = new Tip(seedGrid.gx, seedGrid.gy, null, c.lineage);
-          // Tangential velocity around this circle's centre.
-          const tangent = posAng + PI / 2;
-          tip.vx = Math.cos(tangent);
-          tip.vy = Math.sin(tangent);
-          tips.push(tip);
-        }
-      }
-    }
-
-    // ─── EXTERNAL PHASE ──────────────────────────────────────────────────
-    // When each outer practice circle has built up enough density, we
-    // start spawning mycelium at the 4 corners of the canvas — the wider
-    // world creeping in. These tips use the EXTERNAL lineage (lichen
-    // ochre) and seek inward toward the practice network.
-
-    // Density inside a given outer circle, for readiness check
-    function circleFillFraction(vx, vy, rOuterDisp) {
-      const cx = vx, cy = vy;
-      const rg = rOuterDisp / gridScaleX();
-      const g0 = dispToGrid(cx, cy);
-      let count = 0, filled = 0;
-      const ri = Math.ceil(rg);
-      for (let dy = -ri; dy <= ri; dy++) {
-        const py = g0.gy + dy;
-        if (py < 0 || py >= G) continue;
-        for (let dx = -ri; dx <= ri; dx++) {
-          const ppx = g0.gx + dx;
-          if (ppx < 0 || ppx >= G) continue;
-          if (dx * dx + dy * dy > rg * rg) continue;
-          count++;
-          if (F.den[ppx + py * G] > 0.10) filled++;
-        }
-      }
-      return count > 0 ? filled / count : 0;
-    }
-
-    function allCirclesReady(threshold) {
-      for (let i = 0; i < 4; i++) {
-        const v = vertex(i, geom.rho, geom.cx, geom.cy);
-        if (circleFillFraction(v.x, v.y, geom.outerR) < threshold) return false;
-      }
-      return true;
-    }
-
-    function seedExternalTips() {
-      // Spawn a small batch of external tips at each of the four corners,
-      // aimed inward toward the centre of the canvas. The boundary is
-      // where they meet the practice-mycelium.
-      const corners = [
-        { gx: 4,        gy: 4        },
-        { gx: G - 4,    gy: 4        },
-        { gx: G - 4,    gy: G - 4    },
-        { gx: 4,        gy: G - 4    },
-      ];
-      const tipsPerCorner = 2;
-      for (const c of corners) {
-        const dx = (G / 2) - c.gx;
-        const dy = (G / 2) - c.gy;
-        const baseAng = Math.atan2(dy, dx);
-        for (let k = 0; k < tipsPerCorner; k++) {
-          const tip = new Tip(c.gx, c.gy, null, LINEAGE.EXTERNAL);
-          const ang = baseAng + (Math.random() - 0.5) * 0.4;
-          tip.vx = Math.cos(ang);
-          tip.vy = Math.sin(ang);
-          tips.push(tip);
-        }
-      }
-      // Also lay down a faint nutrient ridge from each corner toward
-      // centre so the external tips have something to follow (and meet
-      // the practice network around the porous boundary).
-      for (const c of corners) {
-        const steps = 18;
-        const endGx = G / 2, endGy = G / 2;
-        for (let s = 1; s < steps; s++) {
-          const t = s / steps;
-          const gx = c.gx + (endGx - c.gx) * t;
-          const gy = c.gy + (endGy - c.gy) * t;
-          paintGaussian(F.nut, gx, gy, 4, 0.22, true);
-        }
-      }
-    }
-
-    // ─── PUBLIC API ──────────────────────────────────────────────────────
-    function reset(displayW, displayH, g) {
-      F.coh.fill(0); F.den.fill(0); F.nut.fill(0); F.moi.fill(0);
-      F.dec.fill(0); F.grw.fill(0); F.brn.fill(0); F.tmp.fill(0);
-      F.col.fill(0);
-      tips.length = 0;
-      frame = 0;
-      seeded = false;
-      externalPhaseStarted = false;
-
-      // Label no-go centres: the four outer label positions, in display
-      // coords. Mycelium routes around these so labels sit on clear paper.
-      // labelGateR is slightly tighter than the halo (so the transition
-      // from painted-mycelium to clear-halo is soft, not a hard edge).
-      const labelCenters = [];
-      for (let i = 0; i < 4; i++) {
-        const theta = QUAD_OFFSET + i * TAU / 4;
-        labelCenters.push({
-          x: g.cx + g.labelRho * Math.cos(theta),
-          y: g.cy + g.labelRho * Math.sin(theta),
-        });
-      }
-
-      // Home-circle centres, indexed by lineage code. Used by the
-      // stroke painter to amplify pigment inside a tip's home circle
-      // (vivid colour pools) and soften it elsewhere (atmospheric).
-      const lineageHomes = {};
-      lineageHomes[LINEAGE.LAB]       = { x: g.cx + g.rho * Math.cos(-PI/2 + 0*(PI/2)),
-                                          y: g.cy + g.rho * Math.sin(-PI/2 + 0*(PI/2)) };
-      lineageHomes[LINEAGE.EMERGENT]  = { x: g.cx + g.rho * Math.cos(-PI/2 + 1*(PI/2)),
-                                          y: g.cy + g.rho * Math.sin(-PI/2 + 1*(PI/2)) };
-      lineageHomes[LINEAGE.WISDOM]    = { x: g.cx + g.rho * Math.cos(-PI/2 + 2*(PI/2)),
-                                          y: g.cy + g.rho * Math.sin(-PI/2 + 2*(PI/2)) };
-      lineageHomes[LINEAGE.ECOSYSTEM] = { x: g.cx + g.rho * Math.cos(-PI/2 + 3*(PI/2)),
-                                          y: g.cy + g.rho * Math.sin(-PI/2 + 3*(PI/2)) };
-
-      // Preserve geometry — used for seeding and coord mapping.
-      // labelGateR is set to match the visible clear-pool radius:
-      // mycelium avoids these zones so each named place reads as a
-      // clear parchment pool surrounded by coloured hyphae.
-      const poolGateR = g.outerR * 0.80;     // matches visible pool (~0.85 × outerR)
-      geom = { W: displayW, H: displayH, cx: g.cx, cy: g.cy,
-               rho: g.rho, outerR: g.outerR, centreR: g.centreR,
-               outerBoundaryR: g.outerBoundaryR,
-               labelCenters, labelGateR: poolGateR,
-               labelHaloR: g.labelHaloR,
-               lineageHomes };
-
-      // Paint canvas at display resolution — branch dots + rupture
-      // glows. The density field (primary visual) uses its own canvas.
-      paintCanvas = document.createElement('canvas');
-      paintCanvas.width  = displayW;
-      paintCanvas.height = displayH;
-      paintCtx = paintCanvas.getContext('2d');
-    }
-
-    function step() {
-      if (!geom) return;
-      if (!seeded) {
-        seedNutrients();
-        seedInitialTips();       // wave 0: tangential ring at centre
-        seeded = true;
-      }
-      frame++;
-
-      // Wave 1 (radial outward from the centre ring) fires once at
-      // ~frame 180. By then the tangential wave has traced a visible
-      // O around the centre; now we send tips into each practice
-      // circle to begin filling them.
-      if (frame === 180) seedWaveOne();
-
-      // Wave 2 (tangential inside each practice circle) fires at
-      // ~frame 420. The circles have begun to fill; these new
-      // tangential tips paint a second "O" inside each quadrant in
-      // its own colour.
-      if (frame === 420) seedWaveTwo();
-
-      // Coherence field update — verbatim from canonical
-      for (let i = 0; i < CELLS; i++) {
-        const L = F.grw[i] * 0.1 + F.brn[i] * 0.2 + F.den[i] * 0.05;
-        F.coh[i] = (F.coh[i] + L * DT) * CDECAY;
-        F.grw[i] *= 0.95;
-        F.brn[i] *= 0.9;
-      }
-
-      // Tip update
-      const newTips = [];
-      for (let i = tips.length - 1; i >= 0; i--) {
-        const child = tips[i].update(STRESS_ZERO);
-        if (child) newTips.push(child);
-        if (tips[i].energy <= 0.1) tips.splice(i, 1);
-      }
-      for (const t of newTips) tips.push(t);
-
-      // Paint each tip's per-frame movement as a thin stroke on the
-      // display-resolution offscreen canvas. Strokes accumulate into
-      // the visible mycelium — filaments at real resolution, not a
-      // pixelated grid wash.
-      paintTipStrokes();
-
-      // Nutrient & moisture diffusion (every 3rd frame — canonical)
-      if (frame % 3 === 0) {
-        diffuse(F.nut, 0.01);
-        diffuse(F.moi, 0.005);
-      }
-
-      // Note: density does NOT decay. Canonical CRR relies on
-      // nutrient consumption (tips subtract from F.nut as they deposit)
-      // plus the -0.3 density penalty in the sensor to keep growth
-      // healthy. The mycelium reaches steady state when nutrients are
-      // consumed and tips starve; re-seeding keeps the cycle going.
-
-      // Gate the external phase: once all four circles are ~35% filled,
-      // start the in-creep from the corners.
-      if (!externalPhaseStarted && allCirclesReady(0.35)) {
-        externalPhaseStarted = true;
-        seedExternalTips();
-      }
-
-      // Gentle re-seeding: when all tips have died the composition would
-      // otherwise slowly fade. Re-seed a fresh wave from the centre (and
-      // from the corners, once the external phase has begun) every so
-      // often, so practice keeps expressing outward indefinitely.
-      if (tips.length === 0) {
-        if (frame % 600 < 2) seedInitialTips();
-        if (externalPhaseStarted && frame % 900 < 2) seedExternalTips();
-      }
-    }
-
-    // ─── RENDER ────────────────────────────────────────────────────
-    // Strands at display resolution (not grid-upscaled). Each tip's
-    // per-frame movement becomes a coloured stroke on an offscreen
-    // canvas, accumulating into filaments. Thickness/alpha scale with
-    // generation (trunk hyphae thicker, branches thinner).
-
-    // ─── Render constants — stroke-based filaments ────────────────
-    const OVERALL_ALPHA = 0.52;   // composite strength of final strokes
-    const AURA_ALPHA    = 0.30;   // blurred substance layer
-    const OVERALL_SAT   = 1.22;   // saturation lift — keeps chromatic over blend overlap
-
-    // Per-stroke alphas (drawn into paint canvas)
-    const STROKE_ALPHA_TRUNK  = 0.10;   // thick trunks (bold hyphae)
-    const STROKE_ALPHA_BRANCH = 0.055;  // hair-thin distal branches
-    const RUPTURE_GLOW_ALPHA  = 0.22;
-    const BRANCH_DOT_ALPHA    = 0.26;
-    const FADE_RGBA = 'rgba(244,241,235,0.0015)';   // slow — old strokes linger, history layers
-
-    // ─── Settling: disabled for this composition.
-    // The mycelium is allowed to grow indefinitely. The fade pass
-    // (FADE_RGBA above) softens old strokes each frame, balancing
-    // new growth so the composition stays fresh but keeps evolving.
-    // Set to very large frame numbers so settleFactor() always
-    // returns 1.0 — effectively disabled, but the machinery stays
-    // intact so we can re-enable by changing these two constants.
-    const SETTLE_START_FRAME = 1e9;
-    const SETTLE_END_FRAME   = 1e9 + 1;
-    const SETTLE_FLOOR       = 1.0;
-
-    function settleFactor() {
-      if (frame < SETTLE_START_FRAME) return 1;
-      if (frame >= SETTLE_END_FRAME) return SETTLE_FLOOR;
-      const t = (frame - SETTLE_START_FRAME) / (SETTLE_END_FRAME - SETTLE_START_FRAME);
-      return 1 - (1 - SETTLE_FLOOR) * t;
-    }
-
-    // ─── RENDER: stroke-based filaments ─────────────────────────────
-    // Each frame, each tip draws a thin line segment from its previous
-    // position (t.px, t.py) to its current position (t.x, t.y), in its
-    // lineage colour. Strokes accumulate on a display-resolution paint
-    // canvas and compose each frame onto the main ctx.
-    //
-    // This is what actually produces mycelium-looking filaments: real
-    // mycelium IS a trail of hyphal tip movement, so tracing each tip's
-    // path as ink gives you proper hyphae. Density-field rendering can't
-    // produce filaments — it only produces coloured regions.
-    //
-    // Against-neutral-mud defence: three things together keep strokes
-    // looking like filaments not matted hair:
-    //   (1) Thick trunks / hair-thin distal branches (visible hierarchy)
-    //   (2) Low stroke alpha so overlap doesn't saturate to neutral
-    //   (3) Moderate home-amplification (1.3× not 2.0×) so pool perimeters
-    //       don't mat together into dark blobs
-    //   (4) Moderate population (MAX_TIPS) — enough tips for richness,
-    //       not so many that every region is crossed repeatedly
-
-    // Branch-point accents (crisp dots at Y-junctions) and rupture
-    // glows painted on the same canvas as subtle punctuation.
-    const pendingBranchDots = [];
-    const pendingRuptureGlows = [];
-    function queueBranchDot(gridX, gridY, col, diam) {
-      pendingBranchDots.push({ gridX, gridY, col, diam });
-      pendingRuptureGlows.push({ gridX, gridY, col, diam });
-    }
-
-    function paintTipStrokes() {
-      if (!paintCtx) return;
-      paintCtx.lineCap = 'butt';
-      paintCtx.lineJoin = 'round';
-
-      const gateR2 = geom.labelGateR ? geom.labelGateR * geom.labelGateR : 0;
-      const centreGateR = geom.centreR * 1.30;
-      const centreR2 = centreGateR * centreGateR;
-      const homes = geom.lineageHomes || null;
-      const homeR2 = geom.outerR * geom.outerR;
-      const sf = settleFactor();
-
-      // ─── Pass 1: hyphal strands (per-tip per-frame segments) ───
-      for (const t of tips) {
-        const tipX = (t.x / G) * geom.W;
-        const tipY = (t.y / G) * geom.H;
-
-        const dxC = tipX - geom.cx, dyC = tipY - geom.cy;
-        if (dxC * dxC + dyC * dyC < centreR2) continue;
-
-        let inLabel = false;
-        if (geom.labelCenters) {
-          for (let li = 0; li < geom.labelCenters.length; li++) {
-            const lc = geom.labelCenters[li];
-            const ddx = tipX - lc.x, ddy = tipY - lc.y;
-            if (ddx * ddx + ddy * ddy < gateR2) { inLabel = true; break; }
-          }
-        }
-        if (inLabel) continue;
-
-        const col = LINEAGE_COLOUR[t.lineage];
-        if (!col) continue;
-
-        const prevX = (t.px / G) * geom.W;
-        const prevY = (t.py / G) * geom.H;
-
-        // Home-circle amplification — inside a tip's own practice
-        // Home-circle amplification + away-attenuation.
-        // Inside home: amplified (1.3×), colour dominant.
-        // Near home: normal.
-        // Far from home: attenuated — strokes become atmospheric whispers
-        //   instead of chromatic territory claims. This sharply reduces
-        //   the overlap mud where pink and orange strokes used to blend
-        //   into muddy neutrals between adjacent pool regions.
-        let homeFactor = 1.0;
-        if (homes) {
-          const home = homes[t.lineage];
-          if (home) {
-            const hdx = tipX - home.x, hdy = tipY - home.y;
-            const hd2 = hdx * hdx + hdy * hdy;
-            if (hd2 < homeR2) {
-              homeFactor = 1.3;               // inside home — bold
-            } else {
-              // Beyond home: smooth falloff to 0.4 at 2× home radius
-              const dist = Math.sqrt(hd2);
-              const homeR = Math.sqrt(homeR2);
-              const over = (dist - homeR) / homeR;   // 0 at boundary, 1 at 2× radius
-              homeFactor = Math.max(0.4, 1.0 - over * 0.6);
-            }
-          }
-        }
-
-        // Uniform thin strokes — canonical-style. Real hyphae in a
-        // network are mostly the same thin gauge, with gentle taper
-        // (daughter diameter = 0.8 × parent.diam). The previous
-        // three-tier "trunk / secondary / distal" hierarchy was more
-        // painterly than biological; it made strokes read as painted
-        // "branches" rather than organic hyphae.
-        const width = Math.max(0.6, 0.6 + t.diam * 0.8);  // 0.6–1.2 px
-        const baseAlpha = STROKE_ALPHA_TRUNK;              // uniform per-stroke alpha
-        const alpha = Math.min(0.95, baseAlpha * homeFactor * sf);
-
-        paintCtx.lineWidth = width;
-        paintCtx.strokeStyle =
-          'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha + ')';
-        paintCtx.beginPath();
-        paintCtx.moveTo(prevX, prevY);
-        paintCtx.lineTo(tipX, tipY);
-        paintCtx.stroke();
-      }
-
-      // ─── Pass 2: rupture glows (one-shot at branching) ───
-      while (pendingRuptureGlows.length > 0) {
-        const g = pendingRuptureGlows.pop();
-        const gx = (g.gridX / G) * geom.W;
-        const gy = (g.gridY / G) * geom.H;
-        const ddC = (gx - geom.cx) * (gx - geom.cx) + (gy - geom.cy) * (gy - geom.cy);
-        if (ddC < centreR2) continue;
-        let inL = false;
-        if (geom.labelCenters) {
-          for (let li = 0; li < geom.labelCenters.length; li++) {
-            const lc = geom.labelCenters[li];
-            const ddx = gx - lc.x, ddy = gy - lc.y;
-            if (ddx * ddx + ddy * ddy < gateR2) { inL = true; break; }
-          }
-        }
-        if (inL) continue;
-
-        const col = g.col;
-        const rr = 3.0 + g.diam * 1.8;
-        const glow = paintCtx.createRadialGradient(gx, gy, 0, gx, gy, rr);
-        glow.addColorStop(0,
-          'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (RUPTURE_GLOW_ALPHA * sf) + ')');
-        glow.addColorStop(1,
-          'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0)');
-        paintCtx.fillStyle = glow;
-        paintCtx.beginPath();
-        paintCtx.arc(gx, gy, rr, 0, TAU);
-        paintCtx.fill();
-      }
-
-      // ─── Pass 3: persistent branch-point dots (Y-junctions) ───
-      while (pendingBranchDots.length > 0) {
-        const d = pendingBranchDots.pop();
-        const dx = (d.gridX / G) * geom.W;
-        const dy = (d.gridY / G) * geom.H;
-        const ddC = (dx - geom.cx) * (dx - geom.cx) + (dy - geom.cy) * (dy - geom.cy);
-        if (ddC < centreR2) continue;
-        let inL = false;
-        if (geom.labelCenters) {
-          for (let li = 0; li < geom.labelCenters.length; li++) {
-            const lc = geom.labelCenters[li];
-            const ddx = dx - lc.x, ddy = dy - lc.y;
-            if (ddx * ddx + ddy * ddy < gateR2) { inL = true; break; }
-          }
-        }
-        if (inL) continue;
-
-        const col = d.col;
-        const rr = 1.4 + d.diam * 1.0;
-        const dot = paintCtx.createRadialGradient(dx, dy, 0, dx, dy, rr);
-        dot.addColorStop(0,
-          'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (BRANCH_DOT_ALPHA * sf) + ')');
-        dot.addColorStop(1,
-          'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0)');
-        paintCtx.fillStyle = dot;
-        paintCtx.beginPath();
-        paintCtx.arc(dx, dy, rr, 0, TAU);
-        paintCtx.fill();
-      }
-
-      // Very slow fade toward parchment — disabled after settling.
-      if (frame < SETTLE_START_FRAME) {
-        paintCtx.fillStyle = FADE_RGBA;
-        paintCtx.fillRect(0, 0, geom.W, geom.H);
-      }
-    }
-
-    function renderInto(ctx) {
-      if (!paintCanvas || !geom) return;
-      ctx.save();
-
-      // Three-pass composite for the 'slow smoke' wispy quality:
-      //   (1) Far haze — heavy blur, low alpha. Atmospheric colour that
-      //       drifts beyond where any stroke physically is.
-      //   (2) Close aura — medium blur, moderate alpha. Substance body.
-      //   (3) Sharp filaments — no blur, full alpha. The actual lines.
-      //
-      // Blur scales proportionally to canvas width. On desktop (ref
-      // 1440px) we get the tuned 12px + 5px blurs. On mobile (375px)
-      // the blur drops proportionally to ~3.1px + 1.3px so filaments
-      // stay readable relative to canvas scale, not washed out.
-      const blurScale = Math.max(0.3, Math.min(1.0, geom.W / 1440));
-      const farBlur   = 12 * blurScale;
-      const closeBlur = 5  * blurScale;
-
-      ctx.filter = 'blur(' + farBlur + 'px) saturate(' + (OVERALL_SAT * 1.15) + ')';
-      ctx.globalAlpha = AURA_ALPHA * 0.55;
-      ctx.drawImage(paintCanvas, 0, 0);
-
-      ctx.filter = 'blur(' + closeBlur + 'px) saturate(' + OVERALL_SAT + ')';
-      ctx.globalAlpha = AURA_ALPHA;
-      ctx.drawImage(paintCanvas, 0, 0);
-
-      ctx.filter = 'saturate(' + (OVERALL_SAT * 1.1) + ')';
-      ctx.globalAlpha = OVERALL_ALPHA;
-      ctx.drawImage(paintCanvas, 0, 0);
-
-      ctx.restore();
-    }
-
-    return { reset, step, renderInto };
-  })();
-
-  // ─── Animation loop ───
-  let t0 = performance.now() / 1000;
-  // Smoothly-eased hover state for the centre pool — 0 at rest, 1
-  // fully active. Eases up/down over ~400ms so the "jump out and
-  // shine" effect feels like light building rather than flashing on.
-  let centreHover = 0;
+  }
+
+  // ─── Render helpers (pools, tints) ──────────────────────────────────
+  let t0 = performance.now();
+
+  function drawPool(cx, cy, r, strength) {
+    const pool = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r);
+    pool.addColorStop(0.00, rgba(PAL.parchment, strength));
+    pool.addColorStop(0.60, rgba(PAL.parchment, strength * 0.94));
+    pool.addColorStop(0.90, rgba(PAL.parchment, strength * 0.30));
+    pool.addColorStop(1.00, rgba(PAL.parchment, 0));
+    ctx.fillStyle = pool;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.fill();
+  }
+
+  function drawPoolTint(cx, cy, r, col, breath, isActive) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    const ringAlpha = (isActive ? 0.40 : 0.30) * (0.85 + 0.15 * breath);
+    const ring = ctx.createRadialGradient(cx, cy, r * 0.25, cx, cy, r);
+    ring.addColorStop(0.00, rgba(col, 0));
+    ring.addColorStop(0.55, rgba(col, ringAlpha * 0.4));
+    ring.addColorStop(0.80, rgba(col, ringAlpha));
+    ring.addColorStop(1.00, rgba(col, 0));
+    ctx.fillStyle = ring;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ─── Main render loop ───────────────────────────────────────────────
   function draw(now) {
-    const t = (now / 1000) - t0;
+    const t = (now - t0) / 1000;
     const g = layout();
+    const pods = buildPods(g);
 
-    // Ease centreHover toward target (0 or 1). Exponential lerp with
-    // coefficient 0.08 gives ~400ms perceptual response at 60fps.
-    const centreTarget = (activeKey === 'daily') ? 1 : 0;
-    centreHover += (centreTarget - centreHover) * 0.08;
-
-    // Step the mycelium simulation one tick.
-    MY.step();
-
-    // Background — same parchment as the surrounding page, so the canvas
-    // disappears into the page rather than showing as a lighter pane.
+    // Parchment background
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = rgba(PAL.parchment, 1);
     ctx.fillRect(0, 0, W, H);
 
-    // Mycelium — the living network of practice. Drawn across the
-    // whole canvas at full resolution. The diagram is formed by
-    // negative space: five clear parchment pools where the mycelium
-    // is absent, holding the label for each named practice.
-    MY.renderInto(ctx);
+    // 1. Cohesion field — large soft halo binding the four practices.
+    //    Breathes on daily's slow cycle. Laid down before pools so it
+    //    reads as ambient ground warmth, not an overlay.
+    const dailyBreath = 0.5 + 0.5 * Math.sin(t / POD_PERIODS[4] * TAU);
+    drawCohesionField(g.cx, g.cy, g.rho + g.outerR * 0.6, dailyBreath);
 
-    // ─── Five clear pools — the diagram as negative space ──────────
-    // Each named practice lives in a pool of clear parchment. The
-    // mycelium flows around these pools (the nutrient landscape
-    // already pushes pigment away from label zones), and the pools
-    // themselves are solid parchment fading softly to transparent
-    // at their edges — giving a feeling of the living network
-    // parting around each named place rather than stopping at a
-    // hard ink line.
-    //
-    // No ink rings. No outer boundary. The composition is the
-    // mycelium's flow + the shape of the five clear spots.
-
-    // Helper: draw a single parchment pool with soft edge.
-    function drawPool(cx, cy, r, strength) {
-      // Solid core out to ~70% of r, gentle fade to 0 at r.
-      const pool = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r);
-      pool.addColorStop(0.00, rgba(PAL.parchment, strength));
-      pool.addColorStop(0.50, rgba(PAL.parchment, strength * 0.96));
-      pool.addColorStop(0.78, rgba(PAL.parchment, strength * 0.55));
-      pool.addColorStop(0.94, rgba(PAL.parchment, strength * 0.15));
-      pool.addColorStop(1.00, rgba(PAL.parchment, 0));
-      ctx.fillStyle = pool;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, TAU);
-      ctx.fill();
-    }
-
-    // Helper: draw a soft lineage tint inside a pool, so each practice
-    // still carries its colour as a pale wash inside the clear spot.
-    function drawPoolTint(cx, cy, r, col, breath, isActive) {
-      // Two-part pigment: a strong coloured ring at the pool's edge —
-      // this is what visibly identifies each named place with its
-      // lineage colour. Plus a light central wash so labels stay on
-      // clear parchment. The ring concentrates colour where the eye
-      // is already looking (pool boundary = where it meets mycelium),
-      // without muddying the text.
-      ctx.save();
-      ctx.globalCompositeOperation = 'multiply';
-
-      // Ring: densest at ~70% of pool radius, fades inward and outward
-      const ringAlpha = (isActive ? 0.38 : 0.28) * (0.85 + 0.15 * breath);
-      const ring = ctx.createRadialGradient(cx, cy, r * 0.25, cx, cy, r);
-      ring.addColorStop(0.00, rgba(col, 0));
-      ring.addColorStop(0.45, rgba(col, ringAlpha * 0.35));
-      ring.addColorStop(0.72, rgba(col, ringAlpha));
-      ring.addColorStop(0.92, rgba(col, ringAlpha * 0.55));
-      ring.addColorStop(1.00, rgba(col, 0));
-      ctx.fillStyle = ring;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, TAU);
-      ctx.fill();
-
-      // Light central wash — subtle lineage breath under the text
-      const coreAlpha = (isActive ? 0.11 : 0.065) * (0.85 + 0.15 * breath);
-      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.5);
-      core.addColorStop(0.00, rgba(col, coreAlpha));
-      core.addColorStop(1.00, rgba(col, 0));
-      ctx.fillStyle = core;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r * 0.5, 0, TAU);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawCentreGlow(cx, cy, r, breath, hover) {
-      // The centre pool is Daily Embodied Practice — the ground the
-      // others stand on, the Zero Space. Its visual identity is LIGHT
-      // rather than a colour.
-      //
-      // CRR solves for the colour of the sun itself: B(C) = exp(C/Ω)·(C*−C)
-      // peaks one capacity-unit before rupture — maximum luminous
-      // beauty just before overload. For sunlight, that's not noon
-      // sun (C ≈ C*, overwhelming) but golden-hour sun — the sun at
-      // peak beauty. Measured golden sunlight ≈ [255, 220, 170].
-      //
-      // At rest: pearl-white, contemplative moonlight on still water.
-      // On hover: eases to solar gold — the centre radiates as sun.
-      // Tween coordinated through the `hover` param (0 = rest, 1 = active).
-
-      const pearl    = [248, 240, 225];   // rest — warm luminous off-white
-      const solarCore= [255, 244, 218];   // hover — white-hot sun centre
-      const solarRim = [255, 210, 150];   // hover — golden-hour rim
-
-      // Lerp all three colour channels between rest and hover values
-      const lerpCol = (a, b, m) => [
-        a[0] + (b[0] - a[0]) * m,
-        a[1] + (b[1] - a[1]) * m,
-        a[2] + (b[2] - a[2]) * m,
-      ];
-      const coreCol = lerpCol(pearl, solarCore, hover);
-      const rimCol  = lerpCol([255, 230, 185], solarRim, hover);
-
-      // Scale halo radius on hover — the centre literally reaches further
-      const haloScale = 1.15 + hover * 0.35;    // 1.15 rest → 1.50 hover
-
-      // Alpha boost on hover — more light, not blinding
-      const haloAlphaBase = 0.32 + hover * 0.22;   // 0.32 → 0.54
-      const coreAlphaBase = 0.42 + hover * 0.28;   // 0.42 → 0.70
-
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-
-      // Outer halo — on hover, expands outward past pool edge, reaching
-      // toward the four practices as if the sun is breathing outward
-      // and warming them.
-      const haloAlpha = haloAlphaBase * (0.88 + 0.12 * breath);
-      const haloR = r * haloScale;
-      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR);
-      halo.addColorStop(0.00, rgba(coreCol, haloAlpha));
-      halo.addColorStop(0.55, rgba(coreCol, haloAlpha * 0.6));
-      halo.addColorStop(0.82, rgba(rimCol,  haloAlpha * 0.28));
-      halo.addColorStop(1.00, rgba(rimCol,  0));
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(cx, cy, haloR, 0, TAU);
-      ctx.fill();
-
-      // Bright core — the source point. On hover, the core intensifies
-      // and grows slightly — the sun at its most beautiful moment.
-      const coreR = r * (0.45 + hover * 0.08);
-      const coreAlpha = coreAlphaBase * (0.88 + 0.12 * breath);
-      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-      core.addColorStop(0.00, rgba(coreCol, coreAlpha));
-      core.addColorStop(1.00, rgba(coreCol, 0));
-      ctx.fillStyle = core;
-      ctx.beginPath();
-      ctx.arc(cx, cy, coreR, 0, TAU);
-      ctx.fill();
-
-      // Hover-only: a faint golden corona flickering at the very edge,
-      // the way sunlight through mist catches gold at the rim of a
-      // radiance. Only adds presence when hover > 0.2; scales with
-      // hover strength so it fades in smoothly.
-      if (hover > 0.02) {
-        const coronaAlpha = hover * 0.18 * (0.85 + 0.15 * breath);
-        const coronaR = r * (1.55 + hover * 0.2);
-        const corona = ctx.createRadialGradient(cx, cy, r * 0.7, cx, cy, coronaR);
-        corona.addColorStop(0.00, rgba(solarRim, 0));
-        corona.addColorStop(0.55, rgba(solarRim, coronaAlpha));
-        corona.addColorStop(1.00, rgba(solarRim, 0));
-        ctx.fillStyle = corona;
-        ctx.beginPath();
-        ctx.arc(cx, cy, coronaR, 0, TAU);
-        ctx.fill();
-      }
-
-      ctx.restore();
-    }
-
-    // Pool size — comfortably bigger than the label block, so the
-    // clear spot reads as a generous named place in the network.
-    const poolR = g.outerR * 0.85;
-    const centrePoolR = g.centreR * 1.35;
-
-    // Four outer pools
+    // 2. Four outer pools (parchment + lineage tint)
     for (let i = 0; i < 4; i++) {
-      const v = vertex(i, g.rho, g.cx, g.cy);
-      const phase = (t / 11) + i * (TAU / 4) * 0.618;
-      const breath = 0.5 + 0.5 * Math.sin(phase);
-      const col = OUTER_COLOURS[i];
+      const breath = 0.5 + 0.5 * Math.sin(t / 11 + i * 1.3);
       const isActive = activeKey === OUTER[i].key;
-
-      // Clear parchment pool (solid strength — label sits on paper)
-      drawPool(v.x, v.y, poolR, isActive ? 0.96 : 0.93);
-
-      // Soft lineage-colour tint inside the pool
-      drawPoolTint(v.x, v.y, poolR, col, breath, isActive);
+      drawPool(pods[i].x, pods[i].y, g.outerR, isActive ? 0.96 : 0.93);
+      drawPoolTint(pods[i].x, pods[i].y, g.outerR, pods[i].col, breath, isActive);
     }
 
-    // Centre pool — Daily Embodied Practice, The Zero Space.
-    // Rendered as LIGHT not pigment: luminous pearl-white glow via
-    // screen blend, distinct from the coloured pigment rings of the
-    // four outer pools. On hover, eases to solar gold — CRR's Beauty
-    // function peak, the sun at its most beautiful moment.
-    const centreBreath = 0.5 + 0.5 * Math.sin(t / 8);
-    drawPool(g.cx, g.cy, centrePoolR, 0.95);
-    drawCentreGlow(g.cx, g.cy, centrePoolR, centreBreath, centreHover);
+    // 3. Centre pod — Daily Embodied Practice as vibrant sun.
+    //    Parchment pool beneath so labels sit on paper, then the sun
+    //    glow layered via screen blend on top.
+    const isDailyActive = activeKey === CENTRE.key;
+    drawPool(g.cx, g.cy, g.centreR, 0.95);
+    drawSunCentre(g.cx, g.cy, g.centreR, dailyBreath, isDailyActive);
+
+    // 4. Star network — four spokes with flowing pulses
+    drawStarNetwork(pods, t);
 
     requestAnimationFrame(draw);
   }
 
-  // ─── Boot ───
+  // ─── Boot ───────────────────────────────────────────────────────────
   const ro = new ResizeObserver(() => resize());
   ro.observe(figure);
   resize();
