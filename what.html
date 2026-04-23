@@ -29,8 +29,12 @@
 .what-hero-overlay {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 56px 32px;
+  align-items: center;
+  /* Positioned ~65% down so the caption sits over the sea rather
+     than cutting across the horizon line and the sun. Flex-end +
+     bottom padding scales cleanly across viewport heights. */
+  justify-content: flex-end;
+  padding: 56px 32px 16%;
   background: linear-gradient(
     to bottom,
     rgba(0,0,0,0.18) 0%,
@@ -100,14 +104,18 @@
 }
 .mandala-figure {
   position: relative;
-  /* Truly edge-to-edge: no cap, no viewport padding. The mycelium
-     network runs from one side of the page to the other, so the
-     "reaching outward to the wider world" metaphor is literal.
-     Height is clamped so on ultrawide displays the figure becomes
-     landscape rather than occupying ~2000px vertical. */
+  /* Edge-to-edge width, with height triple-clamped:
+     (a) never taller than the viewport-width square (100vw)
+     (b) never taller than 900px (comfortable desktop scale)
+     (c) never taller than 85% of viewport height (fits on screen)
+     The third clamp is what lets the whole composition render on
+     a single viewport without the user needing to scroll.
+     Everything downstream (mycelium simulation, pool geometry,
+     labels) scales automatically since all positions derive from
+     canvas dimensions. */
   width: 100vw;
   margin: 0 auto;
-  height: min(100vw, 900px);
+  height: min(100vw, 900px, 85vh);
 }
 .mandala-figure canvas {
   position: absolute;
