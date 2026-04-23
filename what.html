@@ -445,13 +445,26 @@ body { background: var(--parchment, #f4f1eb); }
   .rhythm-row { grid-template-columns: 1fr; gap: 4px; }
 }
 @media (max-width: 560px) {
+  /* Phone: pools shrink to ~129px diameter at 375px viewport. Labels
+     must fit generously inside. Width reduced to 100px gives comfortable
+     margin; font sizes scaled proportionally. */
   .mandala-figure { width: 100vw; }
-  .mandala-label { font-size: 15px; width: 125px; }
-  .mandala-label .label-index { font-size: 9px; }
-  .mandala-label .label-meta { font-size: 8.5px; }
-  .mandala-label.is-centre { width: 125px; }
-  .mandala-label.is-centre .label-name { font-size: 13px; }
-  .mandala-label.is-centre .label-sub { font-size: 11px; }
+  .mandala-label { font-size: 14px; width: 100px; }
+  .mandala-label .label-index { font-size: 8.5px; letter-spacing: 0.20em; margin-bottom: 3px; }
+  .mandala-label .label-meta { font-size: 8px; letter-spacing: 0.14em; margin-top: 4px; }
+  .mandala-label.is-centre { width: 100px; }
+  .mandala-label.is-centre .label-name { font-size: 12px; }
+  .mandala-label.is-centre .label-sub { font-size: 9.5px; margin-top: 3px; }
+}
+@media (max-width: 380px) {
+  /* Very narrow phones (iPhone SE, small Android). Pools shrink further,
+     labels need to be tighter still. */
+  .mandala-label { font-size: 13px; width: 90px; }
+  .mandala-label .label-index { font-size: 8px; }
+  .mandala-label .label-meta { font-size: 7.5px; letter-spacing: 0.12em; }
+  .mandala-label.is-centre { width: 90px; }
+  .mandala-label.is-centre .label-name { font-size: 11px; }
+  .mandala-label.is-centre .label-sub { font-size: 9px; }
 }
 </style>
 </head>
@@ -1790,27 +1803,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Three-pass composite for the 'slow smoke' wispy quality:
       //   (1) Far haze — heavy blur, low alpha. Atmospheric colour that
-      //       drifts beyond where any stroke physically is. This is
-      //       what makes the mycelium feel like it's emerging from
-      //       coloured mist rather than sitting as ink on paper.
-      //   (2) Close aura — medium blur, moderate alpha. Soft body
-      //       around each filament, the substance of the hyphae.
+      //       drifts beyond where any stroke physically is.
+      //   (2) Close aura — medium blur, moderate alpha. Substance body.
       //   (3) Sharp filaments — no blur, full alpha. The actual lines.
       //
-      // Saturation lifted at composite so even heavily-blurred regions
-      // stay chromatic — keeps the Crescent hues from washing toward
-      // grey when multiple colours overlap.
+      // Blur scales proportionally to canvas width. On desktop (ref
+      // 1440px) we get the tuned 12px + 5px blurs. On mobile (375px)
+      // the blur drops proportionally to ~3.1px + 1.3px so filaments
+      // stay readable relative to canvas scale, not washed out.
+      const blurScale = Math.max(0.3, Math.min(1.0, geom.W / 1440));
+      const farBlur   = 12 * blurScale;
+      const closeBlur = 5  * blurScale;
 
-      ctx.filter = 'blur(12px) saturate(' + (OVERALL_SAT * 1.15) + ')';
-      ctx.globalAlpha = AURA_ALPHA * 0.55;         // far atmospheric haze
+      ctx.filter = 'blur(' + farBlur + 'px) saturate(' + (OVERALL_SAT * 1.15) + ')';
+      ctx.globalAlpha = AURA_ALPHA * 0.55;
       ctx.drawImage(paintCanvas, 0, 0);
 
-      ctx.filter = 'blur(5px) saturate(' + OVERALL_SAT + ')';
-      ctx.globalAlpha = AURA_ALPHA;                 // close aura
+      ctx.filter = 'blur(' + closeBlur + 'px) saturate(' + OVERALL_SAT + ')';
+      ctx.globalAlpha = AURA_ALPHA;
       ctx.drawImage(paintCanvas, 0, 0);
 
       ctx.filter = 'saturate(' + (OVERALL_SAT * 1.1) + ')';
-      ctx.globalAlpha = OVERALL_ALPHA;              // sharp filaments
+      ctx.globalAlpha = OVERALL_ALPHA;
       ctx.drawImage(paintCanvas, 0, 0);
 
       ctx.restore();
