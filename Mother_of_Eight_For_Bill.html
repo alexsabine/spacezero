@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pod L(0) — a slow walk through the Mother of Eight Protocol</title>
+<style>
+  /* ─── §CRR engine constraints are encoded in the JS below.
+         All GUI vocabulary uses the Mother of Eight Protocol's own terms
+         (Pod L(0), member, membrane, mitosis, soft edge, deepening core,
+         self-booting loop, creative liquidity, recognition, dormant tie). */
+
+  :root{
+    --parchment: #f4f1eb;
+    --parchment-deep: #e9e3d6;
+    --ink: #2a2418;
+    --ink-soft: #4a4030;
+    --ink-fade: #7a6f5c;
+    --amber: #b8842c;
+    --amber-warm: #d99a3a;
+    --iceplant: #b85268;
+    --moss: #6a7a4a;
+    --membrane: #8a7f6a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Georgia', 'Liberation Serif', 'EB Garamond', serif;
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  body{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+  header.masthead{
+    border-bottom: 1px solid var(--ink-fade);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  header.masthead .eyebrow{
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    margin-bottom: 6px;
+  }
+  header.masthead h1{
+    font-size: 26px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.005em;
+    color: var(--ink);
+  }
+  header.masthead .lede{
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    max-width: 760px;
+  }
+
+  .stage-wrap{
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 22px;
+    margin-top: 18px;
+  }
+  @media (max-width: 940px){
+    .stage-wrap{ grid-template-columns: 1fr; }
+  }
+
+  .canvas-frame{
+    background: var(--parchment-deep);
+    border: 1px solid var(--ink-fade);
+    aspect-ratio: 3 / 2;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  canvas#stage{
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .canvas-caption{
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    right: 14px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 18px;
+  }
+  .canvas-caption #capLeft{
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .canvas-caption #capRight{
+    flex: 0 0 auto;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .narration{
+    background: transparent;
+    border-left: 1px solid var(--ink-fade);
+    padding-left: 18px;
+    font-size: 14.5px;
+    line-height: 1.68;
+  }
+  .narration .chapter-label{
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    margin-bottom: 4px;
+  }
+  .narration h2{
+    font-size: 19px;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .narration p{
+    margin-bottom: 10px;
+    color: var(--ink-soft);
+  }
+  .narration p strong{
+    font-weight: 400;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .narration .annotation{
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dotted var(--ink-fade);
+    font-size: 12.5px;
+    color: var(--ink-fade);
+    font-style: italic;
+  }
+  .narration p.aside{
+    font-size: 13px;
+    color: var(--ink-fade);
+    padding-left: 10px;
+    border-left: 2px solid var(--parchment-deep);
+    margin-top: 14px;
+  }
+  .narration p.aside em{
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  .controls{
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    align-items: center;
+    border-top: 1px solid var(--ink-fade);
+    border-bottom: 1px solid var(--ink-fade);
+    padding: 14px 0;
+  }
+  .controls .group{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .controls .group label{
+    font-size: 11.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+  }
+  .controls button{
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink-soft);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.15s;
+  }
+  .controls button:hover{ background: rgba(0,0,0,0.04); }
+  .controls button:disabled{ opacity: 0.4; cursor: default; }
+  .controls button.primary{
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+  .controls button.primary:hover{ background: var(--ink-soft); }
+  .controls input[type=range]{
+    width: 130px;
+    accent-color: var(--ink);
+  }
+
+  .chapter-strip{
+    display: flex;
+    gap: 0;
+    margin-top: 8px;
+    border-top: 1px solid var(--ink-fade);
+  }
+  .chapter-strip button{
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--ink-fade);
+    border-bottom: 1px solid var(--ink-fade);
+    padding: 12px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--ink-fade);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    line-height: 1.35;
+  }
+  .chapter-strip button:last-child{ border-right: none; }
+  .chapter-strip button:hover{ background: rgba(0,0,0,0.03); color: var(--ink-soft); }
+  .chapter-strip button.active{
+    background: var(--ink);
+    color: var(--parchment);
+  }
+  .chapter-strip button .num{
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .chapter-strip button .name{
+    display: block;
+    font-style: italic;
+  }
+
+  footer.attribution{
+    margin-top: 36px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ink-fade);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-fade);
+    line-height: 1.7;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  footer.attribution a{ color: var(--ink-soft); text-decoration: none; border-bottom: 1px dotted var(--ink-fade); }
+  footer.attribution a:hover{ color: var(--ink); }
+
+  /* ─── Deep Dive button ─── */
+  button.deepdive{
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink-soft);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 16px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    font-style: italic;
+    transition: background 0.15s;
+  }
+  button.deepdive:hover{ background: rgba(0,0,0,0.04); }
+  button.deepdive::before{
+    content: '✦ ';
+    color: var(--amber);
+    font-style: normal;
+  }
+
+  /* ─── Modal overlay ─── */
+  .modal-backdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 36, 24, 0.55);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 100;
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .modal-backdrop.open{ display: flex; }
+  .modal{
+    background: var(--parchment);
+    border: 1px solid var(--ink-soft);
+    max-width: 760px;
+    width: 100%;
+    padding: 36px 44px 44px;
+    position: relative;
+    margin: auto 0;
+  }
+  .modal-close{
+    position: absolute;
+    top: 14px; right: 18px;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 22px;
+    color: var(--ink-fade);
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .modal-close:hover{ color: var(--ink); }
+  .modal .eyebrow{
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    margin-bottom: 6px;
+  }
+  .modal h2{
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .modal .modal-lede{
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+    max-width: 620px;
+    line-height: 1.6;
+  }
+  .modal section.dd-scene{
+    border-top: 1px solid var(--ink-fade);
+    padding: 22px 0 6px;
+  }
+  .modal section.dd-scene .scene-num{
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+  }
+  .modal section.dd-scene h3{
+    font-size: 19px;
+    font-weight: 400;
+    font-style: italic;
+    margin: 4px 0 14px;
+    color: var(--ink);
+  }
+  .modal section.dd-scene p{
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .modal section.dd-scene p em{
+    color: var(--ink);
+    font-style: italic;
+  }
+  .modal section.dd-scene .equation{
+    margin: 16px 0;
+    padding: 14px 18px;
+    background: var(--parchment-deep);
+    border-left: 2px solid var(--amber);
+    font-family: 'Georgia', 'Liberation Serif', serif;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .modal section.dd-scene .equation .eq-label{
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    margin-bottom: 6px;
+    font-family: inherit;
+  }
+  .modal section.dd-scene .equation .eq-line{
+    font-style: italic;
+    margin: 4px 0;
+  }
+  .modal section.dd-scene .equation .eq-gloss{
+    font-size: 12.5px;
+    color: var(--ink-fade);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .modal .citations{
+    margin-top: 30px;
+    padding-top: 18px;
+    border-top: 1px solid var(--ink-fade);
+    font-size: 12px;
+    color: var(--ink-fade);
+    line-height: 1.65;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">A pedagogical simulation for Bill Melton (Draft 01)</div>
+  <h1>Pod L(0) — a slow walk through the Mother of Eight Protocol</h1>
+  <div class="lede">
+    Six unhurried scenes showing how value, memory, recognition, and creativity move within and between small bounded groups. Built as a companion to Bill's working draft. Play it slowly. Watch the dots.
+  </div>
+</header>
+
+<div class="stage-wrap">
+  <div class="canvas-frame">
+    <canvas id="stage"></canvas>
+    <div class="canvas-caption">
+      <span id="capLeft">Pod L(0) — the foundational vessel</span>
+      <span id="capRight">scene 1 of 7</span>
+    </div>
+  </div>
+
+  <aside class="narration">
+    <div class="chapter-label" id="narLabel">Scene 1</div>
+    <h2 id="narTitle">A member alone</h2>
+    <div id="narBody">
+      <p>Each <strong>dot</strong> is a member, a single human being with their own creative resource — their attention, their skill, their willingness.</p>
+      <p>Alone, a member's accumulated value rises only slowly. The vertical bar at the edge of the canvas shows this. Creativity, in Bill's sense, is not yet flowing — it requires relationship.</p>
+      <p>Watch what happens in the next scene, when the dot is joined.</p>
+      <div class="annotation">Bill: "A single individual is not a Pod L(0), because the foundational unit is relational. The minimum is two."</div>
+    </div>
+  </aside>
+</div>
+
+<div class="controls">
+  <div class="group">
+    <button id="playBtn" class="primary">Play</button>
+    <button id="resetBtn">Restart scene</button>
+  </div>
+  <div class="group">
+    <label for="speed">Pace</label>
+    <input type="range" id="speed" min="0.25" max="2" step="0.05" value="1.10">
+    <span id="speedVal" style="font-size: 12px; color: var(--ink-fade); width: 36px;">1.10×</span>
+  </div>
+  <div class="group" style="margin-left: auto;">
+    <button id="deepDiveBtn" class="deepdive">Deep Dive — the Active Inference reading</button>
+  </div>
+  <div class="group">
+    <button id="prevBtn">← Previous scene</button>
+    <button id="nextBtn">Next scene →</button>
+  </div>
+</div>
+
+<div class="chapter-strip" id="chapterStrip">
+  <button data-scene="0" class="active"><span class="num">Scene 1</span><span class="name">A member alone</span></button>
+  <button data-scene="1"><span class="num">Scene 2</span><span class="name">A Pod forms</span></button>
+  <button data-scene="2"><span class="num">Scene 3</span><span class="name">Recognition and memory</span></button>
+  <button data-scene="3"><span class="num">Scene 4</span><span class="name">Two Pods meet</span></button>
+  <button data-scene="4"><span class="num">Scene 5</span><span class="name">Mitosis</span></button>
+  <button data-scene="5"><span class="num">Scene 6</span><span class="name">The self-booting loop</span></button>
+  <button data-scene="6"><span class="num">Scene 7</span><span class="name">A society at play</span></button>
+</div>
+
+<footer class="attribution">
+  <span>Pedagogical simulation built for Bill Melton (Draft 01) · Alexander Sabine · alexander@activeinference.institute</span>
+  <span>Computational engine: CRR temporal grammar · <a href="https://temporalgrammar.ai" target="_blank">temporalgrammar.ai</a></span>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    <div class="eyebrow">Deep dive</div>
+    <h2 id="modalTitle">An Active Inference reading of Bill's six scenes</h2>
+    <p class="modal-lede">
+      The simulation tells the story in Bill's vocabulary. Here is the same story told in the language of the Free Energy Principle and Active Inference, drawing on the framework set out by Friston, Parr, and Pezzulo (2022). Each scene names the phenomenon, the corresponding Active Inference construct, and the equation that bears the weight.
+    </p>
+
+    <section class="dd-scene" id="dd-scene-0">
+      <div class="scene-num">Scene 1</div>
+      <h3>A member alone — an agent without an environment</h3>
+      <p>
+        In Active Inference, an agent is a generative model that minimises <em>variational free energy</em>: the discrepancy between what it predicts and what it samples. A solitary agent with no environmental coupling has nothing to predict. Its posterior beliefs <em>Q(s)</em> remain close to its priors, prediction errors stay near zero, and learning is dormant. This is not contemplative stillness. It is a system with no surfaces against which to update itself.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Variational free energy</span>
+        <span class="eq-line">F = E<sub>Q(s)</sub>[ ln Q(s) − ln P(o, s) ]</span>
+        <span class="eq-gloss">For a solitary agent with no observations o, F reduces to the entropy of the prior. Nothing to learn from, nothing to be surprised by — which is, paradoxically, a failure mode for a living system.</span>
+      </div>
+      <p>
+        Bill's intuition that a Pod requires at least two is, in Active Inference terms, the requirement that an agent have a structured environment that affords prediction error. Other minds are the richest such environment a human encounters.
+      </p>
+    </section>
+
+    <section class="dd-scene" id="dd-scene-1">
+      <div class="scene-num">Scene 2</div>
+      <h3>A Pod forms — Markov blankets and mutual modelling</h3>
+      <p>
+        Each member is an agent with internal states <em>μ</em>; each tie between two members is a <em>Markov blanket</em>, the set of sensory and active states <em>b = {s, a}</em> through which they couple while remaining conditionally independent of each other's inner states. As members accumulate, the number of pairwise blankets grows as n(n−1)/2 — the quadratic wall Bill names directly.
+      </p>
+      <p>
+        What accumulates along each tie is <em>mutual predictive accuracy</em>: each member learns to anticipate the other, lowering the surprise of joint outcomes. The Pod as a whole becomes a higher-level blanket separating its inside from its outside.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Markov blanket condition</span>
+        <span class="eq-line">P(μ, η | b) = P(μ | b) · P(η | b)</span>
+        <span class="eq-gloss">Internal states μ and external states η are conditionally independent given the blanket b. The Pod's membrane is the social equivalent: members and the outside world communicate only through the Pod's shared states.</span>
+      </div>
+    </section>
+
+    <section class="dd-scene" id="dd-scene-2">
+      <div class="scene-num">Scene 3</div>
+      <h3>Recognition — precision-weighting prediction errors</h3>
+      <p>
+        In Active Inference, attention and learning are governed by <em>precision</em>: the inverse variance assigned to a prediction error. High precision means the brain trusts that channel and weights its updates heavily; low precision means the channel is treated as noise. Friston's account of attention is, precisely, the dynamic regulation of precision.
+      </p>
+      <p>
+        When the Pod recognises a contribution, what spreads through the network is a precision update. The ties touching the contributor have their precision raised; future prediction errors along those ties drive learning more strongly. This is why Bill is right that "acclaim is pedagogy" — recognition is not decoration, it is the social analogue of the brain's own attention mechanism, telling the network what to learn from.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Precision-weighted prediction error</span>
+        <span class="eq-line">ε̃ = Π · ε     where ε = s − g(μ)</span>
+        <span class="eq-gloss">The raw prediction error ε is the difference between what was observed (s) and what the generative model predicted (g(μ)). Precision Π scales it. A "valuable contribution" is one whose error is treated as highly precise and therefore drives substantial learning.</span>
+      </div>
+    </section>
+
+    <section class="dd-scene" id="dd-scene-3">
+      <div class="scene-num">Scene 4</div>
+      <h3>Two Pods meet — hierarchical blankets and soft coupling</h3>
+      <p>
+        A visitor at the edge of a Pod is an agent with no shared generative model. Initially, the Pod has high uncertainty about the visitor: <em>likelihood precision</em> is low, so prior beliefs dominate. As ties form, mutual modelling improves and likelihood precision can be raised. Trust, in this framing, is the warranted increase of likelihood precision across a Markov blanket — the moment when each side has enough joint history to take the other's signals at face value.
+      </p>
+      <p>
+        The three inter-Pod ties shown in the simulation are the structural reason multi-path confidence matters. The same hidden state — "is this Pod reliable?" — is observed through several independent likelihood mappings. Bayesian inference with multiple conditionally independent observers reduces posterior variance proportionally to the number of paths, exactly as the simulation Bill linked to shows for K<sub>n</sub> networks.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Hierarchical free energy</span>
+        <span class="eq-line">F<sup>(i)</sup> = E<sub>Q</sub>[ ln Q(μ<sup>(i)</sup>) − ln P(s<sup>(i−1)</sup>, μ<sup>(i)</sup> | μ<sup>(i+1)</sup>) ]</span>
+        <span class="eq-gloss">Each level of a hierarchy minimises free energy conditional on the level above. The Pod is one level; the inter-Pod relationship is the next. Soft edges mean the upper level constrains the lower only loosely until shared evidence builds.</span>
+      </div>
+    </section>
+
+    <section class="dd-scene" id="dd-scene-4">
+      <div class="scene-num">Scene 5</div>
+      <h3>Mitosis — Bayesian model reduction</h3>
+      <p>
+        Active Inference does not have "social mitosis" as a built-in primitive, but it has a closely related operation: <em>Bayesian model reduction</em>. A generative model that has become large and unwieldy can be replaced by a simpler one whenever the simpler model has higher <em>log evidence</em> — that is, when removing parameters or factorising the model lowers free energy on average. Sleep, in Friston's account, performs this reduction nightly for the brain.
+      </p>
+      <p>
+        At some Pod size, maintaining a single unified generative model across all members costs more residual free energy than dividing the model into two coupled sub-models. This is the moment of mitosis. The inherited ties between daughter Pods are the priors carried over from the parent model — they remain useful while likelihood evidence still supports them, and decay otherwise. Bill's six-month default is the social timescale of this evidence renewal.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Model reduction by log evidence</span>
+        <span class="eq-line">ln P(o | m<sub>reduced</sub>) &gt; ln P(o | m<sub>full</sub>)</span>
+        <span class="eq-gloss">When a reduced model explains the data at least as well as the full model, with fewer parameters, it is preferred. Mitosis is the structural rearrangement that occurs when keeping the system as one piece is no longer the most parsimonious account of its observations.</span>
+      </div>
+    </section>
+
+    <section class="dd-scene" id="dd-scene-5">
+      <div class="scene-num">Scene 6</div>
+      <h3>The self-booting loop — policies that lower expected free energy</h3>
+      <p>
+        Active Inference selects actions by minimising <em>expected free energy</em>, G(π), summed over future timesteps. G decomposes into two terms: <em>epistemic value</em> (information gain about hidden states) and <em>pragmatic value</em> (the negative log-probability of preferred outcomes). A policy with low G is one that both teaches the agent something and brings about what the agent prefers.
+      </p>
+      <p>
+        A self-booting Pod is a system in which the policies that produced past contributions — making, sharing, helping — turn out to have low G in both senses. They reduce uncertainty for everyone involved, and they realise outcomes the system values. As evidence accumulates, the posterior over policies sharpens around these generative actions: P(π) ∝ exp(−G(π)) becomes more peaked, and the Pod produces them more readily. The "creative reserve" refilled by recognition is, in this language, the strengthening posterior belief that doing this kind of work is the right policy.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Expected free energy and policy posterior</span>
+        <span class="eq-line">P(π) = σ(−G(π))</span>
+        <span class="eq-line">G(π) = −E<sub>Q̃</sub>[ D<sub>KL</sub>[ Q(s | o, π) ‖ Q(s | π) ] ]  −  E<sub>Q̃</sub>[ ln P(o | C) ]</span>
+        <span class="eq-gloss">The first term is epistemic — expected reduction of uncertainty about hidden states. The second is pragmatic — expected log-probability of preferred outcomes C. A self-booting Pod is one where the policies of contribution score well on both.</span>
+      </div>
+      <p>
+        Bill's test "can creativity fund the next act of creation?" maps directly: the posterior over creative policies is reinforced by the very evidence those policies generate. The loop closes when this reinforcement outpaces the dissipation of unattended priors. If it does, the Pod self-evidences. If it does not, the system is being subsidised from outside, and either the policies need refinement or the environment needs to change.
+      </p>
+    </section>
+
+    <section class="dd-scene" id="dd-scene-6">
+      <div class="scene-num">Scene 7</div>
+      <h3>A society at play — generalised synchrony across hierarchical blankets</h3>
+      <p>
+        A society is a network of Markov blankets nested at multiple scales: members within Pods within communities within institutions. Each level operates its own free-energy minimisation, conditional on the level above. Active Inference accounts of social systems describe this as <em>generalised synchrony</em>: distinct agents coupled through shared sensory and active states gradually come to predict each other accurately, lowering the joint free energy of the ensemble.
+      </p>
+      <p>
+        The colours converging at the centre of the canvas are a visualisation of this shared predictive structure. Each Pod's contribution is a distribution over the shared cultural commons. When Pods are well-coupled, their wavefronts <em>interfere constructively</em> — they share enough predictive structure that the combined intensity is high. When they diverge in their generative models, the field grains beautifully with mingled colour: the productive heterogeneity Bill calls "requisite diversity."
+      </p>
+      <p>
+        Travellers between Pods are bearers of generative model updates — what Bayesian model averaging calls <em>information transfer</em>. Each crossing strengthens the coupling between two Markov blankets and propagates priors across the network. Over time, the society develops a shared posterior that no single Pod could host alone. This is the social analogue of brain function: distributed processing under one self-evidencing hierarchy.
+      </p>
+      <div class="equation">
+        <span class="eq-label">Hierarchical free energy across coupled Markov blankets</span>
+        <span class="eq-line">F<sub>society</sub> = Σ<sub>p</sub> F<sub>p</sub> + Σ<sub>p,q</sub> F<sub>p,q</sub><sup>(coupling)</sup></span>
+        <span class="eq-gloss">The society minimises a sum of per-Pod free energies plus pairwise coupling terms across inter-Pod blankets. A healthy society balances within-Pod accuracy (members predicting each other) and between-Pod accuracy (Pods predicting each other) — neither dominates. Bill's "stronger near, broader far" is the spatial profile of this trade-off.</span>
+      </div>
+    </section>
+
+    <div class="citations">
+      Parr, T., Pezzulo, G., &amp; Friston, K. (2022). Active Inference: The Free Energy Principle in Mind, Brain, and Behavior. MIT Press. · Friston, K. (2010). The free-energy principle: a unified brain theory? Nature Reviews Neuroscience, 11. · Friston, K., Lin, M., Frith, C. D., Pezzulo, G., Hobson, J. A., &amp; Ondobaka, S. (2017). Active inference, curiosity and insight. Neural Computation, 29(10).
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// §CRR ENGINE — runs underneath. All GUI vocabulary uses the MEA paper's terms.
+// ============================================================================
+// Coherence:   C(x,t) = ∫ L(x,τ) dτ      — accumulated shared significance
+// Rupture:     δ(now) fires when C·Ω = 1 — Pod mitosis / recognition pulse
+// Regeneration: R = ∫ φ · exp(C/Ω) · Θ dτ — creativity from coherence-weighted past
+// Beauty:      B(C) = exp(C/Ω)·(C* − C)   — the moment most alive, one Ω before rupture
+// Symmetry:    Z₂ (Ω=1/π, C*=π)  vs  SO(2) (Ω=1/2π, C*=2π).  Ratio = 2.
+// ============================================================================
+
+const TAU = Math.PI * 2;
+const PI = Math.PI;
+
+// Symmetry class constants (Z₂ for member–member bilateral coherence)
+const OMEGA_Z2 = 1 / PI;          // ≈ 0.318
+const CSTAR_Z2 = PI;              // = 3.14159
+const OMEGA_SO2 = 1 / (2 * PI);   // ≈ 0.159
+const CSTAR_SO2 = 2 * PI;         // = 6.283
+
+// Canvas setup
+const cvs = document.getElementById('stage');
+const ctx = cvs.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  const rect = cvs.getBoundingClientRect();
+  W = rect.width;
+  H = rect.height;
+  cvs.width = Math.floor(W * DPR);
+  cvs.height = Math.floor(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+// Palette
+const PAL = {
+  parchment: '#f4f1eb',
+  parchmentDeep: '#e9e3d6',
+  ink: '#2a2418',
+  inkSoft: '#4a4030',
+  inkFade: '#7a6f5c',
+  amber: '#b8842c',
+  amberWarm: '#d99a3a',
+  amberGlow: '#f0c060',
+  iceplant: '#b85268',
+  moss: '#6a7a4a',
+  membrane: '#8a7f6a',
+};
+
+// ── State ──────────────────────────────────────────────────────────────────
+const state = {
+  scene: 0,
+  playing: true,
+  speed: 1.10,          // global time multiplier — sets the simulation pace
+  sceneTime: 0,         // seconds within the current scene
+  members: [],          // {id, podId, x, y, vx, vy, homeX, homeY, glow, age}
+  pods: [],             // {id, cx, cy, r, members:[], C, Omega, Cstar, recognitionPulse, mitosisProgress}
+  ties: [],             // {a, b, podId, C, Omega, age, dormant, weight}
+  artifacts: [],        // recognition glyphs for scene 6
+  visitor: null,        // visitor for scene 4
+  membraneFlash: 0,     // scene 4 membrane handshake
+  mitosisDone: false,   // scene 5 latch
+  daughterTies: [],     // scene 5 fading inheritance
+  loopAngle: 0,         // scene 6 self-booting loop rotation
+};
+
+let lastT = performance.now();
+
+// ── Scene definitions ──────────────────────────────────────────────────────
+const SCENES = [
+  {
+    label: 'Scene 1',
+    title: 'A member alone',
+    caption: 'A single member — without relationship, value barely accumulates',
+    body: `
+      <p>Each <strong>face</strong> is a member, a single human being with their own creative resource — attention, skill, willingness. The colour they carry is the trace of their personal history.</p>
+      <p>Alone, a member's accumulated value rises only slowly. The vertical bar at the edge of the canvas shows this.</p>
+      <p>In Bill's framing, the foundational unit of value is not the individual but the relationship. Watch what happens when the dot is joined.</p>
+      <div class="annotation">Bill: "A single individual is not a Pod L(0), because the foundational unit is relational. The minimum is two."</div>
+    `,
+  },
+  {
+    label: 'Scene 2',
+    title: 'A Pod L(0) forms',
+    caption: 'Members find each other — coherence accumulates along every tie',
+    body: `
+      <p>Members arrive one by one, up to <strong>eight</strong>. As they enter the Pod L(0), <strong>ties</strong> form between every pair — each tie is a small living relationship.</p>
+      <p>Along each tie, shared coherence accumulates. This is the bar at the edge filling — not from any one person, but from what happens <em>between</em> them. The Pod has a soft outer <strong>membrane</strong>, drawn as the dashed ring. It is not a wall; it is selective permeability.</p>
+      <p>Notice that ties scale faster than members: eight members make twenty-eight ties. This is why Pods are bounded.</p>
+      <p class="aside"><em>Why eight?</em> Bill's grounding is practical — attention is finite, trust requires memory, repair requires time. Working-memory research is consonant: Cowan (2010) estimates human working memory at about four chunks; Miller (1956) at 7±2. Holding rich, distinct generative models of each member sits right at the upper edge of what that capacity supports.</p>
+      <div class="annotation">Bill: "The minimum is two. The target size is eight. Above eight, a Pod may be entering pregnancy, preparing for mitosis."</div>
+    `,
+  },
+  {
+    label: 'Scene 3',
+    title: 'Recognition and memory',
+    caption: 'A contribution lands — the Pod\'s memory weights it forward',
+    body: `
+      <p>One member offers a contribution — a piece of work, an insight, an act of care. Watch the warm <strong>amber pulse</strong> travel through every tie in the Pod.</p>
+      <p>That pulse is <strong>recognition</strong>. It does more than acknowledge the act. It changes the <em>weight</em> of that moment in the Pod's shared memory. Future contributions from the same person, or in the same direction, will land more easily — the ties have learned what matters.</p>
+      <p>This is how acclaim becomes infrastructure rather than decoration. The Pod is now tuning itself toward the behaviour it wants to encourage.</p>
+      <div class="annotation">Bill: "Public recognition is not decoration. It is infrastructure. Acclaim becomes pedagogy."</div>
+    `,
+  },
+  {
+    label: 'Scene 4',
+    title: 'Two Pods meet',
+    caption: 'Soft edge, deepening core — a visitor arrives and joins',
+    body: `
+      <p>A <strong>visitor</strong> approaches the right-hand Pod from outside. Notice that there is no gate at the entrance. The visitor arrives at the soft edge, and ties begin to form lightly with the nearest members. Their colour begins to reach into the shared centre.</p>
+      <p>Between the two Pods, multiple ties form across the membranes — a relationship in <strong>multiple paths</strong>, not one fragile thread. This is multi-path confidence: the Pods know each other through many small confirmations.</p>
+      <p>Once the visitor has accumulated enough coherence with the Pod (when their C·Ω crosses 1), they formally <strong>join</strong>: a glow, a brighter smile, and they take their place as a full member. Their colour becomes part of the Pod's palette. Trust deepened with consequence — not paperwork.</p>
+      <div class="annotation">Bill: "Trust is not a gate at the entrance. It is a depth that increases with consequence."</div>
+    `,
+  },
+  {
+    label: 'Scene 5',
+    title: 'Mitosis',
+    caption: 'The Pod has filled — it divides, inherited ties fade',
+    body: `
+      <p>The Pod has accumulated enough coherence that no new person can really be known. The membrane begins to deform. At the critical moment, <strong>mitosis</strong>: the Pod divides into two daughter Pods.</p>
+      <p>The pale dashed lines between the daughters are <strong>inherited ties</strong>. They do not vanish at birth — the daughters carry forward portions of the parent's relationships. But they fade over time unless renewed by fresh contact. After about six months, only the renewed ties remain.</p>
+      <p>Continuity without inherited privilege. New life from a full vessel.</p>
+      <div class="annotation">Bill: "When a Pod divides, daughter Pods may inherit portions of the parent's relationships for a limited transition period. Six months is a useful default drop-off."</div>
+    `,
+  },
+  {
+    label: 'Scene 6',
+    title: 'The self-booting loop',
+    caption: 'The self-booting loop — creativity feeds itself',
+    body: `
+      <p>This is the test Bill cares about most. The Pod is now generating its own next layer without external feeding.</p>
+      <p>Watch the cycle: a member creates an <strong>artifact</strong> (warm dot leaving the member). The artifact reaches the network and produces <strong>recognition</strong> (amber pulse). Recognition feeds back into the member's creative resource (φ), and the next artifact appears more easily — the memory kernel has remembered what worked.</p>
+      <p>If the loop closes — if value flows back faster than it leaks out — the Pod is <strong>self-booting</strong>. It mints its own future. If not, the Pod is being subsidised, and we must change something.</p>
+      <div class="annotation">Bill: "Can the living mint mint itself? Can creativity fund the next act of creation?"</div>
+    `,
+  },
+  {
+    label: 'Scene 7',
+    title: 'A society at play',
+    caption: 'Many Pods · colours flow from agents into the commons',
+    body: `
+      <p>A whole society of Pods. Each agent carries their own colour — the trace of their personal history — visible in their body and the small swirl inside them. Their colour streams from them as a soft wisp, flowing toward the shared centre. This is <strong>corporeal memory</strong> reaching outward: φ leaving each person, weighted by exp(C/Ω), to become part of the commons.</p>
+      <p>At the centre, every Pod's wisps mingle. When colours land on top of each other they blend like wet pigment: red and blue become violet, blue and yellow become green. When the Pods are diverse, the centre grains beautifully with mixed colour; when they are in phase, the centre glows.</p>
+      <p>Members arrive from outside, swap between Pods, and occasionally leave. Pods that grow past their target size divide. The whole field breathes, and the commons records every passage.</p>
+      <div class="annotation">Bill: "From the small circle, the larger world opens. The niche becomes the forest."</div>
+    `,
+  },
+];
+
+// ── §CRR helpers ───────────────────────────────────────────────────────────
+function ruptureReady(C, Omega) {
+  // Universal rupture: C·Ω = 1
+  return C * Omega >= 1.0;
+}
+function beauty(C, Omega, Cstar) {
+  // B(C) = exp(C/Ω) · (C* − C). Peaks at C* − Ω.
+  if (C >= Cstar) return 0;
+  return Math.exp(C / Omega) * (Cstar - C);
+}
+function memoryWeight(C, Omega) {
+  // exp(C/Ω) — but capped so it doesn't blow up before rupture
+  const x = Math.min(C, OMEGA_Z2 * Math.log(20));  // cap exp factor at 20
+  return Math.exp(x / Omega);
+}
+
+// §CRR — Update Pod history buffer for swirl drawing.
+// Records the Pod's trajectory in (theta, magnitude) polar coordinates.
+// theta evolves from the Pod's collective phase; magnitude tracks current C.
+function updatePodHistory(pod, dt) {
+  pod.podPhase += dt * (0.4 + 0.3 * pod.C);  // rotation speed grows with coherence
+  if (pod.podPhase > TAU * 4) pod.podPhase -= TAU * 4;
+  // Add a sample every few frames
+  pod._historyTimer = (pod._historyTimer || 0) + dt;
+  if (pod._historyTimer > 0.08) {
+    pod._historyTimer = 0;
+    pod.history.push({
+      theta: pod.podPhase,
+      mag: Math.min(1, pod.C / 1.5),
+      age: 0,
+    });
+    if (pod.history.length > 120) pod.history.shift();
+  }
+  for (const h of pod.history) h.age += dt;
+}
+
+// §CRR — Agent phase evolution.
+// Each member's phase advances at a rate set by its local coherence + Pod phase pull.
+// After enough shared time, members phase-lock to their Pod (this is what makes
+// holographic interference work — without phase-locking, contributions cancel).
+function updateMemberPhases(pod, dt) {
+  for (const m of pod.members) {
+    m.Cmember += dt * 0.25 * (1 + 0.5 * Math.random());
+    if (m.Cmember > pod.Cstar) m.Cmember = pod.Cstar * 0.4;  // soft per-agent rupture
+    // Natural phase advance
+    m.phase += dt * 1.2;
+    // Pull toward Pod phase — strength scales with Pod coherence (more cohesion = tighter lock)
+    const lockStrength = Math.min(0.95, pod.C * 1.8);
+    const diff = pod.podPhase - m.phase;
+    // Wrap diff to [-π, π]
+    let wrapped = ((diff + PI) % TAU + TAU) % TAU - PI;
+    m.phase += wrapped * lockStrength * dt * 2;
+    if (m.phase > TAU * 4) m.phase -= TAU * 4;
+    if (m.phase < 0) m.phase += TAU * 4;
+
+    // §CRR — Blink scheduling. A blink is a tiny per-agent rupture event.
+    // Interval modulated by Cmember (high coherence = calmer, longer between blinks)
+    // and slightly faster during Pod recognition pulses (attention/excitement).
+    if (m._nextBlinkAt === undefined) {
+      m._nextBlinkAt = state.sceneTime + 1.5 + Math.random() * 3.5;
+    }
+    if (state.sceneTime >= m._nextBlinkAt && !(m._blinkUntil && state.sceneTime < m._blinkUntil)) {
+      m._blinkUntil = state.sceneTime + 0.12;   // blink duration ~120ms
+      const baseGap = 2.5 + Math.random() * 3.5;
+      const stillness = 1 + 0.6 * Math.min(1, m.Cmember / 1.5);  // calmer at high C
+      const excitement = 1 - 0.4 * (pod.recognitionPulse || 0);  // faster during pulse
+      m._nextBlinkAt = state.sceneTime + baseGap * stillness * excitement;
+    }
+  }
+}
+
+// Deterministic hue assignment using golden ratio for good colour separation
+function podHue(id) {
+  // golden ratio conjugate ≈ 0.61803, gives well-spread hues
+  return ((id * 0.61803398875) % 1) * 360;
+}
+
+let nextMemberId = 0;
+function makeMember(podId, homeX, homeY, baseHue) {
+  // §CRR — Each member carries their own colour signature, the trace of their
+  // unique history. Members within a Pod cluster around the Pod's hue but
+  // deviate by an individual jitter, so the Pod has a coherent palette while
+  // every member is still distinct. Outsiders joining a Pod retain their
+  // original hue — their history travels with them.
+  const memberHue = (baseHue === undefined)
+    ? Math.random() * 360
+    : (baseHue + (Math.random() - 0.5) * 80 + 360) % 360;
+  return {
+    id: nextMemberId++,
+    podId,
+    x: homeX + (Math.random() - 0.5) * 4,
+    y: homeY + (Math.random() - 0.5) * 4,
+    homeX, homeY,
+    vx: 0, vy: 0,
+    glow: 0,
+    age: 0,
+    contributing: false,
+    creativeReserve: 0.4 + Math.random() * 0.3,  // φ
+    // §CRR per-agent phase — evolves with accumulated local coherence
+    phase: Math.random() * TAU,
+    Cmember: 0,
+    // Member's colour — sticky across Pod changes (their personal history)
+    hue: memberHue,
+    sat: 0.55 + Math.random() * 0.20,
+    light: 0.50 + Math.random() * 0.10,
+    // Patch drift parameters for the watercolour centre — each member's
+    // patch breathes on its own period
+    patchPhase: Math.random() * TAU,
+    patchPeriod: 6 + Math.random() * 5,
+  };
+}
+
+function makePod(cx, cy, r, id) {
+  return {
+    id, cx, cy, r,
+    members: [],
+    C: 0,                       // §CRR Pod-level coherence
+    Omega: OMEGA_Z2 * 1.4,      // §CRR effective Omega
+    Cstar: CSTAR_Z2 * 0.85,     // §CRR effective C*
+    recognitionPulse: 0,
+    membraneStrength: 0.4,
+    mitosisProgress: 0,
+    hue: podHue(id),            // unique colour from id
+    history: [],                // buffer of (theta, L, age) for swirl drawing
+    podPhase: Math.random() * TAU,  // Pod's collective phase — agents phase-lock to this
+  };
+}
+
+function arrangeMembersInPod(pod) {
+  const n = pod.members.length;
+  if (n === 0) return;
+  if (n === 1) {
+    pod.members[0].homeX = pod.cx;
+    pod.members[0].homeY = pod.cy;
+    return;
+  }
+  const innerR = pod.r * 0.6;
+  for (let i = 0; i < n; i++) {
+    const theta = (i / n) * TAU - PI / 2;
+    pod.members[i].homeX = pod.cx + Math.cos(theta) * innerR;
+    pod.members[i].homeY = pod.cy + Math.sin(theta) * innerR;
+  }
+}
+
+function buildTiesForPod(pod) {
+  const ties = [];
+  const ms = pod.members;
+  for (let i = 0; i < ms.length; i++) {
+    for (let j = i + 1; j < ms.length; j++) {
+      ties.push({
+        a: ms[i].id, b: ms[j].id,
+        podId: pod.id,
+        C: 0,                        // §CRR per-tie coherence
+        Omega: OMEGA_Z2 * 1.2,       // §CRR per-tie Omega
+        age: 0,
+        dormant: false,
+        weight: 1.0,                 // exp(C/Ω) memory weight, normalised
+        inherited: false,
+        fadeStart: 0,
+      });
+    }
+  }
+  return ties;
+}
+
+function getMemberById(id) {
+  for (const m of state.members) if (m.id === id) return m;
+  return null;
+}
+
+// ── Scene loaders ──────────────────────────────────────────────────────────
+function loadScene(idx) {
+  state.scene = idx;
+  state.sceneTime = 0;
+  state.members = [];
+  state.pods = [];
+  state.ties = [];
+  state.artifacts = [];
+  state.visitor = null;
+  state.membraneFlash = 0;
+  state.mitosisDone = false;
+  state.daughterTies = [];
+  state.loopAngle = 0;
+  state.interPodTies = null;
+  state._lastArtIdx = -1;
+  state.societyTies = null;
+  state.travellers = null;
+  state._nextTravellerAt = 0;
+  nextMemberId = 0;
+
+  if (idx === 0) {
+    // One member, off-centre, drifting gently
+    const pod = makePod(W * 0.5, H * 0.5, 1, 0);
+    pod.Omega = OMEGA_Z2 * 0.8;
+    const m = makeMember(0, W * 0.5, H * 0.5);
+    pod.members.push(m);
+    state.members.push(m);
+    state.pods.push(pod);
+  } else if (idx === 1) {
+    // Pod forms over time — members appear one by one up to 8
+    const pod = makePod(W * 0.5, H * 0.5, Math.min(W, H) * 0.32, 0);
+    state.pods.push(pod);
+  } else if (idx === 2) {
+    // Pod of 6, immediately formed, recognition pulse during scene
+    const pod = makePod(W * 0.5, H * 0.5, Math.min(W, H) * 0.30, 0);
+    state.pods.push(pod);
+    for (let i = 0; i < 6; i++) {
+      const m = makeMember(0, pod.cx, pod.cy);
+      pod.members.push(m);
+      state.members.push(m);
+    }
+    arrangeMembersInPod(pod);
+    for (const m of pod.members) { m.x = m.homeX; m.y = m.homeY; }
+    state.ties = buildTiesForPod(pod);
+    // Pre-warm coherence so the Pod feels established
+    for (const t of state.ties) t.C = 0.5;
+    pod.C = 0.5;
+  } else if (idx === 3) {
+    // Two pods + visitor
+    const pod1 = makePod(W * 0.32, H * 0.55, Math.min(W, H) * 0.22, 0);
+    const pod2 = makePod(W * 0.70, H * 0.45, Math.min(W, H) * 0.22, 1);
+    state.pods.push(pod1, pod2);
+    for (let i = 0; i < 5; i++) {
+      const m = makeMember(0, pod1.cx, pod1.cy, pod1.hue);
+      pod1.members.push(m);
+      state.members.push(m);
+    }
+    for (let i = 0; i < 5; i++) {
+      const m = makeMember(1, pod2.cx, pod2.cy, pod2.hue);
+      pod2.members.push(m);
+      state.members.push(m);
+    }
+    arrangeMembersInPod(pod1);
+    arrangeMembersInPod(pod2);
+    for (const m of state.members) { m.x = m.homeX; m.y = m.homeY; }
+    state.ties.push(...buildTiesForPod(pod1));
+    state.ties.push(...buildTiesForPod(pod2));
+    for (const t of state.ties) t.C = 0.6;
+    pod1.C = 0.6; pod2.C = 0.6;
+    // Visitor — starts off-screen to the right of pod2. Their hue is chosen
+    // to contrast with pod2's palette so the join visibly changes the Pod's
+    // colour signature when it happens.
+    state.visitor = {
+      x: W * 0.95, y: H * 0.45,
+      targetX: pod2.cx + pod2.r * 0.92,
+      targetY: pod2.cy,
+      arrived: false,
+      glow: 0,
+      ties: [],
+      hue: (pod2.hue + 180) % 360,    // visitor's personal history — opposite hue
+      sat: 0.65, light: 0.55,
+    };
+  } else if (idx === 4) {
+    // Mitosis: one full pod with 9 members → divides into two
+    const pod = makePod(W * 0.5, H * 0.5, Math.min(W, H) * 0.32, 0);
+    pod.C = 0.85; // pre-ripe
+    state.pods.push(pod);
+    for (let i = 0; i < 9; i++) {
+      const m = makeMember(0, pod.cx, pod.cy, pod.hue);
+      pod.members.push(m);
+      state.members.push(m);
+    }
+    arrangeMembersInPod(pod);
+    for (const m of pod.members) { m.x = m.homeX; m.y = m.homeY; }
+    state.ties = buildTiesForPod(pod);
+    for (const t of state.ties) t.C = 0.85;
+  } else if (idx === 5) {
+    // Self-booting loop: a Pod with continuous create→recognise→create cycle
+    const pod = makePod(W * 0.5, H * 0.5, Math.min(W, H) * 0.34, 0);
+    state.pods.push(pod);
+    for (let i = 0; i < 6; i++) {
+      const m = makeMember(0, pod.cx, pod.cy, pod.hue);
+      pod.members.push(m);
+      state.members.push(m);
+    }
+    arrangeMembersInPod(pod);
+    for (const m of pod.members) { m.x = m.homeX; m.y = m.homeY; }
+    state.ties = buildTiesForPod(pod);
+    for (const t of state.ties) t.C = 0.5;
+    pod.C = 0.5;
+  } else if (idx === 6) {
+    // §CRR — A society of Pods. Many small Pods scattered around the canvas,
+    // each with its own unique hue, sharing a central interference plane.
+    // Inter-Pod ties form a loose social fabric; travellers occasionally cross.
+    const cx = W * 0.5, cy = H * 0.5;
+    const N_PODS = 13;                        // a small society
+    const ringR = Math.min(W, H) * 0.42;
+    for (let i = 0; i < N_PODS; i++) {
+      // Position around the central interference plane (not too uniform)
+      const theta = (i / N_PODS) * TAU + (Math.random() - 0.5) * 0.25;
+      const rad = ringR * (0.78 + Math.random() * 0.22);
+      const podR = Math.min(W, H) * (0.06 + Math.random() * 0.03);
+      const px = cx + Math.cos(theta) * rad;
+      const py = cy + Math.sin(theta) * rad;
+      const pod = makePod(px, py, podR, i);
+      // Smaller initial member count so growth from outsiders is visible
+      const nMem = 2 + Math.floor(Math.random() * 3);
+      for (let j = 0; j < nMem; j++) {
+        const m = makeMember(i, pod.cx, pod.cy, pod.hue);
+        pod.members.push(m);
+        state.members.push(m);
+      }
+      // Pre-warm Pod coherence so the society starts in mid-flow
+      pod.C = 0.6 + Math.random() * 0.4;
+      // Random initial Pod phase so society has diversity
+      pod.podPhase = Math.random() * TAU;
+      arrangeMembersInPod(pod);
+      for (const m of pod.members) {
+        m.x = m.homeX;
+        m.y = m.homeY;
+        m.Cmember = 0.4 + Math.random() * 0.5;
+      }
+      // Intra-Pod ties
+      const podTies = buildTiesForPod(pod);
+      for (const t of podTies) t.C = 0.5 + Math.random() * 0.4;
+      state.ties.push(...podTies);
+      state.pods.push(pod);
+    }
+    // Inter-Pod ties — a loose social fabric, each Pod tied to 2-3 nearest others
+    rebuildSocietyTies();
+    // Society dynamics state
+    state.travellers = [];
+    state._nextSwapAt = 2.0;
+    state._nextOutsiderAt = 3.0;
+    state._nextDepartureAt = 12.0;     // first departure ~12s in — let society settle
+    state._nextPodId = N_PODS;          // next id for daughter Pods after splits
+  }
+
+  updateNarration();
+}
+
+// ── Per-scene update logic ─────────────────────────────────────────────────
+function updateScene1(dt) {
+  // Single member drifts; L is tiny so C barely accumulates
+  const m = state.members[0];
+  m.age += dt;
+  // gentle brownian
+  m.vx += (Math.random() - 0.5) * 4 * dt;
+  m.vy += (Math.random() - 0.5) * 4 * dt;
+  m.vx *= 0.96; m.vy *= 0.96;
+  m.x += m.vx * dt * 12;
+  m.y += m.vy * dt * 12;
+  // pull back to centre softly
+  m.vx += (m.homeX - m.x) * 0.6 * dt;
+  m.vy += (m.homeY - m.y) * 0.6 * dt;
+  // Pod-level C grows VERY slowly (no relationship → minimal L)
+  state.pods[0].C += 0.005 * dt;  // §CRR L for solo member is essentially noise
+}
+
+function updateScene2(dt) {
+  const pod = state.pods[0];
+  // Spawn members one by one, every ~1.6 seconds (slowed by speed slider via dt scaling)
+  const SPAWN_INTERVAL = 1.6;
+  const targetCount = Math.min(8, Math.floor(state.sceneTime / SPAWN_INTERVAL) + 1);
+  while (pod.members.length < targetCount) {
+    const m = makeMember(0, pod.cx + (Math.random() - 0.5) * 8, pod.cy - pod.r * 1.3, pod.hue);
+    pod.members.push(m);
+    state.members.push(m);
+    arrangeMembersInPod(pod);
+    state.ties = buildTiesForPod(pod);
+  }
+  // Members move to home
+  for (const m of pod.members) {
+    m.vx += (m.homeX - m.x) * 4 * dt;
+    m.vy += (m.homeY - m.y) * 4 * dt;
+    m.vx *= 0.85; m.vy *= 0.85;
+    m.x += m.vx * dt;
+    m.y += m.vy * dt;
+  }
+  // Ties accumulate C ~ L*dt where L scales with members in proximity
+  for (const t of state.ties) {
+    const ma = getMemberById(t.a), mb = getMemberById(t.b);
+    if (!ma || !mb) continue;
+    const dist = Math.hypot(ma.x - mb.x, ma.y - mb.y);
+    const proximity = Math.max(0, 1 - dist / (pod.r * 2));
+    t.C += 0.15 * proximity * dt;          // §CRR L = proximity·k for tie
+    t.weight = memoryWeight(t.C, t.Omega);
+  }
+  // Pod-level C = mean of tie Cs
+  if (state.ties.length > 0) {
+    let s = 0;
+    for (const t of state.ties) s += t.C;
+    pod.C = s / state.ties.length;
+  }
+  pod.membraneStrength = 0.3 + 0.5 * Math.min(1, pod.C / 1.5);
+}
+
+function updateScene3(dt) {
+  const pod = state.pods[0];
+  // Recognition pulse: fires at sceneTime ≈ 3s, then again at 9s, 15s
+  const PULSE_TIMES = [3, 9, 15];
+  for (const pt of PULSE_TIMES) {
+    if (state.sceneTime >= pt && state.sceneTime < pt + 0.1) {
+      // Pick contributor — rotate through members
+      const contributor = pod.members[Math.floor(pt / 6) % pod.members.length];
+      contributor.contributing = true;
+      contributor.glow = 1;
+      pod.recognitionPulse = 1;
+    }
+  }
+  // Decay glows
+  for (const m of pod.members) m.glow *= Math.pow(0.4, dt);
+  pod.recognitionPulse *= Math.pow(0.25, dt);
+  // Recognition pulse strengthens tie weights for ties touching the contributor
+  for (const t of state.ties) {
+    const ma = getMemberById(t.a), mb = getMemberById(t.b);
+    const touchesContributor = (ma && ma.contributing) || (mb && mb.contributing);
+    if (touchesContributor && pod.recognitionPulse > 0.5) {
+      t.C += 0.4 * pod.recognitionPulse * dt;   // §CRR — high-C moment, exp kernel will amplify
+    } else {
+      t.C += 0.04 * dt;
+    }
+    t.weight = memoryWeight(t.C, t.Omega);
+  }
+  // Reset contributing flag after pulse fades
+  for (const m of pod.members) {
+    if (m.contributing && pod.recognitionPulse < 0.05) m.contributing = false;
+  }
+  // §CRR — Pod-level coherence = mean of tie Cs. As ties strengthen (especially
+  // those touching contributors during recognition pulses), the Pod's C rises
+  // and the bar at the edge climbs.
+  if (state.ties.length > 0) {
+    let s = 0;
+    for (const t of state.ties) s += t.C;
+    pod.C = s / state.ties.length;
+  }
+  // Gentle breathing motion
+  for (const m of pod.members) {
+    m.x += (m.homeX - m.x) * 3 * dt;
+    m.y += (m.homeY - m.y) * 3 * dt;
+  }
+  pod.membraneStrength = 0.5 + 0.4 * Math.min(1, pod.C / 1.5);
+}
+
+function updateScene4(dt) {
+  // Two pods, visitor approaches the right one
+  const pod2 = state.pods[1];
+  const v = state.visitor;
+  if (!v) return;   // visitor has joined and become a member — nothing left to do here
+  // Visitor approach
+  if (!v.arrived) {
+    const dx = v.targetX - v.x, dy = v.targetY - v.y;
+    const d = Math.hypot(dx, dy);
+    if (d < 4) { v.arrived = true; }
+    else {
+      v.x += (dx / d) * 30 * dt;
+      v.y += (dy / d) * 30 * dt;
+    }
+  } else {
+    v.glow = Math.min(1, v.glow + 0.3 * dt);
+    // Form visitor-ties to closest 2 members of pod2 over time
+    if (v.ties.length < 2 && state.sceneTime > 4) {
+      const sorted = [...pod2.members].sort((a, b) => {
+        return Math.hypot(a.x - v.x, a.y - v.y) - Math.hypot(b.x - v.x, b.y - v.y);
+      });
+      const target = sorted[v.ties.length];
+      v.ties.push({ to: target.id, C: 0, Omega: OMEGA_Z2 * 1.2 });
+    }
+    for (const vt of v.ties) {
+      vt.C += 0.12 * dt;   // §CRR slow approach — soft edge
+    }
+    // §CRR — Join condition: once the visitor's accumulated coherence with the
+    // Pod crosses C·Ω = 1, they have built enough significance to formally enter.
+    // Bill's framing: "trust is not a gate at the entrance — it is a depth that
+    // increases with consequence." The Cramér-Rao saturation is the moment that
+    // depth becomes membership.
+    if (!v._joining && v.ties.length >= 2) {
+      let totalC = 0;
+      for (const vt of v.ties) totalC += vt.C;
+      // Two ties × C·Ω = 1 each gives totalC ≈ 2/Omega ≈ 2π. Use a slightly lower
+      // threshold so the moment lands during the scene at default speed.
+      const joinThreshold = 1.6;
+      if (totalC >= joinThreshold) {
+        v._joining = true;
+        v._joinAt = state.sceneTime + 0.3;   // small pause so the eye registers it
+        pod2.recognitionPulse = 1;
+        // Pulse the visitor-ties one last time
+        for (const vt of v.ties) vt._pulse = 1;
+      }
+    }
+    if (v._joining && state.sceneTime >= v._joinAt) {
+      visitorJoinsPod(v, pod2);
+      state.visitor = null;
+    }
+  }
+  // Inter-pod ties — gentle accumulation across the membrane between the two Pods
+  if (!state.interPodTies) state.interPodTies = buildInterPodTies();
+  for (const t of state.interPodTies) {
+    t.C += 0.08 * dt;
+  }
+  // Light breathing for both pods
+  for (const m of state.members) {
+    m.x += (m.homeX - m.x) * 3 * dt;
+    m.y += (m.homeY - m.y) * 3 * dt;
+  }
+  // Membrane flash when visitor arrives
+  if (v && v.arrived && state.membraneFlash < 1) {
+    state.membraneFlash = Math.min(1, state.membraneFlash + 0.3 * dt);
+  }
+}
+
+// §CRR — Convert the visitor into a full Pod member. The visitor's hue
+// becomes a permanent member of the Pod's palette; ties are upgraded from
+// "approach ties" to proper intra-Pod ties; the Pod's centroid hue updates.
+function visitorJoinsPod(v, pod) {
+  // Create the member with the visitor's existing hue (their personal history travels with them)
+  const newMember = makeMember(pod.id, v.x, v.y, v.hue !== undefined ? v.hue : pod.hue);
+  if (v.hue !== undefined) {
+    newMember.hue = v.hue;
+    newMember.sat = v.sat !== undefined ? v.sat : 0.6;
+    newMember.light = v.light !== undefined ? v.light : 0.55;
+  }
+  newMember.x = v.x; newMember.y = v.y;
+  newMember.glow = 1;            // welcoming glow
+  pod.members.push(newMember);
+  state.members.push(newMember);
+  arrangeMembersInPod(pod);
+  // Convert each of the visitor's two approach-ties into a proper intra-Pod tie,
+  // pre-loaded with the coherence the visitor had built up. The other members
+  // already knew this person; that knowledge survives the transition.
+  for (const vt of v.ties) {
+    state.ties.push({
+      a: vt.to, b: newMember.id,
+      podId: pod.id,
+      C: vt.C * 0.8,             // §CRR — partial retention through the rupture (~80%)
+      Omega: OMEGA_Z2 * 1.2,
+      age: 0,
+      dormant: false,
+      weight: memoryWeight(vt.C * 0.8, OMEGA_Z2 * 1.2),
+      inherited: false,
+      fadeStart: 0,
+    });
+  }
+  // For members not yet tied: form fresh low-coherence ties (newcomer to less-familiar members)
+  for (const other of pod.members) {
+    if (other === newMember) continue;
+    const alreadyTied = state.ties.some(t =>
+      t.podId === pod.id &&
+      ((t.a === other.id && t.b === newMember.id) || (t.b === other.id && t.a === newMember.id)));
+    if (!alreadyTied) {
+      state.ties.push({
+        a: other.id, b: newMember.id,
+        podId: pod.id, C: 0.2,
+        Omega: OMEGA_Z2 * 1.2,
+        age: 0, dormant: false,
+        weight: 1, inherited: false, fadeStart: 0,
+      });
+    }
+  }
+  pod.recognitionPulse = 1;
+  pod.hue = centroidHue(pod.members);
+}
+
+function buildInterPodTies() {
+  const [p1, p2] = state.pods;
+  const ties = [];
+  // Three multi-path ties between selected member pairs across pods
+  const pairs = [[0, 0], [2, 2], [4, 1]];
+  for (const [i, j] of pairs) {
+    if (i < p1.members.length && j < p2.members.length) {
+      ties.push({
+        from: p1.members[i].id,
+        to: p2.members[j].id,
+        C: 0,
+        Omega: OMEGA_Z2 * 1.5,   // §CRR inter-pod ties have larger Omega — softer
+      });
+    }
+  }
+  return ties;
+}
+
+function updateScene5(dt) {
+  const pod = state.pods[0];
+  if (!state.mitosisDone) {
+    // Pod-level C climbs until C·Ω ≥ 1 — mitosis fires
+    pod.C += 0.28 * dt;
+    pod.mitosisProgress = Math.min(1, pod.C * pod.Omega);  // §CRR rupture readiness
+    // The membrane deforms — encoded in renderPod via mitosisProgress
+    // Trigger division when C·Ω = 1
+    if (pod.C * pod.Omega >= 1.0 && state.sceneTime > 3) {
+      doMitosis();
+      state.mitosisDone = true;
+    }
+  } else {
+    // After mitosis: two daughter pods drift apart, inherited ties fade
+    const [d1, d2] = state.pods;
+    const sepTarget = Math.min(W, H) * 0.5;
+    const cx = (d1.cx + d2.cx) / 2;
+    const dx = d2.cx - d1.cx;
+    const targetGap = sepTarget;
+    const factor = targetGap / Math.max(1, Math.abs(dx));
+    d1.cx += (d1.cx - cx) * (factor - 1) * 0.4 * dt;
+    d2.cx += (d2.cx - cx) * (factor - 1) * 0.4 * dt;
+    // Update member home positions
+    arrangeMembersInPod(d1);
+    arrangeMembersInPod(d2);
+    for (const m of state.members) {
+      m.x += (m.homeX - m.x) * 3 * dt;
+      m.y += (m.homeY - m.y) * 3 * dt;
+    }
+    // Inherited ties fade (after a brief grace period)
+    const sinceMitosis = state.sceneTime - 5; // rough
+    for (const t of state.daughterTies) {
+      const fadeAge = state.sceneTime - t.fadeStart;
+      // Six-month decay compressed to ~12 seconds
+      t.weight = Math.max(0, 1 - fadeAge / 12);
+    }
+  }
+}
+
+function doMitosis() {
+  const pod = state.pods[0];
+  // Split members roughly in half
+  const half = Math.ceil(pod.members.length / 2);
+  const groupA = pod.members.slice(0, half);
+  const groupB = pod.members.slice(half);
+  // Two daughter pods
+  const d1 = makePod(W * 0.5 - Math.min(W, H) * 0.18, H * 0.5, Math.min(W, H) * 0.22, 0);
+  const d2 = makePod(W * 0.5 + Math.min(W, H) * 0.18, H * 0.5, Math.min(W, H) * 0.22, 1);
+  d1.members = groupA;
+  d2.members = groupB;
+  for (const m of groupA) m.podId = 0;
+  for (const m of groupB) m.podId = 1;
+  d1.C = pod.C * 0.4;   // §CRR partial reset on rupture
+  d2.C = pod.C * 0.4;
+  arrangeMembersInPod(d1);
+  arrangeMembersInPod(d2);
+  // Intra-pod ties for each daughter
+  state.ties = [...buildTiesForPod(d1), ...buildTiesForPod(d2)];
+  for (const t of state.ties) t.C = 0.35;
+  // Inherited daughter ties — between members across daughters (these will fade)
+  state.daughterTies = [];
+  for (const ma of groupA) {
+    for (const mb of groupB) {
+      state.daughterTies.push({
+        a: ma.id, b: mb.id,
+        weight: 1.0,
+        fadeStart: state.sceneTime,
+        inherited: true,
+      });
+    }
+  }
+  state.pods = [d1, d2];
+}
+
+function updateScene6(dt) {
+  const pod = state.pods[0];
+  // Rotate which member is creating
+  state.loopAngle += dt * 0.8;
+  // Every 3.5 seconds, a new artifact is launched from a member
+  const ARTIFACT_INTERVAL = 3.5;
+  const currentArtIdx = Math.floor(state.sceneTime / ARTIFACT_INTERVAL);
+  if (state._lastArtIdx === undefined || currentArtIdx > state._lastArtIdx) {
+    state._lastArtIdx = currentArtIdx;
+    // Choose creator based on creative reserve (φ) — higher φ = more likely
+    const candidates = [...pod.members].sort((a, b) => b.creativeReserve - a.creativeReserve);
+    const creator = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
+    creator.glow = 1;
+    creator.contributing = true;
+    creator.creativeReserve = Math.max(0.1, creator.creativeReserve - 0.15);   // φ consumed
+    // Launch artifact — orbits to centre, then bursts
+    state.artifacts.push({
+      x: creator.x,
+      y: creator.y,
+      targetX: pod.cx,
+      targetY: pod.cy,
+      creatorId: creator.id,
+      age: 0,
+      phase: 'travel',
+      radius: 4,
+    });
+  }
+  // Update artifacts
+  for (const a of state.artifacts) {
+    a.age += dt;
+    if (a.phase === 'travel') {
+      const dx = a.targetX - a.x, dy = a.targetY - a.y;
+      const d = Math.hypot(dx, dy);
+      if (d < 6) {
+        a.phase = 'burst';
+        a.burstAge = 0;
+        pod.recognitionPulse = 1;
+      } else {
+        a.x += (dx / d) * 45 * dt;
+        a.y += (dy / d) * 45 * dt;
+      }
+    } else if (a.phase === 'burst') {
+      a.burstAge = (a.burstAge || 0) + dt;
+      a.radius = 4 + a.burstAge * 80;
+      // When pulse reaches each member, restore their φ
+      for (const m of pod.members) {
+        if (m.id === a.creatorId) continue;
+        const dm = Math.hypot(m.x - pod.cx, m.y - pod.cy);
+        if (a.radius >= dm && !m._gotPulseFrom?.includes(a)) {
+          m.creativeReserve = Math.min(1, m.creativeReserve + 0.08);  // φ refilled by recognition
+          m.glow = Math.max(m.glow, 0.6);
+          if (!m._gotPulseFrom) m._gotPulseFrom = [];
+          m._gotPulseFrom.push(a);
+        }
+      }
+      // Also boost creator's φ (recognition feeds back)
+      const creator = getMemberById(a.creatorId);
+      if (creator && a.burstAge > 0.4 && !a._creatorRefilled) {
+        creator.creativeReserve = Math.min(1, creator.creativeReserve + 0.18);
+        a._creatorRefilled = true;
+      }
+    }
+  }
+  // Remove old artifacts
+  state.artifacts = state.artifacts.filter(a => a.phase !== 'burst' || a.burstAge < 1.8);
+  // Decay glows
+  for (const m of pod.members) m.glow *= Math.pow(0.5, dt);
+  pod.recognitionPulse *= Math.pow(0.3, dt);
+  // Ties accumulate gently
+  for (const t of state.ties) {
+    t.C += 0.06 * dt;
+    if (pod.recognitionPulse > 0.4) t.C += 0.2 * pod.recognitionPulse * dt;
+    t.weight = memoryWeight(t.C, t.Omega);
+  }
+}
+
+// §CRR — Society dynamics: members swap, outsiders arrive, full Pods divide.
+// All ties keyed by stable Pod.id (set on creation, persists through state.pods edits).
+
+// Compute the centroid hue of a set of members (using vector mean on the colour wheel)
+function centroidHue(members) {
+  if (members.length === 0) return 0;
+  let sx = 0, sy = 0;
+  for (const m of members) {
+    const rad = m.hue * PI / 180;
+    sx += Math.cos(rad);
+    sy += Math.sin(rad);
+  }
+  return ((Math.atan2(sy, sx) * 180 / PI) + 360) % 360;
+}
+
+// Rebuild society ties after any membership change. Uses stable Pod.id.
+function rebuildSocietyTies() {
+  const ties = [];
+  const pods = state.pods;
+  for (let i = 0; i < pods.length; i++) {
+    const dists = [];
+    for (let j = 0; j < pods.length; j++) {
+      if (i === j) continue;
+      const d = Math.hypot(pods[i].cx - pods[j].cx, pods[i].cy - pods[j].cy);
+      dists.push({ id: pods[j].id, d });
+    }
+    dists.sort((a, b) => a.d - b.d);
+    const K = Math.min(3, dists.length);
+    for (let k = 0; k < K; k++) {
+      const other = dists[k].id;
+      if (other <= pods[i].id) continue;  // avoid duplicates
+      ties.push({
+        a: pods[i].id, b: other,
+        C: 0.3 + Math.random() * 0.3,
+        Omega: OMEGA_Z2 * 1.6,
+        pulse: 0,
+      });
+    }
+  }
+  state.societyTies = ties;
+}
+
+function getPodById(id) {
+  for (const p of state.pods) if (p.id === id) return p;
+  return null;
+}
+
+// §CRR — Mitosis at society scale: when a Pod exceeds capacity, divide.
+// Daughter Pods inherit half the members each (preserving their hues, and thus
+// their accumulated histories). The parent is removed from state.pods.
+function podSplit(pod, nextPodIdSetter) {
+  // Place daughters along the parent's hue axis — visually nearby but offset
+  const angle = Math.random() * TAU;
+  const offset = pod.r * 1.2;
+  const d1 = makePod(pod.cx + Math.cos(angle) * offset, pod.cy + Math.sin(angle) * offset,
+                     pod.r * 0.92, nextPodIdSetter());
+  const d2 = makePod(pod.cx - Math.cos(angle) * offset, pod.cy - Math.sin(angle) * offset,
+                     pod.r * 0.92, nextPodIdSetter());
+  // Split members — sort by hue, take alternate to produce two distinct palettes
+  const sorted = [...pod.members].sort((a, b) => a.hue - b.hue);
+  for (let i = 0; i < sorted.length; i++) {
+    const target = (i % 2 === 0) ? d1 : d2;
+    target.members.push(sorted[i]);
+    sorted[i].podId = target.id;
+  }
+  d1.C = pod.C * 0.4;
+  d2.C = pod.C * 0.4;
+  // Recompute Pod hue from member centroid
+  d1.hue = centroidHue(d1.members);
+  d2.hue = centroidHue(d2.members);
+  arrangeMembersInPod(d1);
+  arrangeMembersInPod(d2);
+  return [d1, d2];
+}
+
+// §CRR — Outsider arrival: a new agent spawns from the canvas edge with a
+// random hue (their personal history) and travels to a target Pod.
+function spawnOutsider() {
+  // Choose target Pod — preference for those with fewer members
+  const candidates = state.pods.filter(p => p.members.length < 8);
+  if (candidates.length === 0) return null;
+  const target = candidates[Math.floor(Math.random() * candidates.length)];
+  // Spawn from edge
+  const side = Math.floor(Math.random() * 4);
+  let sx, sy;
+  if (side === 0) { sx = Math.random() * W; sy = -10; }
+  else if (side === 1) { sx = W + 10; sy = Math.random() * H; }
+  else if (side === 2) { sx = Math.random() * W; sy = H + 10; }
+  else { sx = -10; sy = Math.random() * H; }
+  const newHue = Math.random() * 360;  // outsider brings their own hue
+  return {
+    x: sx, y: sy,
+    targetX: target.cx + (Math.random() - 0.5) * target.r * 0.5,
+    targetY: target.cy + (Math.random() - 0.5) * target.r * 0.5,
+    toPodId: target.id,
+    fromPodId: -1,  // -1 = from outside the society
+    hue: newHue,
+    sat: 0.6, light: 0.55,
+    progress: 0,
+    isOutsider: true,
+    _startX: sx, _startY: sy,
+  };
+}
+
+function updateScene7(dt) {
+  // Members breathe gently around their homes
+  for (const m of state.members) {
+    m.x += (m.homeX - m.x) * 3 * dt + (Math.random() - 0.5) * 0.4;
+    m.y += (m.homeY - m.y) * 3 * dt + (Math.random() - 0.5) * 0.4;
+    m.glow *= Math.pow(0.6, dt);
+  }
+
+  // §CRR — Pod-level coherence accumulation and rupture
+  let needRebuild = false;
+  const podsToProcess = [...state.pods];   // snapshot — we may modify state.pods
+  for (const pod of podsToProcess) {
+    if (!state.pods.includes(pod)) continue;  // skip if already split
+    // Coherence grows faster in fuller Pods (more members → more interactions)
+    const fullness = pod.members.length / 8;
+    pod.C += dt * 0.04 * (0.5 + fullness);
+    pod.recognitionPulse *= Math.pow(0.4, dt);
+    // Rupture
+    if (pod.C * pod.Omega >= 1.0) {
+      pod.recognitionPulse = 1;
+      pod.C = pod.C * 0.55;
+      if (pod.members.length > 0) {
+        const m = pod.members[Math.floor(Math.random() * pod.members.length)];
+        m.glow = 1;
+      }
+      // Pulse inter-Pod ties touching this Pod
+      for (const st of state.societyTies) {
+        if (st.a === pod.id || st.b === pod.id) {
+          st.pulse = 1;
+          st.C += 0.15;
+        }
+      }
+      // §CRR — Mitosis at scale: if Pod has reached target size AND
+      // ruptures, it divides. Models the "creative moment overflows the vessel."
+      if (pod.members.length >= 7) {
+        const [d1, d2] = podSplit(pod, () => state._nextPodId++);
+        const idx = state.pods.indexOf(pod);
+        if (idx >= 0) {
+          state.pods.splice(idx, 1, d1, d2);
+          // Update ties — intra-Pod ties: rebuild for each daughter
+          state.ties = state.ties.filter(t => {
+            const ma = getMemberById(t.a), mb = getMemberById(t.b);
+            return !(ma && mb && (pod.members.indexOf(ma) >= 0 || pod.members.indexOf(mb) >= 0));
+          });
+          state.ties.push(...buildTiesForPod(d1));
+          state.ties.push(...buildTiesForPod(d2));
+          // Inherited daughter ties — between the two daughters, fade over ~12s
+          for (const ma of d1.members) {
+            for (const mb of d2.members) {
+              state.daughterTies.push({
+                a: ma.id, b: mb.id,
+                weight: 1.0,
+                fadeStart: state.sceneTime,
+                inherited: true,
+              });
+            }
+          }
+          needRebuild = true;
+        }
+      }
+    }
+  }
+
+  // Inter-Pod ties decay/grow
+  for (const st of state.societyTies) {
+    st.pulse *= Math.pow(0.5, dt);
+    st.C += dt * 0.02;
+  }
+  // Daughter ties fade
+  for (const t of state.daughterTies) {
+    t.weight = Math.max(0, t.weight - dt / 12);   // ~12 seconds to vanish
+  }
+  state.daughterTies = state.daughterTies.filter(t => t.weight > 0.01);
+
+  // §CRR — Member swaps. Every ~3 seconds, a member crosses to a connected Pod.
+  if (state.sceneTime > state._nextSwapAt) {
+    state._nextSwapAt = state.sceneTime + 1.5 + Math.random() * 1.5;
+    // Pick a Pod with at least 3 members (so it can spare one)
+    const sourceCandidates = state.pods.filter(p => p.members.length >= 3);
+    if (sourceCandidates.length > 0) {
+      const src = sourceCandidates[Math.floor(Math.random() * sourceCandidates.length)];
+      const connections = state.societyTies
+        .filter(st => st.a === src.id || st.b === src.id)
+        .map(st => st.a === src.id ? st.b : st.a);
+      if (connections.length > 0) {
+        const dstId = connections[Math.floor(Math.random() * connections.length)];
+        const dst = getPodById(dstId);
+        if (dst && dst.members.length < 8) {
+          const member = src.members[Math.floor(Math.random() * src.members.length)];
+          // Launch as a traveller — the actual membership transfer happens on arrival
+          state.travellers.push({
+            x: member.x, y: member.y,
+            _startX: member.x, _startY: member.y,
+            targetX: dst.cx + (Math.random() - 0.5) * dst.r * 0.4,
+            targetY: dst.cy + (Math.random() - 0.5) * dst.r * 0.4,
+            memberId: member.id,
+            fromPodId: src.id, toPodId: dst.id,
+            hue: member.hue, sat: member.sat, light: member.light,
+            progress: 0,
+            speed: 0.32 + Math.random() * 0.15,
+            isSwap: true,
+          });
+          // Mark member as in transit — they vanish from the source Pod's local presence
+          // We don't remove them from members[] until arrival, so the swirl/centre
+          // can still account for them. We just visually hide them.
+          member._inTransit = true;
+        }
+      }
+    }
+  }
+
+  // §CRR — Outsider arrivals. New agents appear from edge every ~6-12 seconds.
+  if (state.sceneTime > state._nextOutsiderAt) {
+    state._nextOutsiderAt = state.sceneTime + 3.5 + Math.random() * 3;
+    const outsider = spawnOutsider();
+    if (outsider) state.travellers.push(outsider);
+  }
+
+  // §CRR — Departures. Occasionally a member leaves the society entirely,
+  // travelling to the canvas edge and fading out. Models natural attrition.
+  // Pods don't run dry — only Pods with ≥3 members can lose someone.
+  if (state.sceneTime > state._nextDepartureAt) {
+    state._nextDepartureAt = state.sceneTime + 8 + Math.random() * 10;
+    const richPods = state.pods.filter(p => p.members.length >= 3);
+    if (richPods.length > 0) {
+      const src = richPods[Math.floor(Math.random() * richPods.length)];
+      const member = src.members[Math.floor(Math.random() * src.members.length)];
+      // Pick a destination on the canvas edge — outward from the Pod's centre
+      const cx = W / 2, cy = H / 2;
+      const dx = src.cx - cx, dy = src.cy - cy;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const margin = 30;
+      const tx = src.cx + (dx / len) * (Math.max(W, H) * 0.6);
+      const ty = src.cy + (dy / len) * (Math.max(W, H) * 0.6);
+      state.travellers.push({
+        x: member.x, y: member.y,
+        _startX: member.x, _startY: member.y,
+        targetX: tx, targetY: ty,
+        memberId: member.id,
+        fromPodId: src.id, toPodId: -1,
+        hue: member.hue, sat: member.sat, light: member.light,
+        progress: 0,
+        speed: 0.22 + Math.random() * 0.10,
+        isLeaver: true,
+      });
+      // Mark member as leaving — they're rendered by the traveller, not by drawMember
+      member._leaving = true;
+      // Remove from Pod's members immediately so ties don't keep building to them
+      const i = src.members.indexOf(member);
+      if (i >= 0) src.members.splice(i, 1);
+      // Remove ties to this member
+      state.ties = state.ties.filter(t => t.a !== member.id && t.b !== member.id);
+      // Update source Pod hue
+      src.hue = centroidHue(src.members);
+      arrangeMembersInPod(src);
+    }
+  }
+
+  // Update travellers
+  for (const tr of state.travellers) {
+    tr.progress += dt * (tr.speed || 0.35);
+    const t = Math.min(1, tr.progress);
+    const eased = 0.5 - 0.5 * Math.cos(t * PI);
+    tr.x = tr._startX + (tr.targetX - tr._startX) * eased;
+    tr.y = tr._startY + (tr.targetY - tr._startY) * eased;
+    if (tr.progress >= 1 && !tr._arrived) {
+      tr._arrived = true;
+      const toPod = getPodById(tr.toPodId);
+      // Leavers go to the canvas edge — there is no destination Pod. All
+      // other types require a destination Pod; bail if it has gone missing.
+      if (!toPod && !tr.isLeaver) continue;
+      if (tr.isOutsider) {
+        // Outsider joins the Pod — create them as a member with their own hue
+        if (toPod.members.length < 9) {  // allow growth past split threshold for visible "ripening"
+          const newMember = makeMember(toPod.id, toPod.cx, toPod.cy, tr.hue);
+          newMember.hue = tr.hue;  // preserve outsider's exact hue
+          newMember.sat = tr.sat;
+          newMember.light = tr.light;
+          newMember.x = tr.x; newMember.y = tr.y;
+          toPod.members.push(newMember);
+          state.members.push(newMember);
+          arrangeMembersInPod(toPod);
+          // Add ties to existing members
+          for (let i = 0; i < toPod.members.length - 1; i++) {
+            state.ties.push({
+              a: toPod.members[i].id, b: newMember.id,
+              podId: toPod.id, C: 0.3, Omega: OMEGA_Z2 * 1.2, age: 0,
+              dormant: false, weight: 1.0, inherited: false, fadeStart: 0,
+            });
+          }
+          toPod.recognitionPulse = Math.max(toPod.recognitionPulse, 0.7);
+          toPod.hue = centroidHue(toPod.members);
+        }
+      } else if (tr.isSwap) {
+        // Move the member from src to dst
+        const member = getMemberById(tr.memberId);
+        const fromPod = getPodById(tr.fromPodId);
+        if (member && toPod) {
+          // Remove member from whichever Pod currently holds them.
+          // This is robust to mid-journey events: if the source Pod has split,
+          // fromPod may be null, but the member might be in a daughter Pod
+          // (or still listed in a stale reference). Sweep all current Pods.
+          for (const p of state.pods) {
+            const i = p.members.indexOf(member);
+            if (i >= 0) {
+              p.members.splice(i, 1);
+              arrangeMembersInPod(p);
+              p.hue = centroidHue(p.members);
+              break;
+            }
+          }
+          // Remove ties touching this member (any Pod)
+          state.ties = state.ties.filter(t => t.a !== member.id && t.b !== member.id);
+          // Add to destination
+          member.podId = toPod.id;
+          member._inTransit = false;
+          member.x = tr.x; member.y = tr.y;
+          toPod.members.push(member);
+          arrangeMembersInPod(toPod);
+          for (const other of toPod.members) {
+            if (other === member) continue;
+            state.ties.push({
+              a: other.id, b: member.id,
+              podId: toPod.id, C: 0.25, Omega: OMEGA_Z2 * 1.2, age: 0,
+              dormant: false, weight: 1.0, inherited: false, fadeStart: 0,
+            });
+          }
+          toPod.hue = centroidHue(toPod.members);
+          toPod.recognitionPulse = Math.max(toPod.recognitionPulse, 0.5);
+        } else if (member && !toPod) {
+          // Destination was lost (split during travel) — clear in-transit flag
+          // and drop the traveller (member stays wherever they currently are)
+          member._inTransit = false;
+        }
+      } else if (tr.isLeaver) {
+        // Member has reached the edge — remove them from state.members entirely
+        const idx = state.members.findIndex(mm => mm.id === tr.memberId);
+        if (idx >= 0) state.members.splice(idx, 1);
+        // (Pod removal already happened at departure)
+      }
+      // Pulse the tie between fromPod and toPod (if any)
+      for (const st of state.societyTies) {
+        if ((st.a === tr.fromPodId && st.b === tr.toPodId) ||
+            (st.b === tr.fromPodId && st.a === tr.toPodId)) {
+          st.pulse = 1; st.C += 0.2; break;
+        }
+      }
+      needRebuild = true;
+    }
+  }
+  // Remove travellers that have arrived a while ago
+  state.travellers = state.travellers.filter(tr => !tr._arrived || tr.progress < 1.3);
+
+  if (needRebuild) {
+    rebuildSocietyTies();
+  }
+}
+
+function drawSocietyTies() {
+  for (const st of state.societyTies) {
+    const p1 = getPodById(st.a);
+    const p2 = getPodById(st.b);
+    if (!p1 || !p2) continue;
+    const baseAlpha = 0.12 + 0.18 * Math.min(1, st.C);
+    const pulseAlpha = 0.4 * st.pulse;
+    ctx.save();
+    ctx.strokeStyle = `rgba(74, 64, 48, ${baseAlpha + pulseAlpha})`;
+    ctx.lineWidth = 0.5 + st.pulse * 1.0;
+    ctx.setLineDash(st.pulse > 0.2 ? [] : [2, 4]);
+    ctx.beginPath();
+    ctx.moveTo(p1.cx, p1.cy);
+    ctx.lineTo(p2.cx, p2.cy);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawTravellers() {
+  for (const tr of state.travellers) {
+    if (tr._startX === undefined) continue;
+    ctx.save();
+    // For leavers, fade out over the journey (not just on arrival)
+    const journeyFade = tr.isLeaver
+      ? Math.max(0, 1 - tr.progress * 0.9)   // gone by ~progress=1.1
+      : 1;
+    const arrivalFade = tr.progress > 1 ? Math.max(0, 1 - (tr.progress - 1) * 2.5) : 1;
+    const fadeOut = journeyFade * arrivalFade;
+
+    // Trail — softer, in the agent's hue
+    const trailGrad = ctx.createLinearGradient(tr._startX, tr._startY, tr.x, tr.y);
+    trailGrad.addColorStop(0, `hsla(${tr.hue}, 60%, 50%, 0)`);
+    trailGrad.addColorStop(0.7, `hsla(${tr.hue}, 60%, 50%, ${0.30 * fadeOut})`);
+    trailGrad.addColorStop(1, `hsla(${tr.hue}, 65%, 55%, ${0.55 * fadeOut})`);
+    ctx.strokeStyle = trailGrad;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(tr._startX, tr._startY);
+    ctx.lineTo(tr.x, tr.y);
+    ctx.stroke();
+
+    // Travelling face — same idiom as drawMember but slightly smaller so it
+    // reads as "in transit", and faded.
+    const fr = 8.5;   // traveller face radius
+    const sat = tr.sat !== undefined ? tr.sat : 0.6;
+    const light = tr.light !== undefined ? tr.light : 0.55;
+    // Halo
+    ctx.fillStyle = `hsla(${tr.hue}, 70%, 60%, ${0.22 * fadeOut})`;
+    ctx.beginPath();
+    ctx.arc(tr.x, tr.y, fr + 5, 0, TAU);
+    ctx.fill();
+    // Body
+    ctx.globalAlpha = fadeOut;
+    ctx.fillStyle = `hsl(${tr.hue}, ${sat * 70}%, ${Math.min(0.88, light + 0.18) * 100}%)`;
+    ctx.beginPath();
+    ctx.arc(tr.x, tr.y, fr, 0, TAU);
+    ctx.fill();
+    // Inner swirl
+    const swirlGrad = ctx.createRadialGradient(tr.x, tr.y, 0, tr.x, tr.y, fr);
+    swirlGrad.addColorStop(0, `hsla(${tr.hue}, ${sat * 100}%, ${light * 100}%, 0.5)`);
+    swirlGrad.addColorStop(1, `hsla(${tr.hue}, ${sat * 100}%, ${light * 100}%, 0)`);
+    ctx.fillStyle = swirlGrad;
+    ctx.beginPath();
+    ctx.arc(tr.x, tr.y, fr, 0, TAU);
+    ctx.fill();
+    // Rim
+    ctx.strokeStyle = `rgba(42, 36, 24, ${0.65 * fadeOut})`;
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.arc(tr.x, tr.y, fr, 0, TAU);
+    ctx.stroke();
+    // Simple smile face (no blink during travel — travellers stay alert)
+    ctx.fillStyle = `rgba(42, 36, 24, ${0.85 * fadeOut})`;
+    const eyeY = tr.y - fr * 0.20;
+    const eyeOff = fr * 0.32;
+    const eyeR = fr * 0.13;
+    ctx.beginPath();
+    ctx.arc(tr.x - eyeOff, eyeY, eyeR, 0, TAU);
+    ctx.arc(tr.x + eyeOff, eyeY, eyeR, 0, TAU);
+    ctx.fill();
+    // Mouth — slightly anxious for leavers, happy for joiners/swappers
+    ctx.strokeStyle = `rgba(42, 36, 24, ${0.78 * fadeOut})`;
+    ctx.lineWidth = 1.1;
+    ctx.lineCap = 'round';
+    const mouthY = tr.y + fr * 0.32;
+    const mw = fr * 0.36;
+    const md = tr.isLeaver ? -fr * 0.04 : fr * 0.14;   // leavers: small frown
+    ctx.beginPath();
+    ctx.moveTo(tr.x - mw, mouthY);
+    ctx.quadraticCurveTo(tr.x, mouthY + md, tr.x + mw, mouthY);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+}
+
+// ── Master update ──────────────────────────────────────────────────────────
+function update(dt) {
+  state.sceneTime += dt;
+  switch (state.scene) {
+    case 0: updateScene1(dt); break;
+    case 1: updateScene2(dt); break;
+    case 2: updateScene3(dt); break;
+    case 3: updateScene4(dt); break;
+    case 4: updateScene5(dt); break;
+    case 5: updateScene6(dt); break;
+    case 6: updateScene7(dt); break;
+  }
+  // §CRR — phase + history evolution runs for every scene
+  for (const pod of state.pods) {
+    updatePodHistory(pod, dt);
+    updateMemberPhases(pod, dt);
+  }
+}
+
+// ── Drawing ────────────────────────────────────────────────────────────────
+function clear() {
+  ctx.fillStyle = PAL.parchmentDeep;
+  ctx.fillRect(0, 0, W, H);
+  // Subtle texture (light hatching)
+  ctx.save();
+  ctx.globalAlpha = 0.025;
+  ctx.strokeStyle = PAL.ink;
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < W; i += 4) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0); ctx.lineTo(i + H, H);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawPodSwirl(pod) {
+  // §CRR — Each Pod's history rendered as a subtle inward spiral.
+  // The swirl is the trace of the Pod's collective phase through time,
+  // with the Pod's unique hue. Small, subtle, contemplative.
+  if (pod.history.length < 3) return;
+  ctx.save();
+  ctx.translate(pod.cx, pod.cy);
+  const swirlR = pod.r * 0.34;   // small — fits well inside the membrane
+  // Draw the spiral trace
+  ctx.lineWidth = 0.9;
+  for (let i = 1; i < pod.history.length; i++) {
+    const h0 = pod.history[i - 1];
+    const h1 = pod.history[i];
+    // Newer samples are at larger radius; older are tucked in
+    const t0 = i / pod.history.length;
+    const t1 = (i + 1) / pod.history.length;
+    const r0 = swirlR * (0.25 + 0.75 * t0);
+    const r1 = swirlR * (0.25 + 0.75 * t1);
+    const x0 = Math.cos(h0.theta) * r0;
+    const y0 = Math.sin(h0.theta) * r0;
+    const x1 = Math.cos(h1.theta) * r1;
+    const y1 = Math.sin(h1.theta) * r1;
+    // Colour: Pod's hue, with saturation tied to local magnitude
+    const sat = 30 + 40 * h1.mag;
+    const light = 45 + 12 * h1.mag;
+    const alpha = 0.18 + 0.42 * h1.mag * (1 - h1.age * 0.05);
+    if (alpha <= 0) continue;
+    ctx.strokeStyle = `hsla(${pod.hue}, ${sat}%, ${light}%, ${alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+  }
+  // A small dot at the leading edge — the "now" of the Pod
+  const last = pod.history[pod.history.length - 1];
+  const lr = swirlR;
+  ctx.fillStyle = `hsla(${pod.hue}, 70%, 55%, 0.55)`;
+  ctx.beginPath();
+  ctx.arc(Math.cos(last.theta) * lr, Math.sin(last.theta) * lr, 2.2, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// §CRR — WATERCOLOUR CENTRE (each agent's colour bleeds into the shared space)
+// ══════════════════════════════════════════════════════════════════════════
+// Each member carries their own hue — the trace of their unique history.
+// In the centre, every member's colour appears as a soft radial patch
+// (Gaussian-like wash) drifting on its own CRR cycle. The patches blend
+// with the 'multiply' operator — like wet pigment touching wet pigment.
+// Where colours overlap, you see the natural mixing (red + green = ochre,
+// red + blue = violet, etc). The result is the visceral expression of
+// "everyone's difference merging together as creativity."
+//
+// CRR drives the dynamics:
+//   • Patch intensity ∝ exp(C_member/Ω)  — memory-weighted contribution
+//   • Patch breath phase from each member's CRR cycle
+//   • Patch position drifts toward the centre as Pod coherence builds,
+//     so colours mix more strongly during creative moments
+//
+// A faint holographic shimmer is layered on top during peak moments
+// (recognition pulse, mitosis, society ruptures) using interference between
+// member positions — the same equation as the spicy reference at
+// alexsabine.github.io/spacezero/what_spicy.html
+// ══════════════════════════════════════════════════════════════════════════
+
+function getCentreRegion() {
+  // Returns the shared central region for the current scene
+  if (state.scene === 6) {
+    // Scene 7 (society): generous central region
+    const cx = W * 0.5, cy = H * 0.5;
+    const r = Math.min(W, H) * 0.30;
+    return { cx, cy, r };
+  }
+  // Other scenes: smaller central wash
+  const cx = W * 0.5, cy = H * 0.5;
+  const r = Math.min(W, H) * 0.20;
+  return { cx, cy, r };
+}
+
+// §CRR — Per-Pod centre regions. Scenes with multiple Pods (4, 5) use these
+// instead of a single shared centre, so each Pod's colours converge to its
+// own membrane interior — and cross-pollination is rendered as patches from
+// one Pod's members appearing inside the OTHER Pod's centre.
+function getPodCentres() {
+  const map = {};
+  for (const pod of state.pods) {
+    map[pod.id] = {
+      cx: pod.cx, cy: pod.cy,
+      r: pod.r * 0.55,     // wash sits inside the membrane
+    };
+  }
+  return map;
+}
+
+// §CRR — Cross-pollination matrix: how strongly does Pod A's colour
+// appear inside Pod B's centre? Scene 4: scaled by inter-Pod tie C.
+// Scene 5 (post-mitosis): scaled by remaining daughter-tie weight.
+function getCrossPollinationStrength(fromPodId, toPodId) {
+  if (fromPodId === toPodId) return 0;
+  // Scene 4 — inter-pod ties (state.interPodTies)
+  if (state.scene === 3 && state.interPodTies) {
+    let total = 0, count = 0;
+    for (const t of state.interPodTies) {
+      const ma = getMemberById(t.from), mb = getMemberById(t.to);
+      if (!ma || !mb) continue;
+      const aOk = (ma.podId === fromPodId && mb.podId === toPodId);
+      const bOk = (mb.podId === fromPodId && ma.podId === toPodId);
+      if (aOk || bOk) { total += t.C; count++; }
+    }
+    if (count === 0) return 0;
+    // Normalise — each inter-pod tie reaches C ≈ 2 over the scene
+    return Math.min(0.9, (total / count) / 1.4);
+  }
+  // Scene 5 post-mitosis — daughter ties fade
+  if (state.scene === 4 && state.mitosisDone && state.daughterTies) {
+    let total = 0, count = 0;
+    for (const dt of state.daughterTies) {
+      const ma = getMemberById(dt.a), mb = getMemberById(dt.b);
+      if (!ma || !mb) continue;
+      const aOk = (ma.podId === fromPodId && mb.podId === toPodId);
+      const bOk = (mb.podId === fromPodId && ma.podId === toPodId);
+      if (aOk || bOk) { total += dt.weight; count++; }
+    }
+    if (count === 0) return 0;
+    return total / count;   // already in 0..1 range
+  }
+  return 0;
+}
+
+// §CRR — Exchange zones between connected Pods. When two Pods share inter-Pod
+// or daughter ties, the midpoint between their centres becomes a visible
+// "creativity exchange" — neither Pod owns it; both contribute colour to it.
+// Cross-pollination patches target this zone rather than the destination Pod's
+// interior, so the colour mixing reads as ideas-meeting-in-the-middle rather
+// than as one Pod's wash partly bleeding into another.
+function getExchangeZones() {
+  const zones = {};
+  if (state.pods.length < 2) return zones;
+  const pcs = getPodCentres();
+  for (let i = 0; i < state.pods.length; i++) {
+    for (let j = i + 1; j < state.pods.length; j++) {
+      const a = state.pods[i].id, b = state.pods[j].id;
+      const xflow = Math.max(
+        getCrossPollinationStrength(a, b),
+        getCrossPollinationStrength(b, a));
+      if (xflow < 0.05) continue;
+      const ca = pcs[a], cb = pcs[b];
+      const mx = (ca.cx + cb.cx) / 2;
+      const my = (ca.cy + cb.cy) / 2;
+      const baseR = (ca.r + cb.r) / 2;
+      const key = a < b ? (a + '_' + b) : (b + '_' + a);
+      zones[key] = {
+        cx: mx, cy: my,
+        r: baseR * (0.50 + 0.30 * xflow),
+        xflow,
+        podA: a, podB: b,
+      };
+    }
+  }
+  return zones;
+}
+
+function drawInterferencePlane(intensity = 1.0) {
+  // intensity ∈ [0,1] — scene-dependent overall brightness multiplier.
+  // Despite the legacy name, this renders the WATERCOLOUR CENTRE — each
+  // member's colour flows from their body toward the shared centre,
+  // where all the colours mingle. The flow is visibly anchored to each
+  // agent (their "corporeal memory" reaching outward).
+  if (intensity <= 0.01) return;
+  const region = getCentreRegion();
+
+  // §CRR — Multi-Pod scenes (4 = Two Pods Meet, 5 = Mitosis) use per-Pod
+  // centres + an explicit exchange zone between Pod pairs where colours
+  // visibly meet and mix.
+  const useMultiPodCentres = (state.scene === 3) ||
+                             (state.scene === 4 && state.mitosisDone);
+  const podCentres = useMultiPodCentres ? getPodCentres() : null;
+  const exchangeZones = useMultiPodCentres ? getExchangeZones() : null;
+
+  // Gather visible patches AND their source members (so we can draw wisps).
+  const patches = [];
+  for (const pod of state.pods) {
+    if (pod.members.length === 0) continue;
+    const podWeight = Math.min(1, 0.3 + pod.C * 0.9);
+    // Pull strength — how strongly the Pod's members project toward the centre.
+    const pullToCentre = (state.scene === 6)
+      ? Math.min(0.92, 0.25 + pod.C * 0.6 + (pod.recognitionPulse || 0) * 0.4)
+      : Math.min(0.95, 0.15 + pod.C * 0.7 + (pod.recognitionPulse || 0) * 0.5);
+
+    // Each Pod renders into either the shared centre OR its own local centre
+    const localCentre = podCentres ? podCentres[pod.id] : region;
+
+    for (const m of pod.members) {
+      if (m._leaving) continue;   // departing members don't contribute to the centre
+      const breathPh = (state.sceneTime * TAU / m.patchPeriod) + m.patchPhase;
+      const breath = 0.55 + 0.45 * Math.cos(breathPh);
+      const Amem = memoryWeight(m.Cmember, pod.Omega) / Math.exp(1 / pod.Omega);
+      const patchWeight = breath * Math.min(1.4, 0.5 + Amem) * podWeight;
+
+      // §CRR — Carnival hue: a small phase-driven oscillation around the member's
+      // identity hue. The swing widens with Pod coherence.
+      const carnivalSwing = 12 + pod.C * 22;
+      const carnivalHue = m.hue + Math.sin(m.phase) * carnivalSwing;
+
+      // Primary patch — into the member's own local centre
+      const lcTargetX = localCentre.cx + Math.cos(breathPh * 0.6 + m.patchPhase) * localCentre.r * 0.45;
+      const lcTargetY = localCentre.cy + Math.sin(breathPh * 0.6 + m.patchPhase) * localCentre.r * 0.45;
+      const lpx = m.x + (lcTargetX - m.x) * pullToCentre;
+      const lpy = m.y + (lcTargetY - m.y) * pullToCentre;
+      const lSigma = (state.scene === 6)
+        ? localCentre.r * (0.30 + 0.10 * Math.cos(breathPh)) * (0.7 + 0.3 * patchWeight)
+        : useMultiPodCentres
+          ? localCentre.r * (0.75 + 0.15 * Math.cos(breathPh)) * (0.75 + 0.25 * patchWeight)
+          : localCentre.r * (0.55 + 0.15 * Math.cos(breathPh)) * (0.7 + 0.3 * patchWeight);
+      patches.push({
+        x: lpx, y: lpy, sigma: lSigma,
+        srcX: m.x, srcY: m.y,
+        hue: carnivalHue, sat: m.sat, light: m.light,
+        weight: patchWeight,
+        pull: pullToCentre,
+      });
+
+      // §CRR — Cross-pollination: each member also sends a patch into the
+      // exchange zone with each connected Pod. These patches land in the
+      // BETWEEN region, where neither Pod's local wash dominates — so the
+      // mixing of colours from both sides is clearly visible.
+      if (useMultiPodCentres && exchangeZones) {
+        for (const otherPod of state.pods) {
+          if (otherPod.id === pod.id) continue;
+          const xFlow = getCrossPollinationStrength(pod.id, otherPod.id);
+          if (xFlow < 0.05) continue;
+          const key = pod.id < otherPod.id
+            ? (pod.id + '_' + otherPod.id)
+            : (otherPod.id + '_' + pod.id);
+          const zone = exchangeZones[key];
+          if (!zone) continue;
+          // Target slightly offset within the exchange zone so multiple
+          // members from the same Pod don't pile their patches at one spot
+          const offX = Math.cos(breathPh * 0.4 + m.patchPhase + 1.7) * zone.r * 0.45;
+          const offY = Math.sin(breathPh * 0.4 + m.patchPhase + 1.7) * zone.r * 0.45;
+          const zx = zone.cx + offX;
+          const zy = zone.cy + offY;
+          // Pull all the way to the zone — patches end up in the exchange
+          const xPull = Math.min(0.95, 0.7 + xFlow * 0.25);
+          const xpx = m.x + (zx - m.x) * xPull;
+          const xpy = m.y + (zy - m.y) * xPull;
+          patches.push({
+            x: xpx, y: xpy,
+            sigma: zone.r * (0.55 + 0.15 * Math.cos(breathPh)) * (0.75 + 0.25 * xFlow),
+            srcX: m.x, srcY: m.y,
+            hue: carnivalHue, sat: m.sat, light: m.light,
+            weight: patchWeight * xFlow * 1.25,
+            pull: xPull,
+            crossFlow: true,
+          });
+        }
+      }
+    }
+  }
+
+  if (patches.length === 0 && !state.visitor) return;
+
+  // §CRR — In Scene 4, the visitor also contributes a wisp toward the shared
+  // centre, scaled by how much coherence they have built up with the Pod.
+  // Before they arrive, no wisp (they are not yet in relationship). After
+  // arrival, their wisp strengthens with each tie's accumulated C.
+  if (state.visitor && state.visitor.arrived && state.visitor.hue !== undefined) {
+    const v = state.visitor;
+    let visitorC = 0;
+    for (const vt of v.ties) visitorC += vt.C;
+    const visitorWeight = Math.min(1.2, 0.25 + visitorC * 0.6);
+    const breathPh = state.sceneTime * 1.2;
+    // Target into pod2's centre (visitor is joining pod2)
+    const pod2 = state.pods[1];
+    const tcx = (podCentres && pod2) ? podCentres[pod2.id].cx : region.cx;
+    const tcy = (podCentres && pod2) ? podCentres[pod2.id].cy : region.cy;
+    const tcr = (podCentres && pod2) ? podCentres[pod2.id].r : region.r;
+    const targetX = tcx + Math.cos(breathPh * 0.6) * tcr * 0.35;
+    const targetY = tcy + Math.sin(breathPh * 0.6) * tcr * 0.35;
+    const visitorPull = Math.min(0.85, 0.20 + visitorC * 0.5);
+    const vBreathPh2 = state.sceneTime * 1.2;
+    const vCarnivalSwing = 10 + visitorC * 18;
+    const vCarnivalHue = v.hue + Math.sin(vBreathPh2) * vCarnivalSwing;
+    patches.push({
+      x: v.x + (targetX - v.x) * visitorPull,
+      y: v.y + (targetY - v.y) * visitorPull,
+      sigma: tcr * (0.50 + 0.10 * Math.cos(breathPh)) * (0.7 + 0.3 * visitorWeight),
+      srcX: v.x, srcY: v.y,
+      hue: vCarnivalHue, sat: v.sat, light: v.light,
+      weight: visitorWeight,
+      pull: visitorPull,
+    });
+  }
+
+  if (patches.length === 0) return;
+
+  // ── PASS 0: Wisps from each agent → their centre patch ─────────────
+  // §CRR — Each member's "corporeal memory" reaching toward the shared commons.
+  // Drawn BEFORE the centre clip so wisps are visible from the agent all the
+  // way to the centre. Uses 'multiply' so wisps mingle naturally.
+  ctx.save();
+  ctx.globalCompositeOperation = 'multiply';
+  for (const p of patches) {
+    // Skip when pull is low — patch is essentially at the agent already
+    if (p.pull < 0.18) continue;
+    const dx = p.x - p.srcX;
+    const dy = p.y - p.srcY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 6) continue;
+    // Number of stamps along the wisp — more for longer wisps
+    const N = Math.min(7, Math.max(3, Math.floor(dist / 18)));
+    for (let i = 1; i < N; i++) {
+      const t = i / N;
+      const wx = p.srcX + dx * t;
+      const wy = p.srcY + dy * t;
+      // Width tapers — wider near agent, narrower near centre.
+      // Alpha also tapers so the wisp fades in toward the centre patch.
+      const widthFrac = 1 - 0.6 * t;
+      const wsigma = (p.sigma * 0.45) * widthFrac;
+      const wAlpha = 0.10 * p.weight * intensity * widthFrac * widthFrac;
+      if (wAlpha < 0.005) continue;
+      const grad = ctx.createRadialGradient(wx, wy, 0, wx, wy, wsigma);
+      grad.addColorStop(0.00, `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, ${wAlpha})`);
+      grad.addColorStop(0.6,  `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, ${wAlpha * 0.4})`);
+      grad.addColorStop(1.0,  `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(wx, wy, wsigma, 0, TAU);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+
+  // ── Centre clip for the patches and shimmer ─────────────────────────
+  ctx.save();
+  ctx.beginPath();
+  if (useMultiPodCentres) {
+    // Multi-Pod: union of per-Pod centres AND exchange zones between them
+    for (const id in podCentres) {
+      const c = podCentres[id];
+      ctx.moveTo(c.cx + c.r, c.cy);
+      ctx.arc(c.cx, c.cy, c.r, 0, TAU);
+    }
+    if (exchangeZones) {
+      for (const k in exchangeZones) {
+        const z = exchangeZones[k];
+        ctx.moveTo(z.cx + z.r, z.cy);
+        ctx.arc(z.cx, z.cy, z.r, 0, TAU);
+      }
+    }
+  } else {
+    ctx.arc(region.cx, region.cy, region.r, 0, TAU);
+  }
+  ctx.clip();
+
+  // §CRR — Watercolour patch passes (centre commons where all colours merge)
+  ctx.globalCompositeOperation = 'multiply';
+  for (const p of patches) {
+    const baseAlpha = 0.18 * p.weight * intensity;
+    if (baseAlpha < 0.005) continue;
+    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.sigma);
+    grad.addColorStop(0.00, `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, ${baseAlpha})`);
+    grad.addColorStop(0.55, `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, ${baseAlpha * 0.55})`);
+    grad.addColorStop(1.00, `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, 0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.sigma, 0, TAU);
+    ctx.fill();
+  }
+
+  // Luminous additive pass at peak intensity
+  ctx.globalCompositeOperation = 'lighter';
+  for (const p of patches) {
+    const glowAlpha = 0.07 * p.weight * intensity * intensity;
+    if (glowAlpha < 0.005) continue;
+    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.sigma * 0.7);
+    grad.addColorStop(0.00, `hsla(${p.hue}, ${p.sat * 100}%, ${(p.light + 0.15) * 100}%, ${glowAlpha})`);
+    grad.addColorStop(1.00, `hsla(${p.hue}, ${p.sat * 100}%, ${p.light * 100}%, 0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.sigma * 0.7, 0, TAU);
+    ctx.fill();
+  }
+
+  // Holographic shimmer overlay at peak moments (single-centre scenes only)
+  if (!useMultiPodCentres) {
+    const shimmerThresh = state.scene === 6 ? 0.5 : 0.55;
+    if (intensity > shimmerThresh) {
+      drawHolographicShimmer(region, patches, intensity);
+    }
+  }
+
+  ctx.restore();
+}
+
+// §CRR — Holographic shimmer. A coarse interference field of all member
+// positions/phases. Layered with very low alpha over the watercolour as
+// "the moment becomes lucid."
+function drawHolographicShimmer(region, patches, intensity) {
+  const GRID = 56;   // small for performance
+  if (!drawHolographicShimmer._buf || drawHolographicShimmer._buf.width !== GRID) {
+    drawHolographicShimmer._buf = new ImageData(GRID, GRID);
+    drawHolographicShimmer._tmp = document.createElement('canvas');
+    drawHolographicShimmer._tmp.width = GRID;
+    drawHolographicShimmer._tmp.height = GRID;
+  }
+  const buf = drawHolographicShimmer._buf;
+  const data = buf.data;
+  const k = (TAU * 3.0) / (region.r * 2);
+
+  // Collect member sources with their phases — for the shimmer we use the
+  // CRR phase from each member (set by updateMemberPhases).
+  const sources = [];
+  for (const pod of state.pods) {
+    for (const m of pod.members) {
+      sources.push({ x: m.x, y: m.y, phase: m.phase });
+    }
+  }
+  if (sources.length === 0) return;
+
+  const x0 = region.cx - region.r;
+  const y0 = region.cy - region.r;
+  const step = (region.r * 2) / GRID;
+
+  // Bake in a soft falloff so shimmer fades near the edge of the vignette
+  for (let gy = 0; gy < GRID; gy++) {
+    const py = y0 + (gy + 0.5) * step;
+    const dy0 = py - region.cy;
+    for (let gx = 0; gx < GRID; gx++) {
+      const px = x0 + (gx + 0.5) * step;
+      const dx0 = px - region.cx;
+      const distC = Math.sqrt(dx0 * dx0 + dy0 * dy0);
+      const inside = Math.max(0, 1 - distC / region.r);
+      const i = (gy * GRID + gx) * 4;
+      if (inside <= 0) {
+        data[i + 3] = 0;
+        continue;
+      }
+      let re = 0, im = 0;
+      for (const s of sources) {
+        const dx = px - s.x;
+        const dy = py - s.y;
+        const d = Math.sqrt(dx * dx + dy * dy) + 1;
+        const fall = 1 / Math.sqrt(d);
+        const ph = k * d + s.phase;
+        re += fall * Math.cos(ph);
+        im += fall * Math.sin(ph);
+      }
+      const I = re * re + im * im;
+      const v = Math.min(255, I * 14);   // tuned for sources ≈ 5-50
+      const fadeIn = inside * inside;   // soft edge
+      data[i]     = 255;
+      data[i + 1] = 245;
+      data[i + 2] = 220;
+      data[i + 3] = Math.min(255, v * fadeIn * intensity * 0.45);
+    }
+  }
+  const tmp = drawHolographicShimmer._tmp;
+  tmp.getContext('2d').putImageData(buf, 0, 0);
+  ctx.save();
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.globalCompositeOperation = 'screen';
+  ctx.drawImage(tmp,
+                region.cx - region.r, region.cy - region.r,
+                region.r * 2, region.r * 2);
+  ctx.restore();
+}
+
+// Lightweight HSL→RGB (kept as helper for legacy uses)
+function hueToRGB(h) {
+  const c = 0.7;
+  const hp = (h / 60) % 6;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  let r1 = 0, g1 = 0, b1 = 0;
+  if (hp < 1) { r1 = c; g1 = x; }
+  else if (hp < 2) { r1 = x; g1 = c; }
+  else if (hp < 3) { g1 = c; b1 = x; }
+  else if (hp < 4) { g1 = x; b1 = c; }
+  else if (hp < 5) { r1 = x; b1 = c; }
+  else { r1 = c; b1 = x; }
+  const m = 0.55 - c / 2;
+  return [r1 + m, g1 + m, b1 + m];
+}
+
+function drawPod(pod) {
+  // Membrane — dashed circle, brightness ~ membraneStrength
+  ctx.save();
+  ctx.strokeStyle = PAL.membrane;
+  ctx.globalAlpha = 0.35 + 0.5 * (pod.membraneStrength || 0.4);
+  ctx.lineWidth = 1.3;
+  ctx.setLineDash([4, 6]);
+  ctx.beginPath();
+  if (state.scene === 4 && !state.mitosisDone && pod.mitosisProgress) {
+    const p = pod.mitosisProgress;
+    const rx = pod.r * (1 + 0.15 * Math.sin(state.sceneTime * 3) * p);
+    const ry = pod.r * (1 - 0.08 * p);
+    ctx.ellipse(pod.cx, pod.cy, rx, ry, 0, 0, TAU);
+  } else {
+    ctx.arc(pod.cx, pod.cy, pod.r, 0, TAU);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Soft inner halo when recognition pulse is active
+  if (pod.recognitionPulse && pod.recognitionPulse > 0.05) {
+    ctx.save();
+    const grad = ctx.createRadialGradient(pod.cx, pod.cy, 0, pod.cx, pod.cy, pod.r);
+    grad.addColorStop(0, `rgba(216, 154, 58, ${0.18 * pod.recognitionPulse})`);
+    grad.addColorStop(1, `rgba(216, 154, 58, 0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(pod.cx, pod.cy, pod.r, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawTie(t, alpha = 1) {
+  const ma = getMemberById(t.a), mb = getMemberById(t.b);
+  if (!ma || !mb) return;
+  // §CRR — Tie radiance is the memory-weighted significance of the relationship.
+  // exp(C/Ω) is the CRR memory kernel: high-coherence ties shine more brightly
+  // because every past moment along this tie is being weighted in the present.
+  const intensity = Math.min(1, t.C / 1.5);
+  const memWt = Math.min(8, Math.exp(t.C / (t.Omega || OMEGA_Z2)));   // capped
+  const radiance = Math.min(1, intensity * 0.65 + (memWt - 1) * 0.08);
+
+  // Tie colour shifts from soft ink to warm amber as C grows
+  const r = Math.floor(74 + (184 - 74) * intensity);
+  const g = Math.floor(64 + (132 - 64) * intensity);
+  const b = Math.floor(48 + (44 - 48) * intensity);
+
+  ctx.save();
+  // 1. Outer halo — wide, very soft, additive. Carries the glow.
+  if (radiance > 0.05) {
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(240, 192, 96, ${0.18 * radiance * alpha})`;
+    ctx.lineWidth = 4 + radiance * 6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(ma.x, ma.y);
+    ctx.lineTo(mb.x, mb.y);
+    ctx.stroke();
+    // 2. Inner halo — tighter, brighter
+    ctx.strokeStyle = `rgba(245, 210, 130, ${0.30 * radiance * alpha})`;
+    ctx.lineWidth = 2 + radiance * 2.5;
+    ctx.beginPath();
+    ctx.moveTo(ma.x, ma.y);
+    ctx.lineTo(mb.x, mb.y);
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  // 3. Crisp core line — the tie itself
+  ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.40 * alpha + 0.45 * intensity * alpha})`;
+  ctx.lineWidth = 0.7 + intensity * 1.2;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(ma.x, ma.y);
+  ctx.lineTo(mb.x, mb.y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawMember(m) {
+  // Skip in-transit members — the traveller renderer handles them
+  if (m._inTransit) return;
+  // Skip agents who have left the society — they're drawn by drawTravellers
+  if (m._leaving) return;
+
+  // Face radius — larger in scenes with fewer agents, smaller in society view
+  const r = (state.scene === 6) ? 9.5 : 13;
+
+  ctx.save();
+
+  // Halo (recognition / activity)
+  if (m.glow > 0.05) {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(240, 192, 96, ${0.5 * m.glow})`;
+    ctx.arc(m.x, m.y, r + 8, 0, TAU);
+    ctx.fill();
+  }
+
+  // §CRR — Body: a soft watercolour swirl in the member's hue, then crisp rim.
+  // This is the agent's "corporeal memory" — the trace of their accumulated C.
+  // The body's base is the member's hue, with a darker swirl mark in a
+  // complementary direction that rotates slowly with the member's CRR phase.
+
+  // Base body fill (slightly lighter than the hue's mid-tone, like skin in their colour)
+  const bodyL = m.light + 0.18;
+  ctx.fillStyle = `hsl(${m.hue}, ${m.sat * 70}%, ${Math.min(0.88, bodyL) * 100}%)`;
+  ctx.beginPath();
+  ctx.arc(m.x, m.y, r, 0, TAU);
+  ctx.fill();
+
+  // Inner watercolour swirl — soft radial gradient in the member's full-saturation hue
+  // Position the swirl offset slightly by phase, so it appears to rotate inside the body.
+  const swirlOff = r * 0.35;
+  const swirlAng = m.phase * 0.4;   // §CRR — slow rotation tied to member's phase
+  const swirlCx = m.x + Math.cos(swirlAng) * swirlOff;
+  const swirlCy = m.y + Math.sin(swirlAng) * swirlOff;
+  const swirlGrad = ctx.createRadialGradient(
+    swirlCx, swirlCy, 0,
+    swirlCx, swirlCy, r * 1.1);
+  swirlGrad.addColorStop(0,    `hsla(${m.hue}, ${m.sat * 100}%, ${m.light * 100}%, 0.55)`);
+  swirlGrad.addColorStop(0.55, `hsla(${m.hue}, ${m.sat * 100}%, ${m.light * 100}%, 0.18)`);
+  swirlGrad.addColorStop(1,    `hsla(${m.hue}, ${m.sat * 100}%, ${m.light * 100}%, 0)`);
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(m.x, m.y, r, 0, TAU);
+  ctx.clip();
+  ctx.fillStyle = swirlGrad;
+  ctx.fillRect(m.x - r, m.y - r, r * 2, r * 2);
+  ctx.restore();
+
+  // Ink rim — defines the face crisply against the parchment
+  ctx.strokeStyle = `rgba(42, 36, 24, 0.7)`;
+  ctx.lineWidth = 1.0;
+  ctx.beginPath();
+  ctx.arc(m.x, m.y, r, 0, TAU);
+  ctx.stroke();
+
+  // ══ Face features ═══════════════════════════════════════════════════════
+  // §CRR — Eyes, mouth, blink, expression all driven by the member's CRR state.
+  // Phase advances continuously; expression markers fire at specific phase events.
+
+  const eyeY = m.y - r * 0.20;
+  const eyeOffsetX = r * 0.32;
+  const eyeR = r * 0.13;
+  const mouthY = m.y + r * 0.32;
+
+  // §CRR — Blink: a tiny per-agent rupture event. Fires when m.blinkUntil > sceneTime.
+  // Blink duration ~120ms, interval modulated by Cmember (deep coherence → calmer blinks).
+  const blinking = m._blinkUntil && state.sceneTime < m._blinkUntil;
+
+  // §CRR — Mouth expression from Pod recognition + member Cmember:
+  //   • Open round 'o' when contributing or in active glow (speaking)
+  //   • Wide smile when Pod has just had recognition pulse (delight)
+  //   • Soft smile at high coherence (content)
+  //   • Neutral when low coherence
+  const pod = getPodById(m.podId);
+  const podPulse = pod ? (pod.recognitionPulse || 0) : 0;
+  const speaking = m.contributing || m.glow > 0.4;
+  const smile = Math.min(1, 0.25 + 0.55 * podPulse + 0.35 * Math.min(1, m.Cmember / 1.2));
+
+  // Eyes — small filled circles with subtle whites; ink colour
+  ctx.fillStyle = 'rgba(42, 36, 24, 0.92)';
+  if (blinking) {
+    // Closed eyes: short horizontal lines
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(42, 36, 24, 0.92)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(m.x - eyeOffsetX - eyeR, eyeY);
+    ctx.lineTo(m.x - eyeOffsetX + eyeR, eyeY);
+    ctx.moveTo(m.x + eyeOffsetX - eyeR, eyeY);
+    ctx.lineTo(m.x + eyeOffsetX + eyeR, eyeY);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.arc(m.x - eyeOffsetX, eyeY, eyeR, 0, TAU);
+    ctx.arc(m.x + eyeOffsetX, eyeY, eyeR, 0, TAU);
+    ctx.fill();
+    // Tiny eye highlight for liveliness
+    ctx.fillStyle = 'rgba(244, 241, 235, 0.7)';
+    const hlR = eyeR * 0.42;
+    ctx.beginPath();
+    ctx.arc(m.x - eyeOffsetX + eyeR * 0.25, eyeY - eyeR * 0.25, hlR, 0, TAU);
+    ctx.arc(m.x + eyeOffsetX + eyeR * 0.25, eyeY - eyeR * 0.25, hlR, 0, TAU);
+    ctx.fill();
+  }
+
+  // Mouth
+  ctx.strokeStyle = 'rgba(42, 36, 24, 0.85)';
+  ctx.lineWidth = 1.2;
+  ctx.lineCap = 'round';
+  if (speaking) {
+    // Open mouth — small "o" that pulses with phase
+    const openAmt = 0.5 + 0.5 * Math.abs(Math.sin(m.phase * 4));   // §CRR — mouth opens with phase
+    const mouthR = r * 0.16 * openAmt;
+    ctx.fillStyle = 'rgba(42, 36, 24, 0.55)';
+    ctx.beginPath();
+    ctx.ellipse(m.x, mouthY, r * 0.16, mouthR, 0, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+  } else {
+    // Smile arc — width and curvature scale with `smile`
+    const mw = r * (0.34 + 0.12 * smile);
+    const md = r * (0.06 + 0.18 * smile);
+    ctx.beginPath();
+    ctx.moveTo(m.x - mw, mouthY);
+    ctx.quadraticCurveTo(m.x, mouthY + md, m.x + mw, mouthY);
+    ctx.stroke();
+  }
+
+  // Creative reserve ring (scene 6 — self-booting loop)
+  if (state.scene === 5 && m.creativeReserve !== undefined) {
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(216, 154, 58, 0.7)`;
+    ctx.lineWidth = 1.4;
+    ctx.arc(m.x, m.y, r + 4 + m.creativeReserve * 3, 0, TAU * m.creativeReserve);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawCoherenceBar() {
+  // Right-edge bar showing the pooled coherence in the scene
+  const x = W - 22;
+  const y0 = 20;
+  const y1 = H - 60;
+  const barH = y1 - y0;
+  // Frame
+  ctx.save();
+  ctx.strokeStyle = PAL.inkFade;
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(x, y0, 8, barH);
+  // Compute total C
+  let total = 0;
+  for (const p of state.pods) total += p.C;
+  const maxC = state.pods.length * 1.6;
+  const frac = Math.min(1, total / maxC);
+  // Fill
+  const fillH = barH * frac;
+  ctx.fillStyle = PAL.amber;
+  ctx.globalAlpha = 0.6;
+  ctx.fillRect(x, y0 + (barH - fillH), 8, fillH);
+  ctx.globalAlpha = 1;
+  // Label
+  ctx.fillStyle = PAL.inkFade;
+  ctx.font = '10px Georgia, serif';
+  ctx.textAlign = 'right';
+  ctx.save();
+  ctx.translate(x - 6, y0 + barH / 2);
+  ctx.rotate(-PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('shared value accumulated', 0, 0);
+  ctx.restore();
+  ctx.restore();
+}
+
+function drawVisitor() {
+  const v = state.visitor;
+  if (!v) return;
+  const r = 13;
+  const hue = v.hue !== undefined ? v.hue : 30;
+  const sat = v.sat !== undefined ? v.sat : 0.6;
+  const light = v.light !== undefined ? v.light : 0.55;
+
+  // Trail of dashed soft path the visitor took
+  ctx.save();
+  ctx.strokeStyle = `rgba(74, 64, 48, ${0.20 + 0.25 * v.glow})`;
+  ctx.lineWidth = 0.8;
+  ctx.setLineDash([2, 4]);
+  ctx.beginPath();
+  ctx.moveTo(W * 0.95, H * 0.45);
+  ctx.lineTo(v.x, v.y);
+  ctx.stroke();
+  ctx.restore();
+
+  // Halo — welcoming glow once arrived; brighter at the moment of joining
+  if (v.arrived) {
+    ctx.beginPath();
+    const haloA = v._joining ? 0.55 : 0.30 * v.glow;
+    ctx.fillStyle = `rgba(240, 192, 96, ${haloA})`;
+    ctx.arc(v.x, v.y, r + 8, 0, TAU);
+    ctx.fill();
+  }
+
+  // Face body — same idiom as drawMember
+  ctx.save();
+  const bodyL = Math.min(0.88, light + 0.18);
+  ctx.fillStyle = `hsl(${hue}, ${sat * 70}%, ${bodyL * 100}%)`;
+  ctx.beginPath();
+  ctx.arc(v.x, v.y, r, 0, TAU);
+  ctx.fill();
+  // Inner swirl
+  const swirlGrad = ctx.createRadialGradient(v.x, v.y, 0, v.x, v.y, r);
+  swirlGrad.addColorStop(0, `hsla(${hue}, ${sat * 100}%, ${light * 100}%, 0.5)`);
+  swirlGrad.addColorStop(1, `hsla(${hue}, ${sat * 100}%, ${light * 100}%, 0)`);
+  ctx.fillStyle = swirlGrad;
+  ctx.beginPath();
+  ctx.arc(v.x, v.y, r, 0, TAU);
+  ctx.fill();
+  // Rim
+  ctx.strokeStyle = 'rgba(42, 36, 24, 0.7)';
+  ctx.lineWidth = 1.0;
+  ctx.beginPath();
+  ctx.arc(v.x, v.y, r, 0, TAU);
+  ctx.stroke();
+  // Eyes — keep them open (visitor is alert, observing)
+  ctx.fillStyle = 'rgba(42, 36, 24, 0.92)';
+  const eyeY = v.y - r * 0.20;
+  const eyeOff = r * 0.32;
+  const eyeR = r * 0.13;
+  ctx.beginPath();
+  ctx.arc(v.x - eyeOff, eyeY, eyeR, 0, TAU);
+  ctx.arc(v.x + eyeOff, eyeY, eyeR, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(244, 241, 235, 0.7)';
+  const hlR = eyeR * 0.42;
+  ctx.beginPath();
+  ctx.arc(v.x - eyeOff + eyeR * 0.25, eyeY - eyeR * 0.25, hlR, 0, TAU);
+  ctx.arc(v.x + eyeOff + eyeR * 0.25, eyeY - eyeR * 0.25, hlR, 0, TAU);
+  ctx.fill();
+  // Mouth — tentative smile at first, widens as ties build, big smile at join
+  ctx.strokeStyle = 'rgba(42, 36, 24, 0.85)';
+  ctx.lineWidth = 1.2;
+  ctx.lineCap = 'round';
+  let smileBase = 0.10;
+  for (const vt of v.ties) smileBase += vt.C * 0.25;
+  if (v._joining) smileBase += 0.6;
+  const smile = Math.min(1, smileBase);
+  const mw = r * (0.30 + 0.14 * smile);
+  const md = r * (0.04 + 0.20 * smile);
+  const mouthY = v.y + r * 0.32;
+  ctx.beginPath();
+  ctx.moveTo(v.x - mw, mouthY);
+  ctx.quadraticCurveTo(v.x, mouthY + md, v.x + mw, mouthY);
+  ctx.stroke();
+  ctx.restore();
+
+  // Ties from visitor to nearest pod members — colour them in the visitor's hue,
+  // intensifying as coherence accumulates. These are the "approach ties" before joining.
+  for (const vt of v.ties) {
+    const m = getMemberById(vt.to);
+    if (!m) continue;
+    const intensity = Math.min(1, vt.C / 1.0);
+    ctx.save();
+    ctx.strokeStyle = `hsla(${hue}, ${sat * 80}%, 45%, ${0.3 + 0.5 * intensity})`;
+    ctx.lineWidth = 0.6 + intensity * 1.2;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(v.x, v.y);
+    ctx.lineTo(m.x, m.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawInterPodTies() {
+  if (!state.interPodTies) return;
+  for (const t of state.interPodTies) {
+    const ma = getMemberById(t.from), mb = getMemberById(t.to);
+    if (!ma || !mb) continue;
+    const intensity = Math.min(1, t.C / 0.8);
+    ctx.save();
+    ctx.strokeStyle = `rgba(106, 122, 74, ${0.3 + 0.5 * intensity})`;   // moss-tinged for inter-pod
+    ctx.lineWidth = 0.7 + intensity * 1.2;
+    ctx.beginPath();
+    ctx.moveTo(ma.x, ma.y);
+    ctx.lineTo(mb.x, mb.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawDaughterTies() {
+  for (const t of state.daughterTies) {
+    if (t.weight <= 0) continue;
+    const ma = getMemberById(t.a), mb = getMemberById(t.b);
+    if (!ma || !mb) continue;
+    // §CRR — Inherited ties: visible from the moment of mitosis, fading as
+    // their weight decays. Drawn with a soft amber tint to read as "warm
+    // inheritance" rather than cold remainder. Use slightly thicker stroke
+    // and slower-falling alpha so the visible plateau lasts.
+    const a = Math.min(1, t.weight * 1.6 + 0.05);   // softer falloff than weight itself
+    ctx.save();
+    ctx.strokeStyle = `rgba(150, 110, 60, ${0.55 * a})`;
+    ctx.lineWidth = 0.9;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    ctx.moveTo(ma.x, ma.y);
+    ctx.lineTo(mb.x, mb.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawArtifacts() {
+  for (const a of state.artifacts) {
+    if (a.phase === 'travel') {
+      ctx.save();
+      ctx.fillStyle = PAL.amberWarm;
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, 4, 0, TAU);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(240, 192, 96, 0.5)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, 7, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    } else if (a.phase === 'burst') {
+      ctx.save();
+      const alpha = Math.max(0, 1 - a.burstAge / 1.8);
+      ctx.strokeStyle = `rgba(216, 154, 58, ${0.7 * alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(a.targetX, a.targetY, a.radius, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+
+function drawAnnotations() {
+  ctx.save();
+  // The canvas-caption overlay (HTML) sits at the bottom ~30px of the frame,
+  // so annotations live above that, with a small safety margin.
+  const annoY1 = H - 56;   // primary annotation row
+  const annoY2 = H - 40;   // secondary row (when used)
+  ctx.fillStyle = PAL.inkFade;
+  ctx.font = 'italic 12px Georgia, serif';
+  ctx.textAlign = 'left';
+  if (state.scene === 0) {
+    ctx.fillText('member · creative resource ≈ ' + state.members[0].creativeReserve.toFixed(2),
+                 20, annoY1);
+  } else if (state.scene === 1) {
+    const pod = state.pods[0];
+    ctx.fillText(`members in Pod: ${pod.members.length}  ·  ties: ${state.ties.length}`,
+                 20, annoY1);
+    if (pod.members.length >= 8) {
+      ctx.fillStyle = PAL.iceplant;
+      ctx.fillText('Pod has reached its target size of eight.',
+                   20, annoY2);
+    }
+  } else if (state.scene === 2) {
+    ctx.fillText('recognition pulse strengthens ties that touched the contributor',
+                 20, annoY1);
+  } else if (state.scene === 3) {
+    const v = state.visitor;
+    if (v) {
+      let visitorC = 0;
+      for (const vt of v.ties) visitorC += vt.C;
+      const status = v._joining ? 'joining'
+                  : v.arrived ? 'arrived at soft edge'
+                  : 'approaching';
+      ctx.fillText(`visitor: ${status}  ·  ties: ${v.ties.length}  ·  C·Ω: ${(visitorC).toFixed(2)} / 1.6`,
+                   20, annoY1);
+    } else {
+      ctx.fillText('visitor has joined the Pod — their colour now lives in the palette',
+                   20, annoY1);
+    }
+  } else if (state.scene === 4) {
+    if (!state.mitosisDone) {
+      const pod = state.pods[0];
+      ctx.fillText(`Pod ripeness (C·Ω): ${(pod.C * pod.Omega).toFixed(2)}  ·  mitosis at 1.00`,
+                   20, annoY1);
+    } else {
+      ctx.fillText('mitosis complete · inherited ties fade unless renewed', 20, annoY1);
+    }
+  } else if (state.scene === 5) {
+    let totalPhi = 0;
+    for (const m of state.pods[0].members) totalPhi += m.creativeReserve;
+    ctx.fillText(`creative reserve pooled (φ): ${totalPhi.toFixed(2)}  ·  if the loop closes, this stays buoyant`,
+                 20, annoY1);
+  } else if (state.scene === 6) {
+    const nPods = state.pods.length;
+    let nPulsing = 0;
+    for (const p of state.pods) if (p.recognitionPulse > 0.3) nPulsing++;
+    ctx.fillText(`${nPods} Pods · ${state.members.length} members · ${nPulsing} in active recognition · travellers: ${state.travellers ? state.travellers.length : 0}`,
+                 20, annoY1);
+  }
+  ctx.restore();
+}
+
+function render() {
+  clear();
+  // §CRR interference plane — drawn underneath, intensity per scene
+  const ifIntensity = computeInterferenceIntensity();
+  if (ifIntensity > 0.01) drawInterferencePlane(ifIntensity);
+  // Draw inter-pod ties beneath everything in scene 4
+  if (state.scene === 3) drawInterPodTies();
+  // Daughter inherited ties (scene 5)
+  if (state.scene === 4 && state.mitosisDone) drawDaughterTies();
+  // Scene 7 (society) — extra inter-Pod weave
+  if (state.scene === 6 && state.societyTies) drawSocietyTies();
+  // Pods (membranes)
+  for (const pod of state.pods) drawPod(pod);
+  // (The per-Pod swirl is no longer drawn — agents now carry their own
+  // watercolour signature on their bodies; the centre is where ideas mix.)
+  // Ties
+  for (const t of state.ties) drawTie(t);
+  // Visitor (scene 4)
+  if (state.scene === 3) drawVisitor();
+  // Artifacts (scene 6)
+  if (state.scene === 5) drawArtifacts();
+  // Scene 7 travelling members
+  if (state.scene === 6 && state.travellers) drawTravellers();
+  // Members
+  for (const m of state.members) drawMember(m);
+  // Coherence bar
+  drawCoherenceBar();
+  // Annotations
+  drawAnnotations();
+}
+
+// §CRR — How brightly should the interference plane show in this scene?
+function computeInterferenceIntensity() {
+  switch (state.scene) {
+    case 0: return 0;                            // solo — no interference
+    case 1: {                                    // Pod forms — synergy grows with both
+      // §CRR — Holographic creativity in the centre scales with the total
+      // accumulated coherence across all ties. Two contributions:
+      //   • Structural presence: ties = n(n-1)/2, even at low C — the relational
+      //     fabric simply existing gives a quiet glow
+      //   • Live coherence: pod.C × tie-count — the active synergy
+      // Each new member contributes (n-1) new relationships, not just one.
+      const pod = state.pods[0];
+      const n = pod.members.length;
+      const tieCount = (n * (n - 1)) / 2;
+      const fullTies = (8 * 7) / 2;             // 28 ties at target size
+      const structural = tieCount / fullTies;   // 0 → 1 as Pod fills
+      const live = pod.C * structural;           // active synergy
+      // Saturate softly so the build feels organic
+      const total = 0.4 * structural + 1.4 * live;
+      return Math.min(1.0, 0.08 + 0.92 * (1 - Math.exp(-total * 1.4)));
+    }
+    case 2: {                                    // recognition — pulses brightly
+      const pod = state.pods[0];
+      return 0.3 + 0.7 * (pod.recognitionPulse || 0);
+    }
+    case 3: {                                    // two pods meeting — wisps + cross-pollination
+      // §CRR — Each Pod's wash brightens with its own coherence; the cross-flow
+      // strengthens with inter-Pod tie C. Together they paint a clear picture
+      // of "two creative groups exchanging knowledge."
+      const p1 = state.pods[0], p2 = state.pods[1];
+      const podSynergy = ((p1 ? p1.C : 0) + (p2 ? p2.C : 0)) / 2;
+      let interC = 0, interN = 0;
+      if (state.interPodTies) {
+        for (const t of state.interPodTies) { interC += t.C; interN++; }
+      }
+      const interMean = interN > 0 ? interC / interN : 0;
+      let visitorBoost = 0;
+      const v = state.visitor;
+      if (v && v.arrived) {
+        let vC = 0;
+        for (const vt of v.ties) vC += vt.C;
+        visitorBoost = Math.min(0.35, 0.08 + vC * 0.18);
+        if (v._joining) visitorBoost = 0.45;
+      }
+      // Saturate softly so the build feels organic
+      const total = 0.55 + 0.50 * podSynergy + 0.35 * interMean + visitorBoost;
+      return Math.min(1.0, 0.30 + 0.85 * (1 - Math.exp(-total)));
+    }
+    case 4: {                                    // mitosis — peaks at rupture, holds through fade
+      const pod = state.pods[0];
+      if (!state.mitosisDone) {
+        return 0.3 + 0.6 * (pod.mitosisProgress || 0);
+      } else {
+        // §CRR — During the daughter-tie fade, cross-pollination is the story.
+        // Keep both daughter clouds clearly visible. Daughter ties weigh ~1 → 0
+        // over 12s; let intensity track that rather than decaying linearly.
+        let dtWeight = 0;
+        if (state.daughterTies && state.daughterTies.length > 0) {
+          for (const dt of state.daughterTies) dtWeight += dt.weight;
+          dtWeight /= state.daughterTies.length;
+        }
+        // Floor at 0.55 so both daughters' colours always read; lift further while
+        // inheritance is still active. After fade, settles at the daughters' own
+        // independent washes.
+        return 0.55 + 0.30 * dtWeight;
+      }
+    }
+    case 5: {                                    // self-booting — continuous, pulse-modulated
+      const pod = state.pods[0];
+      return 0.4 + 0.5 * (pod.recognitionPulse || 0);
+    }
+    case 6: return 0.9;                          // society — full glory
+  }
+  return 0;
+}
+
+// ── Main loop ──────────────────────────────────────────────────────────────
+function loop(now) {
+  const realDt = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+  const dt = state.playing ? realDt * state.speed : 0;
+  update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+
+// ── UI wiring ──────────────────────────────────────────────────────────────
+function updateNarration() {
+  const s = SCENES[state.scene];
+  document.getElementById('narLabel').textContent = s.label;
+  document.getElementById('narTitle').textContent = s.title;
+  document.getElementById('narBody').innerHTML = s.body;
+  document.getElementById('capLeft').textContent = s.caption;
+  document.getElementById('capRight').textContent = `scene ${state.scene + 1} of 7`;
+  // Update chapter strip
+  const btns = document.querySelectorAll('.chapter-strip button');
+  btns.forEach((b, i) => b.classList.toggle('active', i === state.scene));
+  // Update prev/next state
+  document.getElementById('prevBtn').disabled = state.scene === 0;
+  document.getElementById('nextBtn').disabled = state.scene === SCENES.length - 1;
+}
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  state.playing = !state.playing;
+  document.getElementById('playBtn').textContent = state.playing ? 'Pause' : 'Play';
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  loadScene(state.scene);
+});
+document.getElementById('speed').addEventListener('input', (e) => {
+  state.speed = parseFloat(e.target.value);
+  document.getElementById('speedVal').textContent = state.speed.toFixed(2) + '×';
+});
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (state.scene > 0) loadScene(state.scene - 1);
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (state.scene < SCENES.length - 1) loadScene(state.scene + 1);
+});
+document.querySelectorAll('.chapter-strip button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    loadScene(parseInt(btn.dataset.scene, 10));
+  });
+});
+
+// ── Deep Dive modal ────────────────────────────────────────────────────────
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalClose = document.getElementById('modalClose');
+const deepDiveBtn = document.getElementById('deepDiveBtn');
+
+function openDeepDive() {
+  modalBackdrop.classList.add('open');
+  // Scroll to the current scene's section after the modal renders
+  setTimeout(() => {
+    const target = document.getElementById('dd-scene-' + state.scene);
+    if (target) {
+      const modal = document.querySelector('.modal');
+      // Compute scroll within the backdrop so the section comes to the top
+      const rect = target.getBoundingClientRect();
+      const backdropRect = modalBackdrop.getBoundingClientRect();
+      modalBackdrop.scrollTop += (rect.top - backdropRect.top) - 40;
+    }
+  }, 50);
+}
+function closeDeepDive() {
+  modalBackdrop.classList.remove('open');
+}
+deepDiveBtn.addEventListener('click', openDeepDive);
+modalClose.addEventListener('click', closeDeepDive);
+modalBackdrop.addEventListener('click', (e) => {
+  if (e.target === modalBackdrop) closeDeepDive();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modalBackdrop.classList.contains('open')) closeDeepDive();
+});
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+resize();
+loadScene(0);
+requestAnimationFrame(loop);
+
+</script>
+</body>
+</html>
