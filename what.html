@@ -397,34 +397,34 @@ body { background: var(--parchment, #f4f1eb); }
           <h3 class="practice-detail-name">Lab Zero <span class="practice-detail-subtitle">Science, Nature &amp; Technology</span></h3>
           <p class="practice-detail-lede">At the edge of the Pacific, where the known meets the unknowable, we turn scientific attention toward the questions that matter at the root level. What is the source of love? How does creativity arise in a body, a mind, a community? How does interdependence move through all living things?</p>
           <p class="practice-detail-lede">Lab Zero gathers biologists, mathematicians, neuroscientists, physicists, and consciousness researchers to inquire across the boundaries that usually keep disciplines apart, and across the boundaries between ways of knowing.</p>
+          <p class="practice-detail-lede">Lab Zero is also experiential. Live lecture-hikes wind through the Crescent City coast and redwoods; leading thinkers host guided talks where philosophy and science are embodied, lived, and carefully integrated &mdash; bringing learning to life through shared somatic space.</p>
           <p class="practice-detail-lede">We study what the redwood already knows. What starlings practice. What iceplant along the Battery Point cliffs makes effortless. Nature has always been the longer experiment; we are learning to read it.</p>
         </div>
       </div>
 
       <div class="practice-detail" data-practice="emergent">
         <div class="practice-detail-body">
-          <h3 class="practice-detail-name">The Emergent Gathering <span class="practice-detail-subtitle">Humans, AI &amp; More-than-Human</span></h3>
-          <p class="practice-detail-lede">Something new is arriving; we do not yet know its shape. Large language models. Collective intelligences. Ecosystems held in our care, or thrown off balance by it. None of these is the thing it was a decade ago, and the next decade will not resemble this one.</p>
-          <p class="practice-detail-lede">The Emergent Gathering brings together technologists, philosophers, ecologists, and practitioners of attention to ask: what does benevolent emergence look like? How do we build with AI rather than against what it flattens? What would a future genuinely good for human and more-than-human life require of us, now?</p>
-          <p class="practice-detail-lede">We meet without an agenda and let the conversation find its form. Sometimes that means a lecture, sometimes a walk, sometimes silence. The question is the discipline.</p>
+          <h3 class="practice-detail-name">The Emergent Community <span class="practice-detail-subtitle">Humans, AI &amp; More-than-Human</span></h3>
+          <p class="practice-detail-lede">The Emergent Community gathers in two ways: regular in-person meet-ups in Crescent City, and an online membership platform for researchers, thinkers, and artists to collaborate and explore together inside a carefully curated community.</p>
+          <p class="practice-detail-lede">We weave advanced technology with somatic sharing, meaningful interviews from a trained journalist, and authentic platforming for cutting-edge thinkers, philosophers, and scientists. Care is the primary driver.</p>
+          <p class="practice-detail-lede">Something new is arriving; we do not yet know its shape. The Emergent Community is where we sit with that question together &mdash; what does benevolent emergence look like, and what would a future genuinely good for human and more-than-human life require of us, now?</p>
         </div>
       </div>
 
       <div class="practice-detail" data-practice="wisdom">
         <div class="practice-detail-body">
-          <h3 class="practice-detail-name">Wisdom in Residence <span class="practice-detail-subtitle">Spirit, Art &amp; Philosophy</span></h3>
-          <p class="practice-detail-lede">Knowledge written down stays on the page; wisdom happens between people and places. Space Zero holds residencies for spiritual teachers, artists, and philosophers who live here for a time: cooking, walking, working, teaching when asked, staying quiet when that is what the moment wants.</p>
-          <p class="practice-detail-lede">We believe in embodied transmission. A zen teacher sitting every morning in the same room changes the room. A poet writing for two months on the coast leaves something in the fog. These are not metaphors; this is how cultures have always cultivated the subtle.</p>
-          <p class="practice-detail-lede">Past residents arrive from contemplative lineages, from studios, from universities. What they share is a willingness to be present to ordinary life, to let wisdom take root in a place rather than only in pages.</p>
+          <h3 class="practice-detail-name">Creativity in Residence <span class="practice-detail-subtitle">Spirit, Art &amp; Philosophy</span></h3>
+          <p class="practice-detail-lede">Creativity in Residence hosts artists able to navigate the space of open possibility &mdash; scaffolding complex ideas into forms that are digestible for people of all ages, and bringing science to life through art.</p>
+          <p class="practice-detail-lede">We believe in embodied transmission. A poet writing for two months on the coast leaves something in the fog; an artist working alongside scientists changes how the work is seen. Creativity turns rigour into wonder, and brings discoveries home in ways anyone can carry.</p>
+          <p class="practice-detail-lede">Past residents arrive from studios, from lineages, from universities. What they share is a willingness to translate &mdash; to let art take root in a place and make the deep questions visible.</p>
         </div>
       </div>
 
       <div class="practice-detail" data-practice="ecosystem">
         <div class="practice-detail-body">
-          <h3 class="practice-detail-name">Ecosystem Collaboration <span class="practice-detail-subtitle">Collective Flourishing</span></h3>
-          <p class="practice-detail-lede">No practice flourishes alone. Space Zero is local to Crescent City; it is also woven into a wider fabric of researchers, teachers, communities, and ecologies that stretch from the redwoods to the Pacific Rim and beyond.</p>
-          <p class="practice-detail-lede">We share what we learn. We host gatherings with partners further afield. We study how groups move together well: attunement, entrainment, the quiet conditions under which collaboration becomes effortless and care becomes structural rather than heroic.</p>
-          <p class="practice-detail-lede">Collective flourishing is not an aggregate of individual flourishing. It is a property of the between. That is the work here.</p>
+          <h3 class="practice-detail-name">Open Ground <span class="practice-detail-subtitle">Ecosystem Collaboration</span></h3>
+          <p class="practice-detail-lede">Space Zero is one node among many. We represent the project in Crescent City, California, mindful that other groups of researchers are at work on similar questions across the globe.</p>
+          <p class="practice-detail-lede">Open Ground is where these nodes are mapped &mdash; an ecosystem collaboration for knowledge exchange, shared flourishing, and creative advance into the future together.</p>
         </div>
       </div>
 
@@ -514,9 +514,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── Practices ───────────────────────────────────────────────────────
   const OUTER = [
     { key: 'lab',       name: 'Lab Zero' },
-    { key: 'emergent',  name: 'The Emergent Gathering' },
-    { key: 'wisdom',    name: 'Wisdom in Residence' },
-    { key: 'ecosystem', name: 'Ecosystem Collaboration' },
+    { key: 'emergent',  name: 'The Emergent Community' },
+    { key: 'wisdom',    name: 'Creativity in Residence' },
+    { key: 'ecosystem', name: 'Open Ground' },
   ];
   const CENTRE = {
     key: 'daily',
@@ -718,60 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // network reads as a conversation, not a choreography.
   const SPOKE_OFFSETS = [0.00, 0.25, 0.50, 0.75];
 
-  // ── Beauty function on Z₂ ─────────────────────────────────────────
-  // Ω = 1/π, so 1/Ω = π and C·Ω = C/π.
-  // With u = C/π ∈ [0,1]: B = exp(u·π²)·(1 − u). Peak at u ≈ 0.899.
-  const B_MAX = 720.64;   // precomputed peak for normalisation
-  function beauty(u) {
-    const b = Math.exp(u * PI * PI) * (1 - u);
-    return Math.max(0, Math.min(1, b / B_MAX));
-  }
-
-  // ── Draw a flowing pulse along a spoke ─────────────────────────────
-  // Not a dot — a soft elongated stream of light, shaped by the Beauty
-  // function as it travels. The stream has a head (at position u) and
-  // a short tail behind it, so it reads as motion rather than a bead.
-  function drawSpokePulse(ax, ay, bx, by, u, strength, col) {
-    if (strength <= 0.02) return;
-    // Position of pulse head
-    const hx = ax + (bx - ax) * u;
-    const hy = ay + (by - ay) * u;
-    // Tail extends ~8% of spoke length behind the head
-    const spokeLen = Math.hypot(bx - ax, by - ay);
-    const tailU = Math.max(0, u - 0.10);
-    const tx = ax + (bx - ax) * tailU;
-    const ty = ay + (by - ay) * tailU;
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-
-    // 1. Stream body: a narrow linear gradient from tail to head
-    const lineGrad = ctx.createLinearGradient(tx, ty, hx, hy);
-    lineGrad.addColorStop(0.00, rgba(col, 0));
-    lineGrad.addColorStop(0.65, rgba(col, 0.35 * strength));
-    lineGrad.addColorStop(1.00, rgba(col, 0.85 * strength));
-    ctx.strokeStyle = lineGrad;
-    ctx.lineWidth = 2.2 + 1.8 * strength;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(tx, ty);
-    ctx.lineTo(hx, hy);
-    ctx.stroke();
-
-    // 2. Head glow — a soft radial halo at the leading edge
-    const glowR = 9 + 10 * strength;
-    const headGlow = ctx.createRadialGradient(hx, hy, 0, hx, hy, glowR);
-    headGlow.addColorStop(0.00, rgba(col, 0.85 * strength));
-    headGlow.addColorStop(0.45, rgba(col, 0.30 * strength));
-    headGlow.addColorStop(1.00, rgba(col, 0));
-    ctx.fillStyle = headGlow;
-    ctx.beginPath();
-    ctx.arc(hx, hy, glowR, 0, TAU);
-    ctx.fill();
-
-    ctx.restore();
-  }
-
   // ── Draw the static spoke (ink line) ───────────────────────────────
   // A real line between practice and ground. Legible without a pulse,
   // confident at both endpoints (the relationship doesn't taper to
@@ -841,36 +787,114 @@ document.addEventListener('DOMContentLoaded', () => {
   // each Zero circle. The whole composition reads as one quality of
   // light moving through different places, not as four different
   // colours competing for attention.
+  // ─── Draw the star network ──────────────────────────────────────────
+  // Just the four base spokes as faint ink lines between each pod and
+  // the centre. The moving element along these paths is no longer a
+  // Beauty-function pulse but the lighthouse dots themselves, when
+  // they leave their orbits to visit The Space.
   function drawStarNetwork(pods, t) {
     const centre = pods[4];
-    const pulseCol = PAL.amberCream;
     for (let i = 0; i < 4; i++) {
       const outer = pods[i];
       const { ax, ay, bx, by } = spokeEndpoints(outer, centre);
-
-      // Blanket period: (T_outer + T_centre) / 4
       const bp = 0.25 * (POD_PERIODS[i] + POD_PERIODS[4]);
-      const raw = t / bp + SPOKE_OFFSETS[i];
-      const cycleN = Math.floor(raw);
-      const u = raw - cycleN;
-      const brightness = beauty(u);
-
-      // Slow breath for the base line
       const lineBreath = 0.5 + 0.5 * Math.sin(t / bp * TAU + SPOKE_OFFSETS[i] * TAU);
       drawSpokeBase(ax, ay, bx, by, lineBreath);
-
-      // Pulse direction alternates every cycle:
-      //   Even cycle: practice → centre (return to ground)
-      //   Odd cycle:  centre → practice (ground radiates out)
-      const returning = (cycleN % 2) === 0;
-      const pathU = returning ? u : (1 - u);
-
-      drawSpokePulse(ax, ay, bx, by, pathU, brightness, pulseCol);
     }
   }
 
   // ─── Visual layer — Zero-circles and watercolour centre ─────────────
   let t0 = performance.now();
+
+  // ── Synchronous visit — the CRR dance ──────────────────────────────
+  // The four lighthouses orbit their pods in parallel. When they
+  // simultaneously reach the inward-facing rim, the orbit PAUSES for
+  // the visit duration: all four dots leave their rims, track along
+  // their spokes into The Space, then whirl in a four-way dervish
+  // dance around the centre while the CRR interference field blooms,
+  // then return outward to their rim points and the orbit resumes.
+  //
+  // Timing within a visit:
+  //   OUTBOUND_DUR (2s) — dots track inward along the spokes
+  //   DANCE_DUR    (4s) — dots whirl around the centre together;
+  //                       one full revolution + three braiding cycles
+  //   INBOUND_DUR  (2s) — dots track back outward to their rims
+  //
+  // Dance motion (τ ∈ [0, DANCE_DUR]):
+  //   θ_i(τ) = podAngle_i + ω_slow · τ
+  //   R_i(τ) = R_dance + R_amp · sin(ω_fast · τ + i·π/2)
+  // where:
+  //   ω_slow = 2π / DANCE_DUR     — exactly one revolution
+  //   ω_fast = 3·ω_slow           — three braid cycles per revolution
+  //   R_amp  = centreR · 0.06     — gentle radial breathing
+  // At τ=0 and τ=DANCE_DUR, positions coincide — dance phase wraps
+  // seamlessly, so inbound flight reverses outbound flight.
+  //
+  // The interference field tracks the dot positions throughout the
+  // visit: as dots fly in, waves converge; during dance, field
+  // rotates and breathes; as dots fly out, pattern fades.
+  const ORBIT_PERIOD     = 20;
+  const OUTBOUND_DUR     = 2.0;
+  const DANCE_DUR        = 4.0;
+  const INBOUND_DUR      = 2.0;
+  const VISIT_DURATION   = OUTBOUND_DUR + DANCE_DUR + INBOUND_DUR;   // 8s
+  const CYCLE_PERIOD     = ORBIT_PERIOD + VISIT_DURATION;            // 28s
+  const FIRST_VISIT_START = ORBIT_PERIOD / 2;                        // 10s
+
+  // Map wall-clock time t to "orbit time" — running time with visit
+  // pauses excluded. This is what drives basePhase.
+  function orbitTimeFor(t) {
+    if (t < FIRST_VISIT_START) return t;
+    const sinceFirst = t - FIRST_VISIT_START;
+    const completedCycles = Math.floor(sinceFirst / CYCLE_PERIOD);
+    const intoCycle = sinceFirst - completedCycles * CYCLE_PERIOD;
+    const orbitThroughCompleted = FIRST_VISIT_START + completedCycles * ORBIT_PERIOD;
+    if (intoCycle < VISIT_DURATION) {
+      // Frozen during visit
+      return orbitThroughCompleted;
+    }
+    // Running portion of cycle
+    return orbitThroughCompleted + (intoCycle - VISIT_DURATION);
+  }
+
+  // Single visit state shared by all four pods.
+  //   active  : true when a visit is underway
+  //   v       : seconds into the 8s visit window
+  //   stage   : 'out' | 'dance' | 'in'
+  //   flight  : [0, 1] — flight progress (0 at rim, 1 at convergence)
+  //             (used during outbound and inbound, 1 throughout dance)
+  //   dance   : [0, 1] — dance progress (0 at dance start, 1 at end)
+  //             (undefined during flight stages)
+  //   hologramT: [0, 1] — intensity envelope for the field
+  function getVisitState(t) {
+    if (t < FIRST_VISIT_START) return { active: false };
+    const sinceFirst = t - FIRST_VISIT_START;
+    const intoCycle = sinceFirst % CYCLE_PERIOD;
+    if (intoCycle >= VISIT_DURATION) return { active: false };
+    const v = intoCycle;
+    let stage, flight, dance, hologramT;
+    if (v < OUTBOUND_DUR) {
+      stage = 'out';
+      // sin²(π·u/2) smooth S-curve from 0 to 1
+      const u = v / OUTBOUND_DUR;
+      flight = Math.sin(PI * u / 2);
+      flight *= flight;
+      hologramT = flight;
+    } else if (v < OUTBOUND_DUR + DANCE_DUR) {
+      stage = 'dance';
+      flight = 1;
+      dance = (v - OUTBOUND_DUR) / DANCE_DUR;
+      hologramT = 1;
+    } else {
+      stage = 'in';
+      const u = (v - OUTBOUND_DUR - DANCE_DUR) / INBOUND_DUR;  // 0..1
+      flight = 1 - u;
+      flight = Math.sin(PI * flight / 2);
+      flight *= flight;
+      hologramT = flight;
+    }
+    return { active: true, v, stage, flight, dance, hologramT };
+  }
 
   // ── Zero-style circle ──────────────────────────────────────────────
   // Each of the four outer pods is rendered in the same visual idiom
@@ -935,7 +959,9 @@ document.addEventListener('DOMContentLoaded', () => {
   //   - Radial feather so both edges of the band fade into parchment
   //     rather than ending hard.
   //   - Ocean-palette colour, slow-cycling with phase.
-  function drawLighthouseTrail(cx, cy, r, lighthousePhase) {
+  function drawLighthouseTrail(cx, cy, r, lighthousePhase, opacity) {
+    opacity = opacity == null ? 1 : opacity;
+    if (opacity <= 0.01) return;
     const TRAIL_ARC  = PI * 0.40;                      // ~72° sweep
     const R_OUTER    = r * 0.995;                      // just inside rim
     const R_INNER    = r * 0.89;                       // at inner contour
@@ -949,10 +975,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const trailFrac = TRAIL_ARC / TAU;
     const grad = ctx.createConicGradient(trailStart, cx, cy);
     grad.addColorStop(0.00,              rgba(trailCol, 0));
-    grad.addColorStop(trailFrac * 0.30,  rgba(trailCol, 0.12));
-    grad.addColorStop(trailFrac * 0.65,  rgba(trailCol, 0.48));
-    grad.addColorStop(trailFrac * 0.90,  rgba(trailCol, 0.85));
-    grad.addColorStop(trailFrac,         rgba(trailCol, 0.95));
+    grad.addColorStop(trailFrac * 0.30,  rgba(trailCol, 0.12 * opacity));
+    grad.addColorStop(trailFrac * 0.65,  rgba(trailCol, 0.48 * opacity));
+    grad.addColorStop(trailFrac * 0.90,  rgba(trailCol, 0.85 * opacity));
+    grad.addColorStop(trailFrac,         rgba(trailCol, 0.95 * opacity));
     grad.addColorStop(Math.min(1, trailFrac + 0.001), rgba(trailCol, 0));
     grad.addColorStop(1.00,              rgba(trailCol, 0));
 
@@ -994,7 +1020,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.restore();
   }
 
-  function drawZeroCircle(cx, cy, r, lighthousePhase, isActive) {
+  function drawZeroCircle(cx, cy, r, lighthousePhase, isActive, visit) {
+    visit = visit || { active: false };
     const rimW = Math.max(1.3, r * 0.026);
 
     // 1. Parchment fill with subtle amber inner glow.
@@ -1026,52 +1053,136 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = rimW * 0.36;
     ctx.stroke();
 
-    // 4. Lighthouse trail — watercolour wake behind the dot, filling
-    //    the outer band of the pod interior.
-    drawLighthouseTrail(cx, cy, r, lighthousePhase);
+    // 4. Lighthouse trail — fades as the dot lifts off from home.
+    //    Trail opacity = 1 when dot is at home rim, 0 when dot is
+    //    anywhere inside The Space (flight = 1).
+    const flightProg = visit.active ? visit.flight : 0;
+    const trailOpacity = 1 - flightProg;
+    drawLighthouseTrail(cx, cy, r, lighthousePhase, trailOpacity);
 
-    // 5. Lighthouse dot + inward beam.
-    const dotR = r * 0.058;
-    const orbit = r * 0.94;
-    const dotX = cx + Math.cos(lighthousePhase - PI / 2) * orbit;
-    const dotY = cy + Math.sin(lighthousePhase - PI / 2) * orbit;
+    // 5. Lighthouse dot and beam — ONLY drawn in-pod when the dot is
+    //    essentially at its home rim (flight < 0.02). Beyond that,
+    //    the dot is drawn at its in-flight / dance position by
+    //    drawVisitingDot, rendered last atop everything.
+    if (flightProg < 0.02) {
+      const dotR = r * 0.058;
+      const orbit = r * 0.94;
+      const dotX = cx + Math.cos(lighthousePhase - PI / 2) * orbit;
+      const dotY = cy + Math.sin(lighthousePhase - PI / 2) * orbit;
 
-    // Soft flare behind the dot
+      // Soft flare behind the dot
+      const flareR = dotR * 5.5;
+      const dotGlow = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, flareR);
+      dotGlow.addColorStop(0.00, rgba(PAL.amberCream, 0.60));
+      dotGlow.addColorStop(0.40, rgba(PAL.russet,     0.24));
+      dotGlow.addColorStop(1.00, 'rgba(0,0,0,0)');
+      ctx.fillStyle = dotGlow;
+      ctx.fillRect(dotX - flareR, dotY - flareR, flareR * 2, flareR * 2);
+
+      // Inward beam, clipped to circle interior
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.97, 0, TAU);
+      ctx.clip();
+      ctx.save();
+      ctx.translate(dotX, dotY);
+      ctx.rotate(Math.atan2(cy - dotY, cx - dotX));
+      const innerBeamLen = r * 2.1, innerBeamHalf = 0.13;
+      const innerGrad = ctx.createLinearGradient(0, 0, innerBeamLen, 0);
+      innerGrad.addColorStop(0.00, rgba(PAL.amberCream, 0.22));
+      innerGrad.addColorStop(0.30, rgba(PAL.amberCream, 0.10));
+      innerGrad.addColorStop(0.70, rgba(PAL.amberCream, 0.025));
+      innerGrad.addColorStop(1.00, rgba(PAL.amberCream, 0));
+      ctx.globalCompositeOperation = 'screen';
+      ctx.fillStyle = innerGrad;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, innerBeamLen, -innerBeamHalf, innerBeamHalf);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      ctx.restore();
+
+      // The dot itself
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, dotR, 0, TAU);
+      ctx.fillStyle = rgba(PAL.russet, 0.92);
+      ctx.fill();
+    }
+  }
+
+  // ── Compute a visiting dot's position in the figure ────────────────
+  // Single source of truth for where dot i is at any point in the
+  // visit. Used both by drawVisitingDot and by the hologram so wave
+  // sources track the moving dots.
+  //
+  // Coordinate system: returns canvas/figure coordinates, ready to
+  // draw. The caller provides pod, centrePod, outerR, centreR.
+  //
+  // Stages:
+  //   'out':   lerp(home, danceStart, flight)
+  //   'dance': danceTrajectory(dance)
+  //   'in':    lerp(home, danceStart, flight)    [flight falls 1→0]
+  //
+  // Dance trajectory: each dot orbits figure centre at angular velocity
+  //   ω_slow = 2π / DANCE_DUR   (one revolution over the dance)
+  // with radius breathing at
+  //   ω_fast = 3·ω_slow, phase-shifted per-dot by i·π/2
+  // so adjacent dots alternate "near" and "far" in counterpoint.
+  function computeDotPosition(i, visit, pod, centrePod, outerR, centreR, podAngle) {
+    // Home: inward rim of pod (fixed)
+    const inwardAngle = podAngle + PI;
+    const orbitR = outerR * 0.94;
+    const homeX = pod.x + Math.cos(inwardAngle) * orbitR;
+    const homeY = pod.y + Math.sin(inwardAngle) * orbitR;
+
+    // Dance start/end position (also the convergence point)
+    const R_DANCE = centreR * 0.22;
+    const startX = centrePod.x + Math.cos(podAngle) * R_DANCE;
+    const startY = centrePod.y + Math.sin(podAngle) * R_DANCE;
+
+    if (visit.stage === 'dance') {
+      // Whirling dervish. Each dot's angle advances ω_slow·τ; its
+      // radius breathes at ω_fast·τ with per-dot phase i·π/2.
+      const tau = visit.dance * DANCE_DUR;         // seconds into dance
+      const omegaSlow = TAU / DANCE_DUR;           // one rev per dance
+      const omegaFast = 3 * omegaSlow;             // 3 braid cycles per dance
+      const R_AMP = centreR * 0.06;
+      const theta = podAngle + omegaSlow * tau;
+      const rr = R_DANCE + R_AMP * Math.sin(omegaFast * tau + i * (PI / 2));
+      return {
+        x: centrePod.x + Math.cos(theta) * rr,
+        y: centrePod.y + Math.sin(theta) * rr,
+      };
+    }
+
+    // 'out' and 'in' stages — lerp between home and start/end of dance
+    // using visit.flight (S-curve 0→1 outbound, 1→0 inbound).
+    const b = visit.flight;
+    return {
+      x: homeX + (startX - homeX) * b,
+      y: homeY + (startY - homeY) * b,
+    };
+  }
+
+  function drawVisitingDot(i, pod, centrePod, outerR, centreR, visit, podAngle) {
+    const { x: dx, y: dy } = computeDotPosition(
+      i, visit, pod, centrePod, outerR, centreR, podAngle
+    );
+    const dotR = outerR * 0.058;
+
+    // Soft flare
     const flareR = dotR * 5.5;
-    const dotGlow = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, flareR);
-    dotGlow.addColorStop(0.00, rgba(PAL.amberCream, 0.60));
-    dotGlow.addColorStop(0.40, rgba(PAL.russet,     0.24));
-    dotGlow.addColorStop(1.00, 'rgba(0,0,0,0)');
-    ctx.fillStyle = dotGlow;
-    ctx.fillRect(dotX - flareR, dotY - flareR, flareR * 2, flareR * 2);
-
-    // Inward beam, clipped to circle interior
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.97, 0, TAU);
-    ctx.clip();
-    ctx.save();
-    ctx.translate(dotX, dotY);
-    ctx.rotate(Math.atan2(cy - dotY, cx - dotX));
-    const innerBeamLen = r * 2.1, innerBeamHalf = 0.13;
-    const innerGrad = ctx.createLinearGradient(0, 0, innerBeamLen, 0);
-    innerGrad.addColorStop(0.00, rgba(PAL.amberCream, 0.22));
-    innerGrad.addColorStop(0.30, rgba(PAL.amberCream, 0.10));
-    innerGrad.addColorStop(0.70, rgba(PAL.amberCream, 0.025));
-    innerGrad.addColorStop(1.00, rgba(PAL.amberCream, 0));
-    ctx.globalCompositeOperation = 'screen';
-    ctx.fillStyle = innerGrad;
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.arc(0, 0, innerBeamLen, -innerBeamHalf, innerBeamHalf);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-    ctx.restore();
+    const glow = ctx.createRadialGradient(dx, dy, 0, dx, dy, flareR);
+    glow.addColorStop(0.00, rgba(PAL.amberCream, 0.60));
+    glow.addColorStop(0.40, rgba(PAL.russet,     0.24));
+    glow.addColorStop(1.00, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(dx - flareR, dy - flareR, flareR * 2, flareR * 2);
 
     // The dot itself
     ctx.beginPath();
-    ctx.arc(dotX, dotY, dotR, 0, TAU);
+    ctx.arc(dx, dy, dotR, 0, TAU);
     ctx.fillStyle = rgba(PAL.russet, 0.92);
     ctx.fill();
   }
@@ -1206,24 +1317,65 @@ document.addEventListener('DOMContentLoaded', () => {
     return states;
   }
 
-  function drawWatercolourCentre(cx, cy, r, t) {
+  function drawWatercolourCentre(cx, cy, r, t, visit, sources) {
+    const hologramT = (visit && visit.hologramT) || 0;
+
+    // Sphericity: 0 → flat disc, 1 → luminous glass hemisphere. Follows
+    // the hologramT envelope so the dome emerges during outbound, holds
+    // through the dance, and settles back during inbound.
+    const sphericity = hologramT;
+
+    // The Space SWELLS outward during the dance — space-time warping
+    // as the shared Markov blanket gains dimensional freedom. Up to
+    // 8% at peak sphericity.
+    const SWELL_AMT = 0.08;
+    const rE = r * (1 + sphericity * SWELL_AMT);
+
+    // The "crown" of the hemisphere — where light glances off the top
+    // of the dome. Offset from centre toward upper-left to suggest a
+    // natural above-viewer light source.
+    const CROWN_X_FRAC = -0.22;
+    const CROWN_Y_FRAC = -0.30;
+    const crownX = cx + CROWN_X_FRAC * rE;
+    const crownY = cy + CROWN_Y_FRAC * rE;
+
+    // ── 0. Outer glow / 3D halo ────────────────────────────────────
+    // Soft luminous halo around the disc — suggests the sphere is
+    // glowing outward into the parchment as it lifts off the page.
+    if (sphericity > 0.02) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      const haloAlpha = 0.26 * sphericity;
+      const halo = ctx.createRadialGradient(cx, cy, rE * 0.95, cx, cy, rE * 1.30);
+      halo.addColorStop(0.00, rgba(PAL.amberCream, 0));
+      halo.addColorStop(0.20, rgba(PAL.amberCream, haloAlpha * 0.60));
+      halo.addColorStop(0.55, rgba(PAL.amberCream, haloAlpha));
+      halo.addColorStop(1.00, rgba(PAL.amberCream, 0));
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rE * 1.30, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+
     // 1. Parchment fill so the centre is a definite disc, not a hole
     ctx.save();
     ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.993, 0, TAU);
+    ctx.arc(cx, cy, rE * 0.993, 0, TAU);
     ctx.fillStyle = rgba(PAL.parchment, 1.0);
     ctx.fill();
     ctx.restore();
 
-    // 2. Watercolour patches, clipped to the circle
+    // 2. Watercolour patches, clipped to the (possibly swollen) disc
     ctx.save();
     ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.97, 0, TAU);
+    ctx.arc(cx, cy, rE * 0.97, 0, TAU);
     ctx.clip();
 
-    const states = buildWatercolourPatchStates(cx, cy, r, t);
+    const states = buildWatercolourPatchStates(cx, cy, rE, t);
+    const boostFactor = 1 + hologramT * 0.5;
     for (const s of states) {
-      const a = 0.34 * s.baseWeight * s.crrWeight;
+      const a = 0.34 * s.baseWeight * s.crrWeight * boostFactor;
       const grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.sigma);
       grad.addColorStop(0.00, rgba(s.col, a));
       grad.addColorStop(0.45, rgba(s.col, a * 0.55));
@@ -1242,25 +1394,575 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.drawImage(paper.canvas, 0, 0, W, H);
     ctx.globalAlpha = 1.0;
 
+    // 4. Holographic shimmer — CRR interference field driven by the
+    //    live positions of the four visiting dots.
+    if (hologramT > 0.01 && sources) {
+      drawRuptureHologram(cx, cy, rE, t, hologramT, sources);
+    }
+
+    // 5. GLASS DOME — light dimensionality, not dark.
+    //    The Space becomes a luminous hemisphere during the dance: a
+    //    transparent bubble of coherence that catches light without
+    //    casting shadow. All layers use additive (screen) blending so
+    //    nothing is darkened — the watercolour, hologram and text
+    //    beneath remain bright and legible.
+    if (sphericity > 0.02) {
+
+      // a) Luminance dome — broad amber-cream glow across the whole
+      //    interior, peaking on the crown. Gives the interior an
+      //    overall lift that reads as "this volume is lit from
+      //    within" rather than "this surface is in shadow".
+      ctx.globalCompositeOperation = 'screen';
+      const domeAlpha = 0.32 * sphericity;
+      const dome = ctx.createRadialGradient(
+        crownX, crownY, 0,
+        crownX, crownY, rE * 1.25
+      );
+      dome.addColorStop(0.00, rgba([255, 250, 230], domeAlpha));
+      dome.addColorStop(0.40, rgba([255, 244, 210], domeAlpha * 0.55));
+      dome.addColorStop(0.85, rgba([255, 238, 190], domeAlpha * 0.12));
+      dome.addColorStop(1.00, rgba([255, 238, 190], 0));
+      ctx.fillStyle = dome;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rE * 0.98, 0, TAU);
+      ctx.fill();
+
+      // b) Glass highlight — elongated bright streak across the upper
+      //    crown, anisotropic (taller than wide) so it reads as the
+      //    specular reflection on a curved glass surface, not a dot.
+      //    Implemented via a scaled radial gradient.
+      ctx.save();
+      ctx.translate(crownX, crownY);
+      ctx.scale(1.0, 1.55);              // vertical stretch
+      const hlAlpha = 0.62 * sphericity;
+      const highlight = ctx.createRadialGradient(0, 0, 0, 0, 0, rE * 0.42);
+      highlight.addColorStop(0.00, rgba([255, 255, 248], hlAlpha));
+      highlight.addColorStop(0.25, rgba([255, 252, 234], hlAlpha * 0.60));
+      highlight.addColorStop(0.60, rgba([255, 246, 210], hlAlpha * 0.18));
+      highlight.addColorStop(1.00, rgba([255, 246, 210], 0));
+      ctx.fillStyle = highlight;
+      ctx.beginPath();
+      ctx.arc(0, 0, rE * 0.42, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+
+      // c) Fresnel rim — bright crescent of light at the silhouette,
+      //    narrow and just inside the rim. Real glass hemispheres
+      //    show this compression of light at the grazing angle. Thin
+      //    annular gradient, screen-blended.
+      const fresnelAlpha = 0.38 * sphericity;
+      const fresnel = ctx.createRadialGradient(
+        cx, cy, rE * 0.82,
+        cx, cy, rE * 0.995
+      );
+      fresnel.addColorStop(0.00, rgba(PAL.amberCream, 0));
+      fresnel.addColorStop(0.55, rgba(PAL.amberCream, 0));
+      fresnel.addColorStop(0.82, rgba([255, 250, 230], fresnelAlpha * 0.7));
+      fresnel.addColorStop(0.95, rgba([255, 252, 240], fresnelAlpha));
+      fresnel.addColorStop(1.00, rgba([255, 252, 240], fresnelAlpha * 0.3));
+      ctx.fillStyle = fresnel;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rE * 0.995, 0, TAU);
+      ctx.fill();
+
+      // d) Reading window — a small soft parchment brightening at the
+      //    geometric centre so the "The Space" label sits on a clean
+      //    canvas even during the most intense hologram moments. This
+      //    slightly suppresses the interference field right at the
+      //    text position while leaving the rest of the hologram rich.
+      ctx.globalCompositeOperation = 'source-over';
+      const readAlpha = 0.28 * sphericity;
+      const reading = ctx.createRadialGradient(cx, cy, 0, cx, cy, rE * 0.32);
+      reading.addColorStop(0.00, rgba(PAL.parchment, readAlpha));
+      reading.addColorStop(0.60, rgba(PAL.parchment, readAlpha * 0.45));
+      reading.addColorStop(1.00, rgba(PAL.parchment, 0));
+      ctx.fillStyle = reading;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rE * 0.32, 0, TAU);
+      ctx.fill();
+    }
+
     ctx.restore();
 
-    // 4. Ink rim, matching the four outer circles so the whole
-    //    composition reads as five Zeros in the same hand.
-    const rimW = Math.max(1.3, r * 0.026);
+    // Toggle flash — brief amber pulse when audio is toggled via the
+    // triple-tap easter egg. Lasts 600ms, fades linearly. Gives the
+    // user tactile confirmation on mobile where audio silence
+    // otherwise hides whether the tap registered.
+    const flashNow = performance.now();
+    const flashRem = audio.toggleFlashUntil - flashNow;
+    if (flashRem > 0) {
+      const flashT = flashRem / 600;
+      const flashAlpha = 0.55 * flashT * flashT;
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      const flash = ctx.createRadialGradient(cx, cy, 0, cx, cy, rE * 1.15);
+      flash.addColorStop(0.00, rgba([255, 252, 230], flashAlpha));
+      flash.addColorStop(0.55, rgba([255, 240, 200], flashAlpha * 0.5));
+      flash.addColorStop(1.00, rgba([255, 240, 200], 0));
+      ctx.fillStyle = flash;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rE * 1.15, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 6. Ink rim at the swollen radius — the silhouette of the sphere.
+    const rimW = Math.max(1.3, rE * 0.026);
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.arc(cx, cy, rE, 0, TAU);
     ctx.strokeStyle = rgba(PAL.ink, 0.86);
     ctx.lineWidth = rimW;
     ctx.stroke();
-    // Faint inner contour
+    // Faint inner contour (scales with rE)
     ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.89, 0, TAU);
+    ctx.arc(cx, cy, rE * 0.89, 0, TAU);
     ctx.strokeStyle = rgba(PAL.ink, 0.14);
     ctx.lineWidth = rimW * 0.36;
     ctx.stroke();
   }
 
-  // ─── Main render loop ───────────────────────────────────────────────
+  // ── Holographic shimmer at rupture — CRR interference field ───────
+  // At the shared rupture moment, the four converging lighthouses act
+  // as coherent wave sources. Each deposits a cylindrical wavefront
+  // into the centre; their superposition creates a genuine holographic
+  // interference pattern — the classical four-slit diffraction field,
+  // with standing-wave nodes and antinodes, bright maxima where waves
+  // add constructively, dark minima where they cancel.
+  //
+  // Physics:
+  //   Each source ψᵢ(x) = exp(i·(k·dᵢ − ω·t + φᵢ)) / √dᵢ
+  //   Total amplitude Ψ(x) = Σᵢ ψᵢ
+  //   Brightness  |Ψ|²  →  amplitude of CRR coherence field
+  //   Phase       arg Ψ  →  ocean palette index (iridescence)
+  //
+  // This is literally the CRR coherence field C(x,t) solved in its
+  // wave regime, with four sources at the dots' convergence points.
+  // The field evolves at 60fps; maxima migrate as ω·t advances,
+  // producing living iridescence.
+  //
+  // Parameters:
+  //   k  = 6π/r     — wavenumber gives ~6 wavelengths across diameter
+  //   ω  = 2π rad/s — 1 full temporal cycle per second
+  //   φᵢ = i·π/2    — staggered phases break 4-fold symmetry into
+  //                   richer interference texture
+
+  // Offscreen canvas for the field. Reused across frames. Computed at
+  // moderate resolution and upscaled with smoothing — the interference
+  // pattern is visually continuous so upscaling is flawless.
+  const HOLO_RES = 128;
+  let _holoCanvas = null;
+  let _holoImgData = null;
+  function getHoloCanvas() {
+    if (_holoCanvas) return _holoCanvas;
+    _holoCanvas = document.createElement('canvas');
+    _holoCanvas.width = HOLO_RES;
+    _holoCanvas.height = HOLO_RES;
+    return _holoCanvas;
+  }
+  function getHoloImgData() {
+    if (_holoImgData) return _holoImgData;
+    const c = getHoloCanvas();
+    _holoImgData = c.getContext('2d').createImageData(HOLO_RES, HOLO_RES);
+    return _holoImgData;
+  }
+
+  function drawRuptureHologram(cx, cy, r, t, intensity, srcCanvas) {
+    const holo = getHoloCanvas();
+    const hCtx = holo.getContext('2d');
+    const img = getHoloImgData();
+    const data = img.data;
+
+    // Wave sources: map each canvas-space source (dot position) into
+    // the holo field's pixel coordinates. The holo field spans
+    // HOLO_RES pixels, with its centre at (HALF, HALF) mapping to
+    // canvas (cx, cy), and HALF pixels mapping to canvas distance r.
+    const HALF = HOLO_RES / 2;
+    const sources = srcCanvas.map((s, i) => ({
+      x: HALF + (s.x - cx) / r * HALF,
+      y: HALF + (s.y - cy) / r * HALF,
+      phase: i * (PI / 2),             // staggered source phases
+    }));
+
+    // Wave parameters, using the holo-field's own pixel units.
+    const k = 6 * PI / HALF;            // ~6 wavelengths across radius
+    const omega = TAU;                  // 1 cycle / second
+    const omegaT = omega * t;
+    const R2 = (HALF - 1) * (HALF - 1); // clip to disc
+
+    // Precompute clamp for distance — avoids divergence at source points
+    const D_MIN = 3.0;
+
+    // Ocean palette as a lookup so we can index by hue fraction.
+    const PAL_N = OCEAN_PALETTE.length;
+
+    // Walk each pixel, compute field, write RGBA.
+    // Brightness uses |Ψ| rather than |Ψ|² so the field has a more
+    // even visual distribution — peaks stand out but baseline remains
+    // visible rather than saturating only near the maxima.
+    const AMP_NORM_SQRT = 0.75;   // normalise |Ψ| peak
+    let idx = 0;
+    for (let py = 0; py < HOLO_RES; py++) {
+      const dy0 = py - HALF;
+      for (let px = 0; px < HOLO_RES; px++) {
+        const dx0 = px - HALF;
+        const rr2 = dx0 * dx0 + dy0 * dy0;
+        if (rr2 > R2) {
+          // Outside the disc — fully transparent
+          data[idx + 3] = 0;
+          idx += 4;
+          continue;
+        }
+        // Sum four cylindrical waves
+        let reSum = 0, imSum = 0;
+        for (let i = 0; i < 4; i++) {
+          const s = sources[i];
+          const ddx = px - s.x;
+          const ddy = py - s.y;
+          let d = Math.sqrt(ddx * ddx + ddy * ddy);
+          if (d < D_MIN) d = D_MIN;
+          const ph = k * d - omegaT + s.phase;
+          const falloff = 1.0 / Math.sqrt(d);
+          reSum += Math.cos(ph) * falloff;
+          imSum += Math.sin(ph) * falloff;
+        }
+        // Amplitude and phase
+        const amp = Math.sqrt(reSum * reSum + imSum * imSum);
+        const bright = Math.min(1, amp / AMP_NORM_SQRT);
+        // arg(Ψ) → [0, 1) for palette indexing
+        let ang = Math.atan2(imSum, reSum);
+        if (ang < 0) ang += TAU;
+        const hueU = ang / TAU;
+        // Palette lookup with smooth blend between neighbours
+        const f = hueU * PAL_N;
+        const i0 = Math.floor(f) % PAL_N;
+        const i1 = (i0 + 1) % PAL_N;
+        const ff = f - Math.floor(f);
+        const cA = OCEAN_PALETTE[i0];
+        const cB = OCEAN_PALETTE[i1];
+        const R = cA[0] + (cB[0] - cA[0]) * ff;
+        const G = cA[1] + (cB[1] - cA[1]) * ff;
+        const B = cA[2] + (cB[2] - cA[2]) * ff;
+
+        // Soft vignette — field fades gently toward the circle's rim
+        // so hologram doesn't end abruptly at the clip boundary.
+        const rim = 1 - Math.sqrt(rr2) / HALF;
+        const vignette = Math.max(0, Math.min(1, rim * 4));   // full until 75% out
+
+        // Bright maxima (constructive interference peaks) get extra
+        // brightening toward amber-white — the "CRR rupture" highlights
+        // where C·Ω ≈ 1 is locally saturated.
+        let outR = R, outG = G, outB = B;
+        if (bright > 0.70) {
+          const peak = (bright - 0.70) / 0.30;      // 0..1 above threshold
+          // Blend toward warm amber (PAL.amberCream)
+          outR = R + (255 - R) * peak * 0.9;
+          outG = G + (248 - G) * peak * 0.8;
+          outB = B + (220 - B) * peak * 0.5;
+        }
+
+        const alpha = Math.round(bright * vignette * intensity * 255);
+        data[idx] = outR | 0;
+        data[idx + 1] = outG | 0;
+        data[idx + 2] = outB | 0;
+        data[idx + 3] = alpha;
+        idx += 4;
+      }
+    }
+    hCtx.putImageData(img, 0, 0);
+
+    // Composite onto main canvas, screen-blended so it reads as light.
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(holo, cx - r, cy - r, r * 2, r * 2);
+    ctx.restore();
+  }
+
+  // ─── Diegetic CRR Audio — The Spirits' Voices ────────────────────
+  // The four dots are human spirits. When they dance into The Space
+  // together, their coherence manifests as sound. Mathematically it
+  // is the SAME interference field as the hologram — just sampled in
+  // the audible domain: each dot emits a harmonic stack at its
+  // fundamental; the four stacks interfere; a listener at the centre
+  // of The Space hears the sum.
+  //
+  // Voice pitches are justly-tuned (no equal-temperament) so the
+  // chord feels consonant in a body-sense way, C major open triad
+  // with octave:
+  //   Voice 0 (N/Lab Zero)          : 256.0 Hz  (C4, fundamental = 2¹¹/VISIT_DURATION)
+  //   Voice 1 (E/Emergent Gathering): 320.0 Hz  (E4, 5:4 major third)
+  //   Voice 2 (S/Wisdom)            : 384.0 Hz  (G4, 3:2 perfect fifth)
+  //   Voice 3 (W/Ecosystem)         : 512.0 Hz  (C5, octave)
+  //
+  // Each voice is a stack of sine partials (1·f, 2·f, 3·f, 4·f, 5·f)
+  // with spectral roll-off. Shaped through parallel bandpass formant
+  // filters (730/1090/2440 Hz — vocal "ah") to give a choral quality.
+  // Summed into a long cathedral reverb. Global envelope rides the
+  // visit's hologramT so the spirits sing only during the dance.
+  //
+  // Per-voice amplitude modulates with the dot's distance from the
+  // centre of The Space: when dots are flying inward, voices swell;
+  // when dancing, voices are at full strength; when flying out, they
+  // fade. The 1/√d falloff from the hologram equation is the exact
+  // amplitude law used — the wave physics is identical to the visual.
+  //
+  // Toggled by triple-clicking the centre of The Space. Hidden
+  // easter egg; silent by default (browsers also require a user
+  // gesture before audio can start, which the triple-click provides).
+
+  const audio = {
+    enabled: false,
+    ctx: null,
+    voices: null,            // [{partials: [{osc, gain}], voiceGain}]
+    masterGain: null,
+    reverbGain: null,
+    dryGain: null,
+    _initAttempted: false,
+    VOICE_FREQS: [256.0, 320.0, 384.0, 512.0],
+    // Amplitude weighting of the 5 harmonic partials (fundamental + 4).
+    // Lower partials are stronger, classic spectral roll-off — reads
+    // as a rounded vocal/bell-like tone rather than a buzzy saw.
+    PARTIAL_WEIGHTS: [1.0, 0.55, 0.32, 0.18, 0.10],
+    // Staggered per-voice phase φᵢ = i·π/2 matches the hologram
+    PHASES: [0, PI / 2, PI, 3 * PI / 2],
+
+    // Build the audio graph synchronously. On iOS Safari, all node
+    // creation must happen within a single user-gesture dispatch to
+    // unlock audio — no awaits in between. resume() is the only async
+    // step, and we handle that at the call site.
+    init() {
+      if (this.ctx || this._initAttempted) return !!this.ctx;
+      this._initAttempted = true;
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return false;
+        this.ctx = new AC();
+
+        // Build a synthetic cathedral impulse response — exponentially
+        // decaying bright noise over 3.5s. Sparkles with a slight
+        // early-reflection cluster in the first 80ms so we get both a
+        // "room" and a "tail".
+        const sr = this.ctx.sampleRate;
+        const len = Math.floor(sr * 3.5);
+        const ir = this.ctx.createBuffer(2, len, sr);
+        for (let ch = 0; ch < 2; ch++) {
+          const d = ir.getChannelData(ch);
+          for (let n = 0; n < len; n++) {
+            const tN = n / sr;
+            // Early reflections: a few spaced impulses in the first 80ms
+            let early = 0;
+            if (tN < 0.08) {
+              early = (Math.random() * 2 - 1) * 0.6 * Math.pow(1 - tN / 0.08, 1.2);
+            }
+            // Late diffuse tail with exponential decay
+            const decay = Math.exp(-tN * 1.8);
+            const noise = (Math.random() * 2 - 1) * decay;
+            d[n] = early + noise * 0.55;
+          }
+        }
+        const conv = this.ctx.createConvolver();
+        conv.buffer = ir;
+
+        // Reverb output gain
+        this.reverbGain = this.ctx.createGain();
+        this.reverbGain.gain.value = 0.65;
+        conv.connect(this.reverbGain);
+
+        // Dry output gain (parallel to reverb)
+        this.dryGain = this.ctx.createGain();
+        this.dryGain.gain.value = 0.40;
+
+        // Master gain — this is driven frame-by-frame by the visit
+        // envelope, so it starts at zero.
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.value = 0;
+        this.reverbGain.connect(this.masterGain);
+        this.dryGain.connect(this.masterGain);
+        this.masterGain.connect(this.ctx.destination);
+
+        // Vocal formant shaping — three parallel bandpass filters at
+        // "ah" vowel frequencies. Each voice is fed through this bank
+        // via its voiceGain → formantBus. The filter outputs are
+        // summed and fed to dry + reverb.
+        const formantBus = this.ctx.createGain();
+        formantBus.gain.value = 1.0;
+        const formantFreqs = [730, 1090, 2440];
+        const formantQ     = [12, 14, 18];
+        const formantGains = [1.0, 0.75, 0.30];
+        const formantOut = this.ctx.createGain();
+        formantOut.gain.value = 1.0;
+        for (let f = 0; f < formantFreqs.length; f++) {
+          const bp = this.ctx.createBiquadFilter();
+          bp.type = 'bandpass';
+          bp.frequency.value = formantFreqs[f];
+          bp.Q.value = formantQ[f];
+          const g = this.ctx.createGain();
+          g.gain.value = formantGains[f];
+          formantBus.connect(bp);
+          bp.connect(g);
+          g.connect(formantOut);
+        }
+        formantOut.connect(conv);
+        formantOut.connect(this.dryGain);
+
+        // Build the four voices. Each voice has 5 partial oscillators
+        // summed into a voice gain which feeds the formant bus.
+        this.voices = [];
+        for (let v = 0; v < 4; v++) {
+          const voiceGain = this.ctx.createGain();
+          voiceGain.gain.value = 0;
+          const fundamental = this.VOICE_FREQS[v];
+          const partials = [];
+          for (let p = 0; p < this.PARTIAL_WEIGHTS.length; p++) {
+            const osc = this.ctx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.value = fundamental * (p + 1);
+            // Slight per-partial detune (cents) so each voice has
+            // chorus-like richness — a few cents of drift reads as
+            // "a person singing", not "a synth".
+            osc.detune.value = (Math.random() - 0.5) * 6;
+            const pGain = this.ctx.createGain();
+            pGain.gain.value = this.PARTIAL_WEIGHTS[p] * 0.18;
+            osc.connect(pGain);
+            pGain.connect(voiceGain);
+            osc.start();
+            partials.push({ osc, pGain });
+          }
+          voiceGain.connect(formantBus);
+          this.voices.push({ voiceGain, partials, fundamental });
+        }
+        return true;
+      } catch (err) {
+        // Audio failed to initialise — gracefully degrade
+        console.warn('Audio init failed:', err);
+        this.ctx = null;
+        return false;
+      }
+    },
+
+    // Toggle audio on/off. MUST be called from within a user-gesture
+    // handler (click, touch) for iOS Safari to unlock audio output.
+    // The entire init + resume chain happens synchronously except
+    // for the final resume() which is awaited in the background.
+    toggleFlashUntil: 0,
+    toggle() {
+      if (!this.ctx) {
+        if (!this.init()) return;
+      }
+      if (!this.ctx) return;
+      this.enabled = !this.enabled;
+      // Always call resume() on user gesture — iOS keeps the context
+      // suspended until this is invoked. Fire-and-forget; don't await.
+      if (this.ctx.state !== 'running') {
+        this.ctx.resume().catch(() => {});
+      }
+      // Brief visual confirmation: 600ms pulse on the centre. Gives
+      // user feedback on mobile where otherwise they wait for the
+      // next visit to know the easter egg triggered.
+      this.toggleFlashUntil = performance.now() + 600;
+    },
+
+    // Called from draw() each frame. Updates per-voice amplitudes
+    // based on dot distances, and sets master gain from visit envelope.
+    updateVisit(visit, dotSources, cx, cy, centreR) {
+      if (!this.enabled || !this.ctx) return;
+      const now = this.ctx.currentTime;
+
+      // Master gain follows hologramT. This is the "spirits awake /
+      // spirits at rest" envelope — silent during coherence phase,
+      // blooms during the dance, fades after.
+      const holoT = (visit && visit.hologramT) || 0;
+      // Shape with a softer curve so voices enter gently and hold
+      // strongly. sqrt gives a faster rise than linear, matching how
+      // the hologram's visual brightness reads.
+      const targetMaster = 0.45 * Math.sqrt(holoT);
+      this.masterGain.gain.setTargetAtTime(targetMaster, now, 0.08);
+
+      if (!visit.active || !dotSources) {
+        // All voices off during coherence phase
+        for (const voice of this.voices) {
+          voice.voiceGain.gain.setTargetAtTime(0, now, 0.12);
+        }
+        return;
+      }
+
+      // Per-voice amplitudes: driven by the dot's distance from the
+      // centre. The math mirrors the hologram wave equation —
+      // each voice is amplitude-modulated by its proximity to the
+      // listener (centre of The Space), with a gentle spatial-phase
+      // tremolo reminding us the spirits are still moving even when
+      // the overall field is full.
+      const k = 6 * PI / centreR;      // matches hologram k in figure units
+      const omega = TAU;                // 1 cycle/sec, matches hologram ω
+      const tSec = performance.now() / 1000;
+      for (let i = 0; i < 4; i++) {
+        const src = dotSources[i];
+        const dx = src.x - cx;
+        const dy = src.y - cy;
+        let d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 6) d = 6;
+
+        // Proximity envelope: 0 at centreR×1.8 (far, orbit), 1 at
+        // d = 0 (centre). Voices swell as spirits approach.
+        const proximity = Math.max(0, Math.min(1,
+          1 - d / (centreR * 1.8)
+        ));
+
+        // Spatial-phase tremolo — a gentle breath riding on proximity.
+        // |cos(k·d - ω·t + φ_i)| gives rapid oscillation we don't want;
+        // (1 + cos(...)) / 2 gives gentle amplitude breath.
+        const tremolo = 0.75 + 0.25 * Math.cos(
+          k * d - omega * tSec + this.PHASES[i]
+        );
+
+        const voiceAmp = proximity * tremolo;
+        this.voices[i].voiceGain.gain.setTargetAtTime(voiceAmp, now, 0.04);
+      }
+    },
+  };
+
+  // Triple-tap detector for the centre of The Space.
+  // Uses pointerdown events so it works for mouse, touch, and pen
+  // without the click-event synthesis delay some mobile browsers add.
+  const tripleTapState = {
+    lastTimes: [],
+    WINDOW_MS: 900,
+  };
+  function onCentrePointerDown(evt) {
+    // Only respond to primary button / primary touch
+    if (evt.button !== undefined && evt.button !== 0) return;
+
+    // Hit test: pointer must be within the centre circle.
+    const rect = canvas.getBoundingClientRect();
+    const x = evt.clientX - rect.left;
+    const y = evt.clientY - rect.top;
+    const g = layout();
+    const dx = x - g.cx;
+    const dy = y - g.cy;
+    if (dx * dx + dy * dy > g.centreR * g.centreR) {
+      tripleTapState.lastTimes = [];
+      return;
+    }
+
+    // Prevent default so mobile browsers don't try to zoom, select
+    // text, or dispatch double-tap behaviours on the centre.
+    if (evt.cancelable) evt.preventDefault();
+
+    const now = performance.now();
+    // Keep only recent taps
+    tripleTapState.lastTimes = tripleTapState.lastTimes
+      .filter(tm => now - tm < tripleTapState.WINDOW_MS);
+    tripleTapState.lastTimes.push(now);
+    if (tripleTapState.lastTimes.length >= 3) {
+      tripleTapState.lastTimes = [];
+      audio.toggle();
+    }
+  }
+  // pointerdown covers mouse, touch, and pen in one event.
+  figure.addEventListener('pointerdown', onCentrePointerDown);
+
+
   function draw(now) {
     const t = (now - t0) / 1000;
     const g = layout();
@@ -1271,29 +1973,62 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.fillStyle = rgba(PAL.parchment, 1);
     ctx.fillRect(0, 0, W, H);
 
-    // 1. Four outer Zero circles. Each has its own lighthouse dot
-    //    orbiting the rim. The dots are phase-offset by 1/4 cycle
-    //    each, so a wave of attention sweeps clockwise around the
-    //    composition every 24 seconds (matching the logo's orbit).
-    const LIGHTHOUSE_PERIOD = 24;                   // seconds per full orbit
-    const basePhase = (t * TAU / LIGHTHOUSE_PERIOD); // advances at 2π/24s
-    for (let i = 0; i < 4; i++) {
-      const isActive = activeKey === OUTER[i].key;
-      // Pod i's lighthouse is offset by i × (τ/4) so at any moment the
-      // four dots are at N/E/S/W relative positions on their own rims.
-      const lightPhase = basePhase + i * (TAU / 4);
-      drawZeroCircle(pods[i].x, pods[i].y, g.outerR, lightPhase, isActive);
+    // Orbit phase. Uses orbitTimeFor(t) which pauses during visits —
+    // so basePhase freezes at π (inward) for the whole visit, then
+    // resumes advancing. Combined with per-pod offset i·τ/4, all
+    // four dots sit at their inward rim points throughout the visit,
+    // ready for the flight/dance/return choreography.
+    const basePhase = (orbitTimeFor(t) * TAU / ORBIT_PERIOD);
+
+    // Single visit state shared by all four pods.
+    const visit = getVisitState(t);
+
+    // Precompute dot positions for this frame. Used both as visual
+    // positions for the visiting dots and as wave source positions
+    // for the hologram's interference field — so the field tracks
+    // the dance live, not at fixed positions.
+    let dotSources = null;
+    if (visit.active) {
+      dotSources = [];
+      for (let i = 0; i < 4; i++) {
+        const podAngle = QUAD_OFFSET + i * (TAU / 4);
+        dotSources.push(
+          computeDotPosition(i, visit, pods[i], pods[4],
+                             g.outerR, g.centreR, podAngle)
+        );
+      }
     }
 
-    // 2. The Space — watercolour centre, same palette and drift
-    //    dynamics as the logo's crescent body. The physical venue
-    //    rendered as Crescent City water and iceplant.
-    drawWatercolourCentre(g.cx, g.cy, g.centreR, t);
+    // 1. Four outer Zero circles. During the visit, in-pod dots are
+    //    hidden (flight > 0.02); they're drawn later at their
+    //    in-flight / dance positions.
+    for (let i = 0; i < 4; i++) {
+      const isActive = activeKey === OUTER[i].key;
+      const lightPhase = basePhase + i * (TAU / 4);
+      drawZeroCircle(pods[i].x, pods[i].y, g.outerR, lightPhase, isActive, visit);
+    }
 
-    // 3. Star network — four spokes with amber pulses flowing
-    //    practice↔centre, articulating the CRR relationship between
-    //    each practice and the ground it returns to.
+    // 2. The Space — watercolour centre with live hologram driven by
+    //    the dance. Sources track the moving dots; field evolves as
+    //    they whirl.
+    drawWatercolourCentre(g.cx, g.cy, g.centreR, t, visit, dotSources);
+
+    // 3. Faint ink spokes between each pod and the centre.
     drawStarNetwork(pods, t);
+
+    // 4. Visiting dots — drawn LAST, atop everything else. Their
+    //    positions come from computeDotPosition (cached in dotSources).
+    if (visit.active) {
+      for (let i = 0; i < 4; i++) {
+        const podAngle = QUAD_OFFSET + i * (TAU / 4);
+        drawVisitingDot(i, pods[i], pods[4], g.outerR, g.centreR, visit, podAngle);
+      }
+    }
+
+    // Diegetic audio: update the spirits' voices based on dot
+    // positions and visit state. Silent when audio is disabled (the
+    // default) or no visit is active.
+    audio.updateVisit(visit, dotSources, g.cx, g.cy, g.centreR);
 
     requestAnimationFrame(draw);
   }
