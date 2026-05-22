@@ -1206,7 +1206,7 @@ function renderFooter() {
   <div class="footer-inner">
     <div class="footer-brand">
       <canvas id="footerLogo" width="360" height="240"></canvas>
-      <p>Space Zero is a 501(c)(3) non-profit for creative advance toward future flourishing.</p>
+      <p>Space Zero is a 501(c)(3) non-profit company, for the creative advance toward future flourishing.</p>
     </div>
     <div class="footer-col">
       <h4>Visit</h4>
