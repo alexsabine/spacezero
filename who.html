@@ -39,6 +39,23 @@ body {
   border-bottom: 1px solid var(--rule);
   background: var(--parchment);
 }
+.who-hero .mini-logo {
+  display: flex; justify-content: center;
+  margin-bottom: 34px;
+}
+.who-hero .mini-logo canvas {
+  display: block;
+  max-width: 100%;
+  width: 360px;
+  height: 240px;
+}
+@media (max-width: 400px) {
+  .who-hero .mini-logo canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+}
 .who-hero-eyebrow {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
@@ -312,6 +329,7 @@ body {
 
 <!-- ═══ HERO ═══ -->
 <section class="who-hero">
+  <div class="mini-logo"><canvas id="miniLogo" width="360" height="240"></canvas></div>
   <p class="who-hero-eyebrow">The People</p>
   <h1 class="who-hero-title">Those gathered around the work</h1>
   <p class="who-hero-sub">
