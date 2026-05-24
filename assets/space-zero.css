@@ -153,7 +153,7 @@ a:hover { color: var(--iceplant); }
 .footer-inner {
   max-width: 1180px; margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  grid-template-columns: 1.4fr 1fr 1fr;
   gap: 40px;
   margin-bottom: 50px;
 }
@@ -171,7 +171,10 @@ a:hover { color: var(--iceplant); }
   color: var(--ink-soft); margin: 0 0 16px; font-weight: 400;
 }
 .footer-col ul { list-style: none; padding: 0; margin: 0; }
-.footer-col li { margin-bottom: 10px; }
+.footer-col li {
+  margin-bottom: 10px;
+  font-size: 14px; color: var(--muted);
+}
 .footer-col a, .footer-col .placeholder {
   font-size: 14px; color: var(--muted);
 }
