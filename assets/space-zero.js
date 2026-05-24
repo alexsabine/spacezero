@@ -1211,25 +1211,15 @@ function renderFooter() {
     <div class="footer-col">
       <h4>Visit</h4>
       <ul>
-        <li><span class="placeholder">[Street address]</span></li>
-        <li><span class="placeholder">[Crescent City, CA]</span></li>
-        <li><span class="placeholder">[Postal code]</span></li>
+        <li>Space Zero</li>
+        <li>983 3rd St</li>
+        <li>Crescent City, CA 95531</li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
       <ul>
-        <li><span class="placeholder">[hello@...]</span></li>
-        <li><span class="placeholder">[Phone]</span></li>
-        <li><span class="placeholder">[Social]</span></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Follow</h4>
-      <ul>
-        <li><span class="placeholder">[Newsletter]</span></li>
-        <li><span class="placeholder">[Instagram]</span></li>
-        <li><span class="placeholder">[Substack]</span></li>
+        <li><a href="mailto:info@spacezero.net">info@spacezero.net</a></li>
       </ul>
     </div>
   </div>
