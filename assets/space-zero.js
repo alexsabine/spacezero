@@ -1224,7 +1224,7 @@ function renderFooter() {
     </div>
   </div>
   <div class="footer-bottom">
-    <div>&copy; 2026 Space Zero &middot; 501(c)(3) placeholder</div>
+    <div>&copy; 2026 Space Zero &middot; 501(c)(3)</div>
     <div>Crescent City &middot; California</div>
   </div>
 </footer>`;
