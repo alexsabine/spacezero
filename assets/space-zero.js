@@ -1180,7 +1180,7 @@ function renderAesthetics(canvas) {
  * ═════════════════════════════════════════════════════════════════════════ */
 
 const NAV = [
-  { href: 'index.html',       label: 'Why',          key: 'why' },
+  { href: 'index.html',       label: 'Home',         key: 'why' },
   { href: 'what.html',        label: 'What',         key: 'what' },
   { href: 'who.html',         label: 'Who',          key: 'who' },
   { href: 'get-involved.html', label: 'Get Involved', key: 'get-involved' },
