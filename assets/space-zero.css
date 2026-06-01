@@ -10,8 +10,8 @@
   --parchment-deep:  #e6dfc9;
   --ink:             #1a1612;
   --ink-soft:        #3a2e24;
-  --muted:           #7a6f5f;
-  --muted-light:     #a39987;
+  --muted:           #5e5347;
+  --muted-light:     #7a6f5f;
   --rule:            rgba(58, 46, 36, 0.12);
   --rule-strong:     rgba(58, 46, 36, 0.22);
   --iceplant:        #c84494;
@@ -140,7 +140,7 @@ a:hover { color: var(--iceplant); }
 }
 .element-body {
   font-size: 17px; color: var(--ink-soft);
-  line-height: 1.65; margin: 0; font-weight: 300;
+  line-height: 1.65; margin: 0; font-weight: 400;
 }
 
 /* ═══ FOOTER ═══ */
