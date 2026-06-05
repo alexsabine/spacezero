@@ -896,6 +896,20 @@ function renderAlign(canvas) {
   const R = Math.random;
   let t = 0;
 
+  /* ── predator: a click/tap acts as a threat the school flees from ── */
+  const threat = { x: 0, y: 0, s: 0 };
+  const ripples = [];
+  function localPt(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (W / (r.width || W)), y: (e.clientY - r.top) * (H / (r.height || H)) };
+  }
+  canvas.addEventListener('pointerdown', (e) => {
+    const p = localPt(e);
+    threat.x = p.x; threat.y = p.y; threat.s = 1;
+    ripples.push({ x: p.x, y: p.y, age: 0 });
+    if (ripples.length > 4) ripples.shift();
+  });
+
   /* ── spatial hash ── */
   const CELL = max(40, min(W, H) * 0.2);
   let hashW, hashH, grid = [], hashDirty = true;
@@ -953,6 +967,8 @@ function renderAlign(canvas) {
     for (const f of fishes) insertHash(f);
     // slow drifting attractor so the school keeps re-centring in frame (§CRR SO(2) drift)
     const ax = W * (0.5 + 0.16 * sin(t * 0.11)), ay = H * (0.5 + 0.12 * sin(t * 0.09 + 1.7));
+    if (threat.s > 0) threat.s = max(0, threat.s - dt / 1.5);   // decays over ~1.5s
+    const threatR = min(W, H) * 0.42;
     for (const f of fishes) {
       const tL = 8 + sin(t * .3 + f.id * .1) * .8;
       f.tail.step(tL, dt); f.fp += dt * (5 + f.tail.sa * 20);
@@ -974,6 +990,15 @@ function renderAlign(canvas) {
       f.vy += sepY * .18 + aliY * .07 * w + cohY * .004 * w;
       if (f.crr.ruptured) { const jitter = (R() - .5) * .8; f.vx += cos(f.ang + P * .5) * jitter * 2; f.vy += sin(f.ang + P * .5) * jitter * 2; }
       if (f.crr.regen > 0) { const vh = f.crr.validatedHeading; if (vh) { const bl = f.crr.regen * .15 * dt * 60; f.vx += (cos(vh.ang) * f.swimSpeed - f.vx) * bl; f.vy += (sin(vh.ang) * f.swimSpeed - f.vy) * bl; } }
+      // predator threat: strong repulsion + coherence disruption → the school scatters
+      if (threat.s > 0) {
+        const mdx = threat.x - f.x, mdy = threat.y - f.y, md = hypot(mdx, mdy) + 1;
+        if (md < threatR) {
+          const fall = (1 - md / threatR) * threat.s;
+          f.vx -= mdx / md * fall * 3.4; f.vy -= mdy / md * fall * 3.4;
+          if (md < threatR * 0.55) f.crr.C *= pow(0.86, dt * 60);   // disrupt coherence near the strike
+        }
+      }
       // gentle centring + soft edge containment (replaces toroidal wrap)
       f.vx += (ax - f.x) * 0.00045; f.vy += (ay - f.y) * 0.00045;
       if (f.x < MARGIN) f.vx += (MARGIN - f.x) / MARGIN * 0.6;
@@ -1157,6 +1182,17 @@ function renderAlign(canvas) {
     upd(dt);
     fishes.sort((a, b) => a.depth - b.depth);
     for (const f of fishes) drawFish(f);
+    // predator-strike ripples
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rp = ripples[i]; rp.age += dt;
+      const life = 1 - rp.age / 1.4;
+      if (life <= 0) { ripples.splice(i, 1); continue; }
+      const rad = (min(W, H) * 0.06) + rp.age * min(W, H) * 0.28;
+      X.beginPath(); X.arc(rp.x, rp.y, rad, 0, T);
+      X.strokeStyle = rgba(PAL.parchment, 0.22 * life);
+      X.lineWidth = 1.4 * life + 0.3;
+      X.stroke();
+    }
     // gentle depth vignette
     const vg = X.createRadialGradient(W / 2, H / 2, min(W, H) * 0.3, W / 2, H / 2, max(W, H) * 0.72);
     vg.addColorStop(0, 'rgba(0,0,0,0)');
@@ -1566,6 +1602,8 @@ function renderAesthetics(canvas) {
   const tips = [];
   const fruits = [];
   let ruptCount = 0, simDay = 0, frame = 0;
+  // ── lifecycle (render-side; bounds tip growth & cost): grow → mature → fade → regrow ──
+  let phase = 'grow', life = 0, matureT = 0;
 
   function Tip(x, y, par) {
     this.x = x; this.y = y;
@@ -1713,6 +1751,11 @@ function renderAesthetics(canvas) {
     inoculate(G * 0.3, G * 0.5);
     inoculate(G * 0.7, G * 0.5);
   }
+  function resetCycle() {                 // clear everything and re-inoculate a fresh colony
+    tips.length = 0; fruits.length = 0;
+    ruptCount = 0; simDay = 0; frame = 0;
+    init();
+  }
   function step() {
     frame++;
     const stress = totalStress(), h = envHealth();
@@ -1757,6 +1800,7 @@ function renderAesthetics(canvas) {
   const FX = fx => offX + fx * scale, FY = fy => offY + fy * scale;
 
   const SOIL_WARM = [40, 30, 20], SOIL_COOL = [24, 31, 32];
+  const SOIL_BASE_C = blend(SOIL_WARM, SOIL_COOL, 0.35);   // fade target (network dissolves into soil)
   const HYPHA_WARM = [236, 224, 196], HYPHA_SAGE = [176, 184, 150];
   const COH_SHEEN = [150, 196, 214];
 
@@ -1767,7 +1811,31 @@ function renderAesthetics(canvas) {
     const t = (now / 1000) - t0;
     let dt = t - tPrev; tPrev = t;
     if (!isFinite(dt) || dt < 0) dt = 1 / 60;
-    step();
+    if (dt > 0.1) dt = 1 / 60;
+
+    /* ── lifecycle ── grow & mature run the engine; fade freezes it (saves cost) ── */
+    if (phase === 'grow') {
+      life = Math.min(1, life + dt * 0.7);
+      step();
+      const mature = (simDay > 95 && (fruits.length >= 4 || simDay > 150)) || tips.length > 1300;
+      if (mature) { phase = 'mature'; matureT = 0; }
+    } else if (phase === 'mature') {
+      life = Math.min(1, life + dt * 0.7);
+      step();                              // let the mushroom caps finish growing
+      matureT += dt;
+      if (matureT > 4.5) phase = 'fade';
+    } else if (phase === 'fade') {
+      life = Math.max(0, life - dt * 0.28); // ~3.6s dissolve; engine is frozen here
+      if (life <= 0.001) { resetCycle(); phase = 'grow'; life = 0; }
+    }
+
+    // soil substrate base — always opaque, so the network fades *into* it
+    ctx.clearRect(0, 0, W, H);
+    const soil = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+    soil.addColorStop(0, rgba(SOIL_WARM, 1));
+    soil.addColorStop(1, rgba(SOIL_COOL, 1));
+    ctx.fillStyle = soil;
+    ctx.fillRect(0, 0, W, H);
 
     // 1. field → recoloured pixels (half-res buffer)
     for (let ry = 0; ry < RW; ry++) {
@@ -1793,7 +1861,8 @@ function renderAesthetics(canvas) {
       }
     }
     fctx.putImageData(fimg, 0, 0);
-    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.globalAlpha = life;                       // whole network fades with the lifecycle
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(fld, offX, offY, drawSz, drawSz);
 
@@ -1849,6 +1918,7 @@ function renderAesthetics(canvas) {
       ctx.ellipse(px, py - sz, sz * 0.8, sz * 0.42, 0, 0, TAU);
       ctx.fill();
     }
+    ctx.restore();   // end network life-alpha
 
     // 5. soft vignette
     const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.28, W / 2, H / 2, Math.max(W, H) * 0.72);
