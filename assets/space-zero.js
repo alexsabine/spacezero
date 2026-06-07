@@ -1204,43 +1204,54 @@ function renderAlign(canvas) {
   requestAnimationFrame(draw);
 }
 
-/* ── 03 BENEVOLENCE: technology with heart — a beating pulse + ECG ──
- *  §CRR engine: the heartbeat is a stable CRR limit cycle. Coherence
- *  C(t)=∫L dτ fills through diastole; at C·Ω = 1 the wall ruptures (systole —
- *  the R-spike, the "lub"), then regenerates R = ∫φ·exp(C/Ω)·Θ dτ as the
- *  chamber refills (the "dub"). Ω (boundary permeability) sets the tempo, so a
- *  single parameter yields the perfect rhythm — a calm ~52 bpm. The PQRST trace
- *  and the heart's pulse are driven from one shared phase, in lock-step. Public
- *  framing: kindness giving technology its pulse; the instrument of medicine
- *  made beautiful — feeling and rhythm, not biology. */
+/* ── 03 BENEVOLENCE: technology with heart — two agents entraining ──
+ *  §CRR engine: two hearts (and two breaths) are CRR limit-cycle oscillators —
+ *  each accumulates coherence C(t)=∫L dτ to a rupture at C·Ω = 1 (systole, the
+ *  R-spike) and regenerates R = ∫φ·exp(C/Ω)·Θ dτ as it refills. The two agents
+ *  start detuned, then couple (Kuramoto, K·sin(θⱼ−θᵢ)); as the connection K
+ *  rises the rhythms phase-lock — cardiac / neural entrainment between people.
+ *  Coupling drives the picture: colour converges toward the sunset's gold, a
+ *  shared radiance pulses from the midpoint, and (honestly, from the real
+ *  phases) the two ECG traces slide into alignment through time. Breath entrains
+ *  the same way — the slow halo and the baseline wander on the trace. Public
+ *  framing: love and kindness shared; two becoming one rhythm. */
 function renderBenevolence(canvas) {
   const cssW = parseInt(canvas.getAttribute('width'));
   const cssH = parseInt(canvas.getAttribute('height'));
   const { ctx, W, H } = setupCanvas(canvas, cssW, cssH);
-  const { sin, cos, exp, pow, min, max } = Math;
-  const SCL = W / 460;                  // line-weight scale for the panel
+  const { sin, cos, exp, pow, min, max, abs } = Math;
+  const SCL = W / 460;
+  const sstep = (a, b, x) => { const k = min(1, max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
 
-  /* §CRR limit cycle — calm cardiac period (Ω sets the tempo) */
-  const PERIOD = 1.15;                  // seconds per beat ≈ 52 bpm
-  const ROOT = W * 0.5, MIDY = H * 0.40;
+  /* two agents — detuned CRR limit-cycle oscillators (heart + breath) */
+  const wA = TAU / 1.00, wB = TAU / 1.11;     // cardiac angular frequency (rad/s)
+  const wbA = TAU / 4.0, wbB = TAU / 4.6;     // breath angular frequency
+  let thA = 0.0, thB = PI * 0.92;             // cardiac phases
+  let beA = 0.0, beB = PI * 0.60;             // breath phases
+  const KC = 1.60, KB = 0.80;                 // peak coupling (cardiac / breath)
+  let cohC = 0, E = 0;                        // phase order parameter / entrainment level
 
-  /* ECG PQRST as a sum of smooth lobes; sharp R-spike at u ≈ 0.285 */
+  /* colour — each agent's hue converges toward the sunset's gold as they cohere */
+  const GOLD  = [245, 168, 86];                                 // sunset gold (the ocean panel)
+  const CORAL = [240, 122, 96];                                 // sunset coral
+  const C_A = blend(PAL.iceplantBright, PAL.iceplantDeep, 0.30);// agent A — cool rose
+  const C_B = blend(PAL.iceplantBright, CORAL, 0.55);           // agent B — warm coral
+
+  /* ECG PQRST + mechanical pulse (shared waveform shapes) */
   function gss(x, c, w) { const d = (x - c) / w; return exp(-d * d); }
   function ecg(u) {
     return  0.10 * gss(u, 0.16,  0.024)   // P
-          - 0.07 * gss(u, 0.255, 0.010)   // Q
-          + 1.00 * gss(u, 0.285, 0.015)   // R
-          - 0.24 * gss(u, 0.320, 0.014)   // S
-          + 0.26 * gss(u, 0.46,  0.036);  // T
+          - 0.07 * gss(u, 0.255, 0.011)   // Q
+          + 1.00 * gss(u, 0.285, 0.020)   // R
+          - 0.24 * gss(u, 0.330, 0.016)   // S
+          + 0.26 * gss(u, 0.47,  0.038);  // T
   }
-  /* mechanical pulse — fast attack, gentle release; lub (systole) + dub */
   function pls(u, c, upT, dnT) { const d = u < c ? (c - u) / upT : (u - c) / dnT; return exp(-d * d); }
   function beat(u) { return 1.00 * pls(u, 0.30, 0.018, 0.10) + 0.42 * pls(u, 0.52, 0.022, 0.12); }
 
-  /* heart outline — parametric, symbolic (not anatomical) */
   function heartPath(cx, cy, s) {
     ctx.beginPath();
-    const N = 90;
+    const N = 80;
     for (let i = 0; i <= N; i++) {
       const a = (i / N) * TAU;
       const x = 16 * pow(sin(a), 3);
@@ -1251,174 +1262,219 @@ function renderBenevolence(canvas) {
     ctx.closePath();
   }
 
-  const ripples = [];
-  let t0 = performance.now() / 1000, uPrev = 0;
+  /* ── fixed-rate integrator + ECG history (a true scrolling monitor) ── */
+  const FS = 160, DS = 1 / FS, WIN = 2.4, NV = Math.round(WIN * FS);
+  const yA = new Float32Array(NV), yB = new Float32Array(NV);
+  let head = 0, filled = 0;
+  const ringsShared = [];        // {t, str} radiant rings from the midpoint
+  const ripA = [], ripB = [];    // per-heart ripple birth times
+  let uPrevA = 0, uPrevB = 0, simT = 0;
+
+  function substep(ds) {
+    simT += ds;
+    // connection cycle (~24 s): APART (held) → come together → TOGETHER (held) → release
+    const p = (simT % 24) / 24;
+    const conn = sstep(0.30, 0.45, p) * (1 - sstep(0.80, 0.97, p));
+    const Kc = KC * conn, Kb = KB * conn;
+    thA += (wA  + Kc * sin(thB - thA)) * ds;
+    thB += (wB  + Kc * sin(thA - thB)) * ds;
+    beA += (wbA + Kb * sin(beB - beA)) * ds;
+    beB += (wbB + Kb * sin(beA - beB)) * ds;
+
+    const Rc = abs(cos((thA - thB) / 2));
+    cohC += (Rc - cohC) * (1 - exp(-ds / 0.5));         // phase alignment (rings)
+    E    += (conn - E)  * (1 - exp(-ds / 0.8));         // entrainment level (visuals)
+
+    const uA = (thA / TAU) % 1, uB = (thB / TAU) % 1, cr = 0.285;
+    if (uPrevA < cr && uA >= cr) {                       // agent A systole (rupture δ)
+      ripA.push(simT); if (ripA.length > 4) ripA.shift();
+      if (E > 0.4 && cohC > 0.5) { ringsShared.push({ t: simT, str: E }); if (ringsShared.length > 5) ringsShared.shift(); }
+    }
+    if (uPrevB < cr && uB >= cr) { ripB.push(simT); if (ripB.length > 4) ripB.shift(); }
+    uPrevA = uA; uPrevB = uB;
+
+    yA[head] = ecg(uA); yB[head] = ecg(uB);
+    head = (head + 1) % NV; if (filled < NV) filled++;
+  }
+
+  const heartH = H * 0.28, baseS = heartH / 29;
+  let tPrev = performance.now() / 1000, acc = 0;
 
   function draw(now) {
-    const t = (now / 1000) - t0;
-    const u = (t % PERIOD) / PERIOD;     // cardiac phase
-    const bv = beat(u);                  // 0 .. ~1.1 mechanical pulse
+    const t = now / 1000;
+    let dt = t - tPrev; tPrev = t;
+    if (!isFinite(dt) || dt < 0) dt = 1 / 60;
+    if (dt > 0.1) dt = 0.1;
+    acc += dt;
+    let steps = 0;
+    while (acc >= DS && steps < 28) { substep(DS); acc -= DS; steps++; }
 
-    /* emit an expanding heart-ripple at each R-spike (the rupture δ) */
-    if (uPrev < 0.285 && u >= 0.285) { ripples.push(t); if (ripples.length > 5) ripples.shift(); }
-    uPrev = u;
+    /* ── frame state ── */
+    const uA = (thA / TAU) % 1, uB = (thB / TAU) % 1;
+    const bvA = beat(uA), bvB = beat(uB), bvMix = (bvA + bvB) * 0.5;
+    const brA = 0.5 + 0.5 * sin(beA), brB = 0.5 + 0.5 * sin(beB);
+    const en = E, coh = cohC;
+    const colA = blend(C_A, GOLD, 0.80 * en);
+    const colB = blend(C_B, GOLD, 0.80 * en);
+    const sepF = 0.178 - 0.034 * en;                   // lean in as they cohere
+    const hcy = H * 0.37, xA = W * (0.5 - sepF), xB = W * (0.5 + sepF);
+    const Mx = W * 0.5, My = hcy;
 
-    /* ── background: warm parchment with a soft rose halo behind the heart ── */
-    ctx.clearRect(0, 0, W, H);
-    const bg = ctx.createRadialGradient(ROOT, MIDY, 0, ROOT, MIDY, max(W, H) * 0.75);
-    bg.addColorStop(0.00, rgba(blend(PAL.parchment, PAL.iceplantPale, 0.16 + 0.10 * bv), 1));
-    bg.addColorStop(0.45, rgba(PAL.parchment, 1));
-    bg.addColorStop(1.00, rgba(PAL.parchmentWarm, 1));
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
-    const baseY = H * 0.80, ampPx = H * 0.150;
-
-    /* ── faint monitor graticule in the lower readout band ── */
-    const gridTop = baseY - ampPx * 1.15, gridBot = baseY + ampPx * 0.7;
-    ctx.save();
-    ctx.beginPath(); ctx.rect(0, gridTop, W, gridBot - gridTop); ctx.clip();
-    ctx.strokeStyle = rgba(PAL.iceplantDeep, 0.05);
-    ctx.lineWidth = 1;
-    const gs = max(16, W / 24);
-    for (let x = ROOT % gs; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x, gridTop); ctx.lineTo(x, gridBot); ctx.stroke(); }
-    for (let y = baseY; y > gridTop; y -= gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-    for (let y = baseY + gs; y < gridBot; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-    ctx.restore();
-
-    /* heart geometry — visual mass centred at MIDY */
-    const heartH = H * 0.40, baseS = heartH / 29;
-    const hcx = ROOT, hcy = MIDY - 2.5 * baseS;
-
-    /* ── heart-ripples (expanding outlines behind the heart) ── */
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    for (const bt of ripples) {
-      const age = t - bt; if (age > 1.5) continue;
-      const k = age / 1.5;
-      heartPath(hcx, hcy, baseS * (1.0 + 0.85 * k));
-      ctx.strokeStyle = rgba(PAL.iceplantBright, (1 - k) * (1 - k) * 0.5);
-      ctx.lineWidth = max(0.6, 2.4 * (1 - k) * SCL);
+    /* inner painters (close over this frame's colours + geometry) */
+    function drawHeart(cx, cy, s, col, bv) {
+      ctx.save(); ctx.globalCompositeOperation = 'screen';
+      const bR = heartH * (0.55 + 0.18 * bv), ba = 0.14 + 0.24 * bv;
+      const bl = ctx.createRadialGradient(cx, cy, 0, cx, cy, bR);
+      bl.addColorStop(0.00, rgba(blend(col, PAL.amberCream, 0.25), ba));
+      bl.addColorStop(0.45, rgba(col, ba * 0.4));
+      bl.addColorStop(1.00, rgba(col, 0));
+      ctx.fillStyle = bl; ctx.fillRect(cx - bR, cy - bR, bR * 2, bR * 2);
+      ctx.restore();
+      heartPath(cx, cy, s);
+      const top = cy - 12 * s, bot = cy + 17 * s;
+      const f = ctx.createLinearGradient(0, top, 0, bot);
+      f.addColorStop(0.00, rgba(blend(col, PAL.amberCream, 0.42), 1));
+      f.addColorStop(0.42, rgba(col, 1));
+      f.addColorStop(0.80, rgba(blend(col, PAL.ink, 0.22), 1));
+      f.addColorStop(1.00, rgba(blend(blend(col, PAL.ink, 0.22), PAL.ember, 0.4), 1));
+      ctx.fillStyle = f; ctx.fill();
+      ctx.save(); heartPath(cx, cy, s); ctx.clip();
+      const sx = cx - 6 * s, sy = cy - 7 * s;
+      const sp = ctx.createRadialGradient(sx, sy, 0, sx, sy, 13 * s);
+      sp.addColorStop(0.0, rgba(PAL.parchment, 0.45 + 0.15 * bv));
+      sp.addColorStop(0.5, rgba(blend(col, PAL.parchment, 0.6), 0.16));
+      sp.addColorStop(1.0, rgba(col, 0));
+      ctx.fillStyle = sp; ctx.fillRect(cx - 18 * s, cy - 20 * s, 36 * s, 36 * s);
+      ctx.restore();
+      heartPath(cx, cy, s);
+      ctx.strokeStyle = rgba(blend(col, PAL.ink, 0.35), 0.42);
+      ctx.lineWidth = max(1, 1.3 * SCL);
       ctx.stroke();
+    }
+
+    function drawTrace(buf, baseY, amp, col) {
+      if (filled < 2) return;
+      const n = filled, start = (head - filled + NV) % NV, x0 = W * 0.06, x1 = W * 0.94;
+      const X = i => x0 + (i / (n - 1)) * (x1 - x0);
+      const Y = i => baseY - buf[(start + i) % NV] * amp;
+      ctx.save(); ctx.globalCompositeOperation = 'screen';
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); for (let i = 1; i < n; i++) ctx.lineTo(X(i), Y(i));
+      ctx.strokeStyle = rgba(col, 0.16); ctx.lineWidth = max(3, 5 * SCL); ctx.stroke();
+      ctx.restore();
+      const g = ctx.createLinearGradient(x0, 0, x1, 0);
+      g.addColorStop(0.0, rgba(col, 0.0));
+      g.addColorStop(0.5, rgba(col, 0.5));
+      g.addColorStop(1.0, rgba(blend(col, PAL.amberCream, 0.2), 0.95));
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); for (let i = 1; i < n; i++) ctx.lineTo(X(i), Y(i));
+      ctx.strokeStyle = g; ctx.lineWidth = max(1.3, 1.9 * SCL); ctx.stroke();
+      const px = X(n - 1), py = Y(n - 1), pr = 13 * SCL;
+      ctx.save(); ctx.globalCompositeOperation = 'screen';
+      const pg = ctx.createRadialGradient(px, py, 0, px, py, pr);
+      pg.addColorStop(0, rgba(PAL.amberCream, 0.85)); pg.addColorStop(0.4, rgba(col, 0.4)); pg.addColorStop(1, rgba(col, 0));
+      ctx.fillStyle = pg; ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+      ctx.restore();
+      ctx.beginPath(); ctx.arc(px, py, max(1.4, 2.0 * SCL), 0, TAU);
+      ctx.fillStyle = rgba(PAL.parchment, 0.95); ctx.fill();
+    }
+
+    /* ── background: warm parchment, sunset-gold halo warming as they cohere ── */
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createRadialGradient(Mx, My, 0, Mx, My, max(W, H) * 0.8);
+    bg.addColorStop(0.00, rgba(blend(PAL.parchment, GOLD, 0.04 + 0.17 * en + 0.05 * bvMix), 1));
+    bg.addColorStop(0.42, rgba(PAL.parchment, 1));
+    bg.addColorStop(1.00, rgba(PAL.parchmentWarm, 1));
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    /* ── breath halos behind each heart (swell together when breath entrains) ── */
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    for (const a of [[xA, brA, colA], [xB, brB, colB]]) {
+      const hx = a[0], br = a[1], col = a[2];
+      const r = heartH * (1.05 + 0.45 * br), al = (0.05 + 0.07 * br) * (0.55 + 0.45 * en);
+      const g = ctx.createRadialGradient(hx, hcy, 0, hx, hcy, r);
+      g.addColorStop(0, rgba(blend(col, PAL.amberCream, 0.35), al));
+      g.addColorStop(1, rgba(col, 0));
+      ctx.fillStyle = g; ctx.fillRect(hx - r, hcy - r, r * 2, r * 2);
     }
     ctx.restore();
 
-    /* ── heart bloom ── */
-    const sNow = baseS * (1 + 0.085 * bv);
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    const bloomR = heartH * (0.62 + 0.18 * bv), ba = 0.16 + 0.26 * bv;
-    const bloom = ctx.createRadialGradient(hcx, hcy, 0, hcx, hcy, bloomR);
-    bloom.addColorStop(0.00, rgba(blend(PAL.iceplantBright, PAL.amberCream, 0.25), ba));
-    bloom.addColorStop(0.45, rgba(PAL.iceplantBright, ba * 0.4));
-    bloom.addColorStop(1.00, rgba(PAL.iceplantBright, 0));
-    ctx.fillStyle = bloom;
-    ctx.fillRect(hcx - bloomR, hcy - bloomR, bloomR * 2, bloomR * 2);
+    /* ── shared field of warmth + radiating rings (love / kindness, when cohered) ── */
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    if (en > 0.04) {                                    // continuous shared aura — radiate together
+      const r = heartH * (1.7 + 0.5 * bvMix), al = en * (0.10 + 0.17 * bvMix);
+      const g = ctx.createRadialGradient(Mx, My, 0, Mx, My, r);
+      g.addColorStop(0.00, rgba(blend(GOLD, PAL.amberCream, 0.35), al));
+      g.addColorStop(0.55, rgba(GOLD, al * 0.35));
+      g.addColorStop(1.00, rgba(GOLD, 0));
+      ctx.fillStyle = g; ctx.fillRect(Mx - r, My - r, r * 2, r * 2);
+    }
+    for (const rg of ringsShared) {                     // one expanding ring per shared beat
+      const age = simT - rg.t; if (age > 1.9) continue;
+      const k = age / 1.9;
+      const rad = (0.08 + 0.64 * k) * max(W, H) * 0.66;
+      const al = (1 - k) * (1 - k) * 0.55 * rg.str;
+      ctx.strokeStyle = rgba(blend(GOLD, PAL.amberCream, 0.32), al);
+      ctx.lineWidth = max(0.6, 3.8 * (1 - k) * SCL);
+      ctx.beginPath(); ctx.arc(Mx, My, rad, 0, TAU); ctx.stroke();
+    }
+    const mb = bvMix * en;                              // bright bloom as both beat as one
+    if (mb > 0.03) {
+      const r = heartH * (0.8 + 0.9 * mb);
+      const g = ctx.createRadialGradient(Mx, My, 0, Mx, My, r);
+      g.addColorStop(0, rgba(blend(GOLD, PAL.amberCream, 0.45), 0.38 * mb));
+      g.addColorStop(1, rgba(GOLD, 0));
+      ctx.fillStyle = g; ctx.fillRect(Mx - r, My - r, r * 2, r * 2);
+    }
     ctx.restore();
 
-    /* ── heart body ── */
-    heartPath(hcx, hcy, sNow);
-    const top = hcy - 12 * sNow, bot = hcy + 17 * sNow;
-    const fill = ctx.createLinearGradient(0, top, 0, bot);
-    fill.addColorStop(0.00, rgba(blend(PAL.iceplantPale, PAL.amberCream, 0.30), 1));
-    fill.addColorStop(0.38, rgba(PAL.iceplantBright, 1));
-    fill.addColorStop(0.78, rgba(PAL.iceplantDeep, 1));
-    fill.addColorStop(1.00, rgba(blend(PAL.iceplantDeep, PAL.ember, 0.28), 1));
-    ctx.fillStyle = fill;
-    ctx.fill();
-
-    /* upper-left specular sheen — luminous and flat (beauty over biology) */
-    ctx.save();
-    heartPath(hcx, hcy, sNow); ctx.clip();
-    const shx = hcx - 6 * sNow, shy = hcy - 7 * sNow;
-    const spec = ctx.createRadialGradient(shx, shy, 0, shx, shy, 14 * sNow);
-    spec.addColorStop(0.0, rgba(PAL.parchment, 0.5 + 0.15 * bv));
-    spec.addColorStop(0.5, rgba(PAL.iceplantPale, 0.18));
-    spec.addColorStop(1.0, rgba(PAL.iceplantPale, 0));
-    ctx.fillStyle = spec;
-    ctx.fillRect(hcx - 18 * sNow, hcy - 20 * sNow, 36 * sNow, 36 * sNow);
-    ctx.restore();
-
-    /* crisp rim */
-    heartPath(hcx, hcy, sNow);
-    ctx.strokeStyle = rgba(blend(PAL.iceplantDeep, PAL.ink, 0.25), 0.45);
-    ctx.lineWidth = max(1, 1.4 * SCL);
-    ctx.stroke();
-
-    /* faint inner echo contour — structure without anatomy */
-    heartPath(hcx, hcy, sNow * 0.74);
-    ctx.strokeStyle = rgba(PAL.iceplantPale, 0.16 + 0.12 * bv);
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    /* ── the heart writing its trace: a subtle beam down to the readout, on the beat ── */
-    if (bv > 0.05) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-      const beam = ctx.createLinearGradient(0, bot, 0, baseY);
-      beam.addColorStop(0, rgba(PAL.iceplantBright, 0.10 * bv));
-      beam.addColorStop(1, rgba(PAL.amberCream, 0.16 * bv));
-      ctx.fillStyle = beam;
-      const bw2 = (10 + 26 * bv) * SCL;
-      ctx.fillRect(hcx - bw2 * 0.5, bot, bw2, baseY - bot);
+    /* ── connection bridge ∝ entrainment ── */
+    if (en > 0.05) {
+      ctx.save(); ctx.globalCompositeOperation = 'screen';
+      const g = ctx.createLinearGradient(xA, 0, xB, 0), al = 0.18 * en * (0.5 + 0.5 * bvMix);
+      g.addColorStop(0.0, rgba(colA, al * 0.4));
+      g.addColorStop(0.5, rgba(blend(GOLD, PAL.amberCream, 0.25), al));
+      g.addColorStop(1.0, rgba(colB, al * 0.4));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.ellipse(Mx, My, abs(xB - xA) * 0.5, heartH * 0.5, 0, 0, TAU); ctx.fill();
       ctx.restore();
     }
 
-    /* ── ECG trace: scrolling monitor, pen writing at the right edge ── */
-    const x0 = W * 0.06, x1 = W * 0.94, win = 2.30, NSEG = 600;
-    const pts = new Float32Array((NSEG + 1) * 2);
-    for (let i = 0; i <= NSEG; i++) {
-      const fx = i / NSEG;
-      const tt = t - (1 - fx) * win;
-      const uu = (((tt % PERIOD) + PERIOD) % PERIOD) / PERIOD;
-      pts[i * 2] = x0 + fx * (x1 - x0);
-      pts[i * 2 + 1] = baseY - ecg(uu) * ampPx;
+    /* ── per-heart ripples (each agent's own pulse) ── */
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    for (const grp of [[ripA, xA, colA], [ripB, xB, colB]]) {
+      const list = grp[0], hx = grp[1], col = grp[2];
+      for (const bt of list) {
+        const age = simT - bt; if (age > 1.3) continue;
+        const k = age / 1.3;
+        heartPath(hx, hcy, baseS * (1.0 + 0.8 * k));
+        ctx.strokeStyle = rgba(col, (1 - k) * (1 - k) * 0.4);
+        ctx.lineWidth = max(0.5, 2.0 * (1 - k) * SCL);
+        ctx.stroke();
+      }
     }
-    function tracePath() {
-      ctx.beginPath();
-      ctx.moveTo(pts[0], pts[1]);
-      for (let i = 1; i <= NSEG; i++) ctx.lineTo(pts[i * 2], pts[i * 2 + 1]);
-    }
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    // soft warm underlay glow
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    tracePath(); ctx.strokeStyle = rgba(PAL.iceplantBright, 0.12); ctx.lineWidth = max(4, 7 * SCL); ctx.stroke();
-    tracePath(); ctx.strokeStyle = rgba(blend(PAL.iceplantBright, PAL.ember, 0.25), 0.20); ctx.lineWidth = max(2.5, 4 * SCL); ctx.stroke();
     ctx.restore();
-    // bright crisp trace, fading to the left (older signal)
-    const grad = ctx.createLinearGradient(x0, 0, x1, 0);
-    grad.addColorStop(0.00, rgba(PAL.iceplantBright, 0.0));
-    grad.addColorStop(0.55, rgba(PAL.iceplantBright, 0.55));
-    grad.addColorStop(1.00, rgba(blend(PAL.iceplantBright, PAL.amberCream, 0.2), 0.95));
-    tracePath();
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = max(1.4, 2.1 * SCL);
-    ctx.stroke();
 
-    /* pen dot + bloom at the writing edge */
-    const penX = pts[NSEG * 2], penY = pts[NSEG * 2 + 1];
-    const pr = 16 * SCL * (0.7 + 0.8 * bv);
+    /* ── the two hearts ── */
+    drawHeart(xA, hcy, baseS * (1 + 0.09 * bvA) * (1 + 0.02 * brA), colA, bvA);
+    drawHeart(xB, hcy, baseS * (1 + 0.09 * bvB) * (1 + 0.02 * brB), colB, bvB);
+
+    /* ── dual ECG monitor: graticule + two traces sliding into alignment ── */
+    const amp = H * 0.052, top = H * 0.64, bottom = H * 0.99;
     ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    const penGlow = ctx.createRadialGradient(penX, penY, 0, penX, penY, pr);
-    penGlow.addColorStop(0.0, rgba(PAL.amberCream, 0.9));
-    penGlow.addColorStop(0.4, rgba(PAL.iceplantBright, 0.4));
-    penGlow.addColorStop(1.0, rgba(PAL.iceplantBright, 0));
-    ctx.fillStyle = penGlow;
-    ctx.fillRect(penX - pr, penY - pr, pr * 2, pr * 2);
+    ctx.beginPath(); ctx.rect(0, top, W, bottom - top); ctx.clip();
+    ctx.strokeStyle = rgba(PAL.iceplantDeep, 0.045); ctx.lineWidth = 1;
+    const gs = max(16, W / 24);
+    for (let x = (W * 0.5) % gs; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke(); }
+    for (let y = top + gs; y < bottom; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
     ctx.restore();
-    ctx.beginPath();
-    ctx.arc(penX, penY, max(1.6, 2.4 * SCL), 0, TAU);
-    ctx.fillStyle = rgba(PAL.parchment, 0.95);
-    ctx.fill();
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    drawTrace(yA, H * 0.745 + H * 0.012 * sin(beA), amp, colA);   // breath baseline wander
+    drawTrace(yB, H * 0.895 + H * 0.012 * sin(beB), amp, colB);
 
     /* ── soft vignette ── */
-    const vg = ctx.createRadialGradient(W / 2, H / 2, min(W, H) * 0.30, W / 2, H / 2, max(W, H) * 0.72);
+    const vg = ctx.createRadialGradient(W / 2, H / 2, min(W, H) * 0.32, W / 2, H / 2, max(W, H) * 0.74);
     vg.addColorStop(0, 'rgba(0,0,0,0)');
     vg.addColorStop(1, rgba(PAL.ink, 0.12));
-    ctx.fillStyle = vg;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
 
     scheduleNext(canvas, draw);
   }
