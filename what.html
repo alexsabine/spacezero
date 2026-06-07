@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Space Zero &middot; What</title>
-<meta name="description" content="What happens at Space Zero: five practices gathered around a shared centre of attention.">
+<meta name="description" content="What happens at Space Zero: three living practices — Lab Zero, The Emergent and Open Ground — grounded in The Space, a place of daily embodied attention.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -146,8 +146,13 @@ body { background: var(--parchment, #f4f1eb); }
   width: 180px;
   transform: translate(-50%, -50%);
   pointer-events: auto;
-  cursor: default;
+  cursor: pointer;
   line-height: 1.15;
+}
+.mandala-label:focus-visible {
+  outline: 2px solid var(--iceplant);
+  outline-offset: 6px;
+  border-radius: 6px;
 }
 .mandala-label .label-name {
   display: block;
@@ -404,7 +409,7 @@ body { background: var(--parchment, #f4f1eb); }
     <div class="mandala-wrap">
       <div class="mandala-figure" id="mandalaFigure">
         <canvas id="mandalaCanvas" width="640" height="640"
-                aria-label="A circular diagram showing four practices arranged around The Space at the centre; a physical place of daily embodied practice that grounds them."></canvas>
+                aria-label="A circular diagram of three practices — Lab Zero, The Emergent and Open Ground — set with The Space around a shared centre. Select any circle to read its description below."></canvas>
         <!-- Labels injected by JS -->
       </div>
     </div>
@@ -413,15 +418,21 @@ body { background: var(--parchment, #f4f1eb); }
       <div class="practice-detail" data-practice="lab">
         <div class="practice-detail-body">
           <h3 class="practice-detail-name">Lab Zero <span class="practice-detail-subtitle">Science, Nature &amp; Aesthetics</span></h3>
-          <p class="practice-detail-lede">We turn scientific attention toward the questions that matter at the root level:</p>
+          <p class="practice-detail-lede">Lab Zero turns scientific attention toward the questions that matter at the root:</p>
           <ul class="practice-detail-list">
             <li>What is the source of care?</li>
             <li>How does creativity arise in a body, a mind, a community?</li>
             <li>How does interdependence move through all living things?</li>
           </ul>
-          <p class="practice-detail-lede">Lab Zero gathers scientists and artists to inquire across boundaries, weaving different knowledges through ongoing learning and unlearning.</p>
-          <p class="practice-detail-lede">We carry the inquiry outside too: experiential lecture-hikes through the coast and redwoods, where philosophy, art, and science are embodied, lived, and integrated.</p>
-          <p class="practice-detail-lede">In turn, these experiences are transformed into digestible, accessible and fun ways for people of all ages to access the latest scientific understandings and ethical implications. We strive to bridge and scaffold wherever it is required.</p> 
+          <p class="practice-detail-lede">Scientists, artists and contemplatives inquire across boundaries, weaving different knowledges through ongoing learning and unlearning. The questions are lived as much as studied:</p>
+          <ul class="practice-detail-list">
+            <li>Discovery walks in nature, alongside scientists</li>
+            <li>Applied research in neuroaesthetics</li>
+            <li>Rendering first-person experience into scientific discovery</li>
+            <li>Creating the conditions for ideation to become action</li>
+          </ul>
+          <p class="practice-detail-lede">Each season &mdash; three times a year &mdash; a scientist, an artist, and a philosopher or spiritual teacher come into residence together for two to four weeks. Each residency culminates in a curated exhibition at Space Zero: a mycologist, an artist, and a contemplative, say, surfacing the hidden life of mycelial networks side by side. Once a year, the three seasons&rsquo; work gathers into a larger exhibition, open to the public in Crescent City.</p>
+          <p class="practice-detail-lede">In turn, we translate these experiences into accessible, beautiful learning resources &mdash; bridging and scaffolding the latest science and its ethical implications for people of all ages.</p>
         </div>
       </div>
 
@@ -439,21 +450,19 @@ body { background: var(--parchment, #f4f1eb); }
         </div>
       </div>
 
-      <div class="practice-detail" data-practice="wisdom">
-        <div class="practice-detail-body">
-          <h3 class="practice-detail-name">Creativity in Residence <span class="practice-detail-subtitle">Wisdom, Art &amp; Creative Science</span></h3>
-          <p class="practice-detail-lede">Creativity in Residence hosts artists, philosophers, creative researchers, and spiritual practitioners to navigate territories of possibility.</p>
-          <p class="practice-detail-lede">We believe in embodied transmission. A poet writing two months on the coast leaves something in the fog. An artist working alongside scientists changes how the science is seen. Over time, a curated body of installations and films accumulates, always oriented toward care and future flourishing.</p>
-          <p class="practice-detail-lede">We work with experts in creative industries, theatre, music and cultural transmission to widen participation and make learning accessible to all.</p>
-        </div>
-      </div>
-
       <div class="practice-detail" data-practice="ecosystem">
         <div class="practice-detail-body">
           <h3 class="practice-detail-name">Open Ground <span class="practice-detail-subtitle">Ecosystem Collaboration</span></h3>
-          <p class="practice-detail-lede">Space Zero is one node among many, one emerging project in Crescent City, aware that kindred communities are at work across the globe.</p>
-          <p class="practice-detail-lede">Open Ground is where these nodes are mapped: an ecosystem of knowledge exchange, co-creative experience, shared flourishing, and coordinated advance into the future.</p>
-          <p class="practice-detail-lede">Participatory and processual mapping techniques meet cutting-edge technologies and wild creativity. We help systems to know themselves better.</p>
+          <p class="practice-detail-lede">Space Zero is one node among many. Open Ground tends our place in a wider web &mdash; local and global at once.</p>
+          <p class="practice-detail-lede"><em>Locally</em>, we attune to Crescent City: appreciating the weave of land, ocean, and community we are embedded in, and the particular fabric of this coast.</p>
+          <p class="practice-detail-lede"><em>Globally</em>, we gather online with kindred nodes to trace the shared &ldquo;DNA&rdquo; between different approaches to:</p>
+          <ul class="practice-detail-list">
+            <li>human flourishing</li>
+            <li>AI alignment</li>
+            <li>frontier technologies</li>
+            <li>applied spiritual wisdom</li>
+          </ul>
+          <p class="practice-detail-lede">We compare experiences and outcomes, learn from our differences, and open fertile ground for future work together &mdash; a living exchange of applied knowledge in which universities, labs, and communities meet as equals.</p>
         </div>
       </div>
 
@@ -502,16 +511,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!canvas || !figure) return;
 
   // ─── Practices ───────────────────────────────────────────────────────
+  // Four circles at N/E/S/W. The lower circle (S) is The Space — the
+  // grounding venue — which scrolls to its written section when clicked.
+  // The visual hub at the centre is unlabelled (it carries the watercolour
+  // coast). Creativity in Residence has been folded into Lab Zero.
   const OUTER = [
-    { key: 'lab',       name: 'Lab Zero' },
-    { key: 'emergent',  name: 'The Emergent' },
-    { key: 'wisdom',    name: 'Creativity in Residence' },
-    { key: 'ecosystem', name: 'Open Ground' },
+    { key: 'lab',       name: 'Lab Zero' },     // N
+    { key: 'emergent',  name: 'The Emergent' }, // E
+    { key: 'daily',     name: 'The Space' },    // S — the lower circle (the ground)
+    { key: 'ecosystem', name: 'Open Ground' },  // W
   ];
-  const CENTRE = {
-    key: 'daily',
-    name: 'The Space',
-  };
 
   // ─── Build HTML labels, positioned absolutely over the figure ───────
   // Just the name — the subheadings live in the detail panels below.
@@ -524,13 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return el;
   });
 
-  // Centre label
-  const centreLabel = document.createElement('div');
-  centreLabel.className = 'mandala-label is-centre';
-  centreLabel.dataset.practice = CENTRE.key;
-  centreLabel.innerHTML = `<span class="label-name">${CENTRE.name}</span>`;
-  figure.appendChild(centreLabel);
-  labels.push(centreLabel);
+  // The centre carries no label now — it is the unlabelled watercolour hub.
 
   // ─── Cross-highlighting with the detail panels ──────────────────────
   let activeKey = null;
@@ -552,6 +555,41 @@ document.addEventListener('DOMContentLoaded', () => {
   detailEls.forEach(d => {
     d.addEventListener('mouseenter', () => setActive(d.dataset.practice));
     d.addEventListener('mouseleave', clearActive);
+  });
+
+  // ─── Click / tap a circle → smooth-scroll to its written section ─────
+  // The labels sit at each circle's centre; clicking either the label or
+  // the circle body on the canvas scrolls down to the matching detail.
+  function scrollToDetail(key) {
+    const el = document.querySelector(`.practice-detail[data-practice="${key}"]`);
+    if (!el) return;
+    const headerGap = 84;   // clear the fixed site header + a little air
+    const y = el.getBoundingClientRect().top + window.pageYOffset - headerGap;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    setActive(key);
+  }
+  labels.forEach(l => {
+    l.setAttribute('role', 'button');
+    l.setAttribute('tabindex', '0');
+    l.setAttribute('aria-label', `${l.querySelector('.label-name').textContent} — read more`);
+    l.addEventListener('click', () => scrollToDetail(l.dataset.practice));
+    l.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollToDetail(l.dataset.practice); }
+    });
+  });
+  // Clicking the circle body itself (canvas, not the label) scrolls too:
+  // hit-test the four outer pods against the pointer position.
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const g = layout();
+    for (let i = 0; i < 4; i++) {
+      const theta = QUAD_OFFSET + i * TAU / 4;
+      const px = g.cx + g.rho * Math.cos(theta);
+      const py = g.cy + g.rho * Math.sin(theta);
+      const dx = x - px, dy = y - py;
+      if (dx * dx + dy * dy <= g.outerR * g.outerR) { scrollToDetail(OUTER[i].key); return; }
+    }
   });
 
   // ─── Palette ────────────────────────────────────────────────────────
@@ -654,9 +692,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.left = `${(x / W) * 100}%`;
       el.style.top  = `${(y / H) * 100}%`;
     }
-    const centre = labels[4];
-    centre.style.left = `${(g.cx / W) * 100}%`;
-    centre.style.top  = `${(g.cy / H) * 100}%`;
   }
 
   // ─── CRR star network — The Space at centre, four in cohesion ─
@@ -1682,7 +1717,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // with octave:
   //   Voice 0 (N/Lab Zero)          : 256.0 Hz  (C4, fundamental = 2¹¹/VISIT_DURATION)
   //   Voice 1 (E/Emergent Gathering): 320.0 Hz  (E4, 5:4 major third)
-  //   Voice 2 (S/Wisdom)            : 384.0 Hz  (G4, 3:2 perfect fifth)
+  //   Voice 2 (S/The Space)         : 384.0 Hz  (G4, 3:2 perfect fifth)
   //   Voice 3 (W/Ecosystem)         : 512.0 Hz  (C5, octave)
   //
   // Each voice is a stack of sine partials (1·f, 2·f, 3·f, 4·f, 5·f)
