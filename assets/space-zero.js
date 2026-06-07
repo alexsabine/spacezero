@@ -1204,344 +1204,221 @@ function renderAlign(canvas) {
   requestAnimationFrame(draw);
 }
 
-/* ── 03 BENEVOLENCE: lighthouse on the open sea ──
- *  §CRR engine drives two channels. (1) The sea is an SO(2) swell field
- *  (Ω = OMEGA_SHARP): summed sine trains with Stokes harmonics; foam appears
- *  where slope·Ω saturates — the C·Ω = 1 rupture breaking into whitecaps.
- *  (2) The beacon is a rotating SO(2) coherence (period ~9 s); the flash is
- *  the rupture δ(now) as the beam crosses the line of sight. Tower/caisson
- *  modelled on the reference photograph. Public framing: a lighthouse, a kept
- *  light for safe passage. */
+/* ── 03 BENEVOLENCE: technology with heart — a beating pulse + ECG ──
+ *  §CRR engine: the heartbeat is a stable CRR limit cycle. Coherence
+ *  C(t)=∫L dτ fills through diastole; at C·Ω = 1 the wall ruptures (systole —
+ *  the R-spike, the "lub"), then regenerates R = ∫φ·exp(C/Ω)·Θ dτ as the
+ *  chamber refills (the "dub"). Ω (boundary permeability) sets the tempo, so a
+ *  single parameter yields the perfect rhythm — a calm ~52 bpm. The PQRST trace
+ *  and the heart's pulse are driven from one shared phase, in lock-step. Public
+ *  framing: kindness giving technology its pulse; the instrument of medicine
+ *  made beautiful — feeling and rhythm, not biology. */
 function renderBenevolence(canvas) {
   const cssW = parseInt(canvas.getAttribute('width'));
   const cssH = parseInt(canvas.getAttribute('height'));
   const { ctx, W, H } = setupCanvas(canvas, cssW, cssH);
-  const { sin, cos, abs, min, max, hypot, PI: MPI } = Math;
+  const { sin, cos, exp, pow, min, max } = Math;
+  const SCL = W / 460;                  // line-weight scale for the panel
 
-  const horizonY = H * 0.40;
-  const cx = W * 0.50;                       // tower centre (kept central)
-  const baseY = H * 0.66;                    // waterline at the caisson
-  const lwTower = W * 0.072;                 // tower base width
-  const towerTopY = H * 0.215;
-  const towerBotY = baseY - H * 0.045;
+  /* §CRR limit cycle — calm cardiac period (Ω sets the tempo) */
+  const PERIOD = 1.15;                  // seconds per beat ≈ 52 bpm
+  const ROOT = W * 0.5, MIDY = H * 0.40;
 
-  /* §CRR SO(2) swell field (Ω = OMEGA_SHARP), Stokes-broadened */
-  const OM = OMEGA_SHARP, sk = min(1, OM * 0.4);
-  function swell(x, tt) {
-    const a = x * 0.9 - tt * 0.35, b = x * 1.7 - tt * 0.7 + 0.8;
-    const c = x * 0.7 + 2 - tt * 0.3, d = x * 1.4 - tt * 0.55 + 1.3;
-    let h = 0;
-    h += 0.30 * (sin(a) + sk * 0.2 * sin(2 * a));
-    h += 0.15 * (sin(b) + sk * 0.2 * sin(2 * b));
-    h += 0.20 * (sin(c) + sk * 0.15 * sin(2 * c));
-    h += 0.08 * sin(d);
-    return h;                                 // ≈ [-0.7, 0.7]
+  /* ECG PQRST as a sum of smooth lobes; sharp R-spike at u ≈ 0.285 */
+  function gss(x, c, w) { const d = (x - c) / w; return exp(-d * d); }
+  function ecg(u) {
+    return  0.10 * gss(u, 0.16,  0.024)   // P
+          - 0.07 * gss(u, 0.255, 0.010)   // Q
+          + 1.00 * gss(u, 0.285, 0.015)   // R
+          - 0.24 * gss(u, 0.320, 0.014)   // S
+          + 0.26 * gss(u, 0.46,  0.036);  // T
   }
-  const nz = (a, b) => { const s = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return s - Math.floor(s); };
+  /* mechanical pulse — fast attack, gentle release; lub (systole) + dub */
+  function pls(u, c, upT, dnT) { const d = u < c ? (c - u) / upT : (u - c) / dnT; return exp(-d * d); }
+  function beat(u) { return 1.00 * pls(u, 0.30, 0.018, 0.10) + 0.42 * pls(u, 0.52, 0.022, 0.12); }
 
-  let t0 = performance.now() / 1000;
+  /* heart outline — parametric, symbolic (not anatomical) */
+  function heartPath(cx, cy, s) {
+    ctx.beginPath();
+    const N = 90;
+    for (let i = 0; i <= N; i++) {
+      const a = (i / N) * TAU;
+      const x = 16 * pow(sin(a), 3);
+      const y = 13 * cos(a) - 5 * cos(2 * a) - 2 * cos(3 * a) - cos(4 * a);
+      const px = cx + x * s, py = cy - y * s;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  }
+
+  const ripples = [];
+  let t0 = performance.now() / 1000, uPrev = 0;
 
   function draw(now) {
     const t = (now / 1000) - t0;
-    const bRaw = cos(PI * t / (2 * PI * PI));
-    const breath = 0.4 + 0.6 * bRaw * bRaw;
+    const u = (t % PERIOD) / PERIOD;     // cardiac phase
+    const bv = beat(u);                  // 0 .. ~1.1 mechanical pulse
 
-    /* ── sky: calm luminous wash ── */
-    const sky = ctx.createLinearGradient(0, 0, 0, horizonY);
-    sky.addColorStop(0.00, rgba(blend(PAL.iceplantPale, PAL.amberCream, 0.5), 1.0));
-    sky.addColorStop(0.55, rgba(PAL.amberCream, 0.92));
-    sky.addColorStop(1.00, rgba(blend(PAL.amberCream, PAL.waterJade, 0.55), 1.0));
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, W, horizonY + 1);
+    /* emit an expanding heart-ripple at each R-spike (the rupture δ) */
+    if (uPrev < 0.285 && u >= 0.285) { ripples.push(t); if (ripples.length > 5) ripples.shift(); }
+    uPrev = u;
 
-    // soft sun haze
-    const sunY = horizonY * 0.5;
-    const sg = ctx.createRadialGradient(W * 0.7, sunY, 0, W * 0.7, sunY, W * 0.35);
-    sg.addColorStop(0, rgba(PAL.amberCream, 0.5 * breath + 0.2));
-    sg.addColorStop(1, rgba(PAL.amberCream, 0));
-    ctx.fillStyle = sg;
-    ctx.fillRect(0, 0, W, horizonY);
+    /* ── background: warm parchment with a soft rose halo behind the heart ── */
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createRadialGradient(ROOT, MIDY, 0, ROOT, MIDY, max(W, H) * 0.75);
+    bg.addColorStop(0.00, rgba(blend(PAL.parchment, PAL.iceplantPale, 0.16 + 0.10 * bv), 1));
+    bg.addColorStop(0.45, rgba(PAL.parchment, 1));
+    bg.addColorStop(1.00, rgba(PAL.parchmentWarm, 1));
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
 
-    // distant headland
-    ctx.beginPath();
-    ctx.moveTo(0, horizonY);
-    const hn = 10;
-    for (let k = 0; k <= hn; k++) {
-      const xk = (k / hn) * W;
-      const yk = horizonY - (8 + 10 * Math.sin(k * 1.3 + 0.5)) * (k < 6 ? 1 : 0.4);
-      ctx.lineTo(xk, yk);
+    const baseY = H * 0.80, ampPx = H * 0.150;
+
+    /* ── faint monitor graticule in the lower readout band ── */
+    const gridTop = baseY - ampPx * 1.15, gridBot = baseY + ampPx * 0.7;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, gridTop, W, gridBot - gridTop); ctx.clip();
+    ctx.strokeStyle = rgba(PAL.iceplantDeep, 0.05);
+    ctx.lineWidth = 1;
+    const gs = max(16, W / 24);
+    for (let x = ROOT % gs; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x, gridTop); ctx.lineTo(x, gridBot); ctx.stroke(); }
+    for (let y = baseY; y > gridTop; y -= gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    for (let y = baseY + gs; y < gridBot; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    ctx.restore();
+
+    /* heart geometry — visual mass centred at MIDY */
+    const heartH = H * 0.40, baseS = heartH / 29;
+    const hcx = ROOT, hcy = MIDY - 2.5 * baseS;
+
+    /* ── heart-ripples (expanding outlines behind the heart) ── */
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    for (const bt of ripples) {
+      const age = t - bt; if (age > 1.5) continue;
+      const k = age / 1.5;
+      heartPath(hcx, hcy, baseS * (1.0 + 0.85 * k));
+      ctx.strokeStyle = rgba(PAL.iceplantBright, (1 - k) * (1 - k) * 0.5);
+      ctx.lineWidth = max(0.6, 2.4 * (1 - k) * SCL);
+      ctx.stroke();
     }
-    ctx.lineTo(W, horizonY); ctx.closePath();
-    ctx.fillStyle = rgba(blend(PAL.waterCobalt, PAL.ink, 0.4), 0.18);
+    ctx.restore();
+
+    /* ── heart bloom ── */
+    const sNow = baseS * (1 + 0.085 * bv);
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const bloomR = heartH * (0.62 + 0.18 * bv), ba = 0.16 + 0.26 * bv;
+    const bloom = ctx.createRadialGradient(hcx, hcy, 0, hcx, hcy, bloomR);
+    bloom.addColorStop(0.00, rgba(blend(PAL.iceplantBright, PAL.amberCream, 0.25), ba));
+    bloom.addColorStop(0.45, rgba(PAL.iceplantBright, ba * 0.4));
+    bloom.addColorStop(1.00, rgba(PAL.iceplantBright, 0));
+    ctx.fillStyle = bloom;
+    ctx.fillRect(hcx - bloomR, hcy - bloomR, bloomR * 2, bloomR * 2);
+    ctx.restore();
+
+    /* ── heart body ── */
+    heartPath(hcx, hcy, sNow);
+    const top = hcy - 12 * sNow, bot = hcy + 17 * sNow;
+    const fill = ctx.createLinearGradient(0, top, 0, bot);
+    fill.addColorStop(0.00, rgba(blend(PAL.iceplantPale, PAL.amberCream, 0.30), 1));
+    fill.addColorStop(0.38, rgba(PAL.iceplantBright, 1));
+    fill.addColorStop(0.78, rgba(PAL.iceplantDeep, 1));
+    fill.addColorStop(1.00, rgba(blend(PAL.iceplantDeep, PAL.ember, 0.28), 1));
+    ctx.fillStyle = fill;
     ctx.fill();
 
-    /* ── sea: SO(2) swell rendered in perspective ── */
-    const seaBase = ctx.createLinearGradient(0, horizonY, 0, H);
-    seaBase.addColorStop(0.00, rgba(blend(PAL.waterJade, PAL.amberCream, 0.18), 1.0));
-    seaBase.addColorStop(0.35, rgba(PAL.waterAqua, 1.0));
-    seaBase.addColorStop(0.70, rgba(PAL.waterCobalt, 1.0));
-    seaBase.addColorStop(1.00, rgba(blend(PAL.waterCobalt, PAL.ink, 0.55), 1.0));
-    ctx.fillStyle = seaBase;
-    ctx.fillRect(0, horizonY, W, H - horizonY);
+    /* upper-left specular sheen — luminous and flat (beauty over biology) */
+    ctx.save();
+    heartPath(hcx, hcy, sNow); ctx.clip();
+    const shx = hcx - 6 * sNow, shy = hcy - 7 * sNow;
+    const spec = ctx.createRadialGradient(shx, shy, 0, shx, shy, 14 * sNow);
+    spec.addColorStop(0.0, rgba(PAL.parchment, 0.5 + 0.15 * bv));
+    spec.addColorStop(0.5, rgba(PAL.iceplantPale, 0.18));
+    spec.addColorStop(1.0, rgba(PAL.iceplantPale, 0));
+    ctx.fillStyle = spec;
+    ctx.fillRect(hcx - 18 * sNow, hcy - 20 * sNow, 36 * sNow, 36 * sNow);
+    ctx.restore();
 
-    // crest highlights + foam (the rupture) over perspective rows
-    const rows = 42;
-    for (let i = 1; i <= rows; i++) {
-      const p = i / rows;                         // 0 near horizon → 1 foreground
-      const y = horizonY + (H - horizonY) * p;
-      const persp = p;                            // amplitude/feature scale grows toward viewer
-      const amp = (1.0 + 14.0 * persp) ;          // px vertical displacement of crest line
-      const xfreq = 0.9 + 2.4 * persp;            // wave-space scaling
-      const stepX = max(5, 10 - 6 * persp);
-      let prevH = 0, prevX = 0;
-      ctx.beginPath();
-      let started = false;
-      for (let xx = -10; xx <= W + 10; xx += stepX) {
-        const wx = (xx / W) * 6 * xfreq;
-        const h = swell(wx, t * (0.6 + 0.5 * persp));
-        const yy = y + h * amp;
-        if (!started) { ctx.moveTo(xx, yy); started = true; }
-        else ctx.lineTo(xx, yy);
-        prevH = h; prevX = xx;
-      }
-      // a faint darker trough shading line
-      ctx.strokeStyle = rgba(blend(PAL.waterCobalt, PAL.ink, 0.3), 0.10 * persp);
-      ctx.lineWidth = 1 + persp;
-      ctx.stroke();
+    /* crisp rim */
+    heartPath(hcx, hcy, sNow);
+    ctx.strokeStyle = rgba(blend(PAL.iceplantDeep, PAL.ink, 0.25), 0.45);
+    ctx.lineWidth = max(1, 1.4 * SCL);
+    ctx.stroke();
 
-      // crest light + foam pass
-      let pH = swell((-10 / W) * 6 * xfreq, t * (0.6 + 0.5 * persp));
-      let col = 0;
-      for (let xx = -10; xx <= W + 10; xx += stepX) {
-        col++;
-        const wx = (xx / W) * 6 * xfreq;
-        const h = swell(wx, t * (0.6 + 0.5 * persp));
-        const slope = (h - pH); pH = h;
-        const yy = y + h * amp;
-        // up-slope crest highlight
-        if (slope > 0) {
-          ctx.fillStyle = rgba(blend(PAL.waterJade, PAL.amberCream, 0.4), 0.05 + 0.10 * slope * 6 * persp);
-          ctx.fillRect(xx, yy - 1.5 * persp, stepX, 1.5 + 2 * persp);
-        }
-        // §CRR foam: slope·(scaled Ω) crossing → rupture. (gain tuned for visibility)
-        const foam = Math.max(0, abs(slope) * (3.5 + 10 * OM) * persp - 0.20);
-        const r1 = nz(col * 1.7, i * 3.1), r2 = nz(i * 5.3, col * 2.9);
-        if (foam > 0.001 && p > 0.30 && r1 < 0.45 + 0.4 * persp) {  // stochastic, denser up close
-          const fa = min(0.5, foam) * (0.35 + 0.55 * persp) * (0.6 + 0.5 * r2);
-          ctx.fillStyle = rgba(PAL.parchment, fa);
-          const fw = stepX * (0.4 + persp) * (0.6 + 0.8 * r1);
-          const jx = (r2 - 0.5) * stepX * 1.4, jy = (r1 - 0.5) * 2.5 * persp;
-          ctx.beginPath();
-          ctx.ellipse(xx + jx, yy + jy, fw, (0.8 + 2.2 * persp) * (0.7 + 0.6 * r2), r1 * TAU, 0, TAU);
-          ctx.fill();
-        }
-      }
-    }
+    /* faint inner echo contour — structure without anatomy */
+    heartPath(hcx, hcy, sNow * 0.74);
+    ctx.strokeStyle = rgba(PAL.iceplantPale, 0.16 + 0.12 * bv);
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-    /* ── beacon rotation (§CRR SO(2), Ω = 1/2π) ── */
-    const PERIOD = 9.0;
-    const phase = (t / PERIOD) * TAU;
-    const lanternX = cx, lanternY = towerTopY - lwTower * 0.55;
-    // flash = rupture δ when a beam crosses the viewing axis (two beams → 2/rev)
-    const flash = Math.pow(Math.max(0, Math.cos(phase)), 6) + Math.pow(Math.max(0, Math.cos(phase + PI)), 6);
-    // sweep opacity for the two sky shafts (appear to swing across)
-    const rightOp = Math.max(0, Math.sin(phase));
-    const leftOp = Math.max(0, -Math.sin(phase));
-
-    // sky beam shafts
-    function beamShaft(dir, op) {
-      if (op < 0.01) return;
-      const len = W * 0.7, halfA = 0.10;
+    /* ── the heart writing its trace: a subtle beam down to the readout, on the beat ── */
+    if (bv > 0.05) {
       ctx.save();
-      ctx.translate(lanternX, lanternY);
-      ctx.rotate(dir);
-      const g = ctx.createLinearGradient(0, 0, len, 0);
-      const a = 0.16 * op * (0.6 + 0.4 * breath);
-      g.addColorStop(0.00, rgba(PAL.amberCream, a));
-      g.addColorStop(0.30, rgba(PAL.amberCream, a * 0.5));
-      g.addColorStop(0.70, rgba(PAL.amberWarm, a * 0.2));
-      g.addColorStop(1.00, rgba(PAL.amberWarm, 0));
       ctx.globalCompositeOperation = 'screen';
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, len, -halfA, halfA); ctx.closePath(); ctx.fill();
+      const beam = ctx.createLinearGradient(0, bot, 0, baseY);
+      beam.addColorStop(0, rgba(PAL.iceplantBright, 0.10 * bv));
+      beam.addColorStop(1, rgba(PAL.amberCream, 0.16 * bv));
+      ctx.fillStyle = beam;
+      const bw2 = (10 + 26 * bv) * SCL;
+      ctx.fillRect(hcx - bw2 * 0.5, bot, bw2, baseY - bot);
       ctx.restore();
     }
-    beamShaft(-PI * 0.18, rightOp);   // up-right  (cos>0, sin<0)
-    beamShaft(-PI * 0.82, leftOp);    // up-left   (cos<0, sin<0)
 
-    /* ── wet rock mound the caisson is founded on (irregular, half-submerged) ── */
-    const rockW = W * 0.225;
-    const cyRock = baseY - H * 0.006, vTop = H * 0.02, vBot = H * 0.09;
-    ctx.beginPath();
-    const rkN = 48;
-    for (let k = 0; k <= rkN; k++) {
-      const a = (k / rkN) * TAU;
-      const rr = rockW * (0.80 + 0.20 * nz(k * 1.3, 4));
-      const x = cx + Math.cos(a) * rr;
-      const vy = (Math.sin(a) >= 0 ? Math.sin(a) * vBot : Math.sin(a) * vTop);
-      const y = cyRock + vy + (nz(k * 2.1, 7) - 0.5) * 7;
-      k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    /* ── ECG trace: scrolling monitor, pen writing at the right edge ── */
+    const x0 = W * 0.06, x1 = W * 0.94, win = 2.30, NSEG = 600;
+    const pts = new Float32Array((NSEG + 1) * 2);
+    for (let i = 0; i <= NSEG; i++) {
+      const fx = i / NSEG;
+      const tt = t - (1 - fx) * win;
+      const uu = (((tt % PERIOD) + PERIOD) % PERIOD) / PERIOD;
+      pts[i * 2] = x0 + fx * (x1 - x0);
+      pts[i * 2 + 1] = baseY - ecg(uu) * ampPx;
     }
-    ctx.closePath();
-    const rg = ctx.createLinearGradient(0, cyRock - vTop, 0, cyRock + vBot);
-    rg.addColorStop(0.00, rgba(blend(PAL.redwoodBark, PAL.ink, 0.45), 0.96));
-    rg.addColorStop(0.55, rgba(blend(PAL.redwoodBark, PAL.ink, 0.62), 0.95));
-    rg.addColorStop(1.00, rgba(blend(PAL.waterCobalt, PAL.ink, 0.7), 0.58));  // fades into water
-    ctx.fillStyle = rg;
-    ctx.fill();
-
-    // breaking foam at the rock/caisson waterline
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    for (let i = 0; i < 34; i++) {
-      const a = (i / 34) * TAU;
-      const churn = 0.5 + 0.5 * Math.sin(t * 1.3 + i * 1.7);
-      const rr = rockW * (0.84 + 0.18 * nz(i, 11));
-      const rx = cx + Math.cos(a) * rr;
-      const ry = cyRock + (Math.sin(a) >= 0 ? Math.sin(a) * vBot * 0.5 : Math.sin(a) * vTop) + Math.sin(t * 1.1 + i) * 3;
-      const r = (3 + churn * 8) * (0.7 + 0.3 * Math.sin(i * 2));
-      ctx.fillStyle = rgba(PAL.parchment, 0.04 + 0.11 * churn);
-      ctx.beginPath(); ctx.arc(rx, ry, r, 0, TAU); ctx.fill();
-    }
-    ctx.restore();
-
-    /* ── caisson (oval concrete pier) ── */
-    const caisTop = baseY - H * 0.10, caisBot = baseY + H * 0.045;
-    const caisW = W * 0.20;
-    // body
-    const cg = ctx.createLinearGradient(cx - caisW, 0, cx + caisW, 0);
-    cg.addColorStop(0.00, rgba(blend(PAL.parchmentWarm, PAL.ink, 0.42), 1));
-    cg.addColorStop(0.40, rgba(blend(PAL.parchment, PAL.parchmentWarm, 0.5), 1));
-    cg.addColorStop(0.70, rgba(PAL.parchmentWarm, 1));
-    cg.addColorStop(1.00, rgba(blend(PAL.parchmentWarm, PAL.ink, 0.50), 1));
-    ctx.fillStyle = cg;
-    ctx.beginPath();
-    ctx.moveTo(cx - caisW, caisTop);
-    ctx.lineTo(cx - caisW, caisBot - 8);
-    ctx.ellipse(cx, caisBot - 8, caisW, H * 0.03, 0, PI, 0, true);
-    ctx.lineTo(cx + caisW, caisTop);
-    ctx.ellipse(cx, caisTop, caisW, H * 0.028, 0, 0, PI, true);
-    ctx.closePath();
-    ctx.fill();
-    // domed deck top
-    ctx.beginPath();
-    ctx.ellipse(cx, caisTop, caisW, H * 0.028, 0, 0, TAU);
-    ctx.fillStyle = rgba(blend(PAL.parchment, PAL.amberCream, 0.3), 1);
-    ctx.fill();
-    ctx.strokeStyle = rgba(PAL.ink, 0.25); ctx.lineWidth = 1; ctx.stroke();
-    // small annex on the caisson (as photo)
-    ctx.fillStyle = rgba(blend(PAL.parchmentWarm, PAL.ink, 0.35), 1);
-    ctx.fillRect(cx + caisW * 0.30, caisTop - H * 0.03, caisW * 0.5, H * 0.045);
-
-    /* ── tower (white, tapering, banded) ── */
-    ctx.beginPath();
-    ctx.moveTo(cx - lwTower / 2, towerBotY);
-    ctx.lineTo(cx - lwTower * 0.34, towerTopY);
-    ctx.lineTo(cx + lwTower * 0.34, towerTopY);
-    ctx.lineTo(cx + lwTower / 2, towerBotY);
-    ctx.closePath();
-    const tg = ctx.createLinearGradient(cx - lwTower / 2, 0, cx + lwTower / 2, 0);
-    tg.addColorStop(0.00, rgba(blend(PAL.parchment, PAL.ink, 0.20), 1));
-    tg.addColorStop(0.30, rgba(PAL.parchment, 1));
-    tg.addColorStop(0.55, rgba('255,255,255'.split(',').map(Number), 0.98));
-    tg.addColorStop(1.00, rgba(blend(PAL.parchment, PAL.ink, 0.28), 1));
-    ctx.fillStyle = tg;
-    ctx.fill();
-    // horizontal band lines + window slits
-    const tH = towerBotY - towerTopY;
-    for (let i = 1; i <= 4; i++) {
-      const yy = towerTopY + tH * (i / 5);
-      const halfw = (lwTower * 0.34) + (lwTower * 0.16) * (i / 5);
-      ctx.strokeStyle = rgba(PAL.ink, 0.16);
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(cx - halfw, yy); ctx.lineTo(cx + halfw, yy); ctx.stroke();
-      // tiny window
-      ctx.fillStyle = rgba(PAL.ink, 0.5);
-      ctx.fillRect(cx - lwTower * 0.04, yy - tH * 0.05, lwTower * 0.08, tH * 0.05);
-    }
-
-    /* ── gallery deck + railing ── */
-    const galW = lwTower * 0.62, galY = towerTopY;
-    ctx.fillStyle = rgba(blend(PAL.ink, PAL.redwoodBark, 0.3), 0.92);
-    ctx.fillRect(cx - galW, galY - lwTower * 0.10, galW * 2, lwTower * 0.12);
-    // railing posts
-    ctx.strokeStyle = rgba(PAL.ink, 0.7); ctx.lineWidth = 1;
-    for (let i = 0; i <= 6; i++) { const xx = cx - galW + (galW * 2) * (i / 6); ctx.beginPath(); ctx.moveTo(xx, galY - lwTower * 0.10); ctx.lineTo(xx, galY - lwTower * 0.22); ctx.stroke(); }
-    ctx.beginPath(); ctx.moveTo(cx - galW, galY - lwTower * 0.22); ctx.lineTo(cx + galW, galY - lwTower * 0.22); ctx.stroke();
-
-    /* ── lantern room (glazed) ── */
-    const lanW = lwTower * 0.44, lanH = lwTower * 0.5;
-    const ly0 = galY - lwTower * 0.22 - lanH;
-    const lanternGlow = 0.30 + 0.55 * flash;
-    // glazing
-    const lgg = ctx.createLinearGradient(0, ly0, 0, ly0 + lanH);
-    lgg.addColorStop(0, rgba(PAL.amberCream, 0.5 + 0.45 * flash));
-    lgg.addColorStop(1, rgba(PAL.amberWarm, 0.45 + 0.4 * flash));
-    ctx.fillStyle = lgg;
-    ctx.fillRect(cx - lanW, ly0, lanW * 2, lanH);
-    // astragals
-    ctx.strokeStyle = rgba(PAL.ink, 0.55); ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) { const xx = cx - lanW + (lanW * 2) * (i / 4); ctx.beginPath(); ctx.moveTo(xx, ly0); ctx.lineTo(xx, ly0 + lanH); ctx.stroke(); }
-    ctx.strokeRect(cx - lanW, ly0, lanW * 2, lanH);
-
-    /* ── roof (black dome + finial) ── */
-    ctx.beginPath();
-    ctx.moveTo(cx - lanW * 1.15, ly0);
-    ctx.quadraticCurveTo(cx, ly0 - lanH * 1.1, cx + lanW * 1.15, ly0);
-    ctx.closePath();
-    ctx.fillStyle = rgba(PAL.ink, 0.95);
-    ctx.fill();
-    ctx.beginPath(); ctx.moveTo(cx, ly0 - lanH * 0.78); ctx.lineTo(cx, ly0 - lanH * 1.25); ctx.strokeStyle = rgba(PAL.ink, 0.95); ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx, ly0 - lanH * 1.28, 2.2, 0, TAU); ctx.fillStyle = rgba(PAL.ink, 0.95); ctx.fill();
-
-    /* ── lantern bloom + flash effects (§CRR rupture δ) ── */
-    const lcx = cx, lcy = ly0 + lanH * 0.45;
-    const lg = ctx.createRadialGradient(lcx, lcy, 0, lcx, lcy, lwTower * (3.0 + 3.0 * flash));
-    lg.addColorStop(0, rgba(PAL.amberCream, lanternGlow));
-    lg.addColorStop(0.5, rgba(PAL.amberCream, lanternGlow * 0.3));
-    lg.addColorStop(1, rgba(PAL.amberCream, 0));
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    ctx.fillStyle = lg;
-    const lr = lwTower * (3.0 + 3.0 * flash);
-    ctx.fillRect(lcx - lr, lcy - lr, lr * 2, lr * 2);
-
-    if (flash > 0.08) {
-      // horizontal lens-flare streak
-      const fa = 0.5 * flash;
-      const streak = ctx.createLinearGradient(lcx - W * 0.4, lcy, lcx + W * 0.4, lcy);
-      streak.addColorStop(0, rgba(PAL.amberCream, 0));
-      streak.addColorStop(0.5, rgba(PAL.parchment, fa));
-      streak.addColorStop(1, rgba(PAL.amberCream, 0));
-      ctx.fillStyle = streak;
-      ctx.fillRect(lcx - W * 0.4, lcy - 1.5 - 2 * flash, W * 0.8, 3 + 4 * flash);
-      // shimmering reflection on the water below the rocks (broken, not a solid bar)
-      const waterStart = baseY + H * 0.055;
-      const colA = 0.45 * flash;
-      // faint underlying glow, narrow
-      const gl2 = ctx.createLinearGradient(lcx, waterStart, lcx, H);
-      gl2.addColorStop(0, rgba(PAL.amberCream, colA * 0.5));
-      gl2.addColorStop(1, rgba(PAL.amberCream, 0));
-      ctx.fillStyle = gl2;
-      const cw = lwTower * (0.35 + 0.5 * flash);
+    function tracePath() {
       ctx.beginPath();
-      ctx.moveTo(lcx - cw * 0.25, waterStart);
-      ctx.lineTo(lcx + cw * 0.25, waterStart);
-      ctx.lineTo(lcx + cw, H);
-      ctx.lineTo(lcx - cw, H);
-      ctx.closePath(); ctx.fill();
-      // broken glitter dashes, widening + jittering with distance
-      for (let i = 0; i < 26; i++) {
-        const p = i / 26;
-        const yy = waterStart + (H - waterStart) * p + Math.sin(t * 5 + i) * 2;
-        const spread = cw * (0.4 + p * 1.6);
-        const xx = lcx + (nz(i * 3.1, 2) - 0.5) * 2 * spread + Math.sin(t * 6 + i * 1.7) * spread * 0.3;
-        const dw = (1.5 + p * 5) * (0.6 + 0.7 * nz(i, 5));
-        ctx.fillStyle = rgba(PAL.amberCream, colA * (0.4 + 0.6 * nz(i * 2.3, 8)) * (1 - p * 0.6));
-        ctx.fillRect(xx - dw * 0.5, yy, dw, 1 + p * 1.5);
-      }
+      ctx.moveTo(pts[0], pts[1]);
+      for (let i = 1; i <= NSEG; i++) ctx.lineTo(pts[i * 2], pts[i * 2 + 1]);
     }
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    // soft warm underlay glow
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    tracePath(); ctx.strokeStyle = rgba(PAL.iceplantBright, 0.12); ctx.lineWidth = max(4, 7 * SCL); ctx.stroke();
+    tracePath(); ctx.strokeStyle = rgba(blend(PAL.iceplantBright, PAL.ember, 0.25), 0.20); ctx.lineWidth = max(2.5, 4 * SCL); ctx.stroke();
     ctx.restore();
+    // bright crisp trace, fading to the left (older signal)
+    const grad = ctx.createLinearGradient(x0, 0, x1, 0);
+    grad.addColorStop(0.00, rgba(PAL.iceplantBright, 0.0));
+    grad.addColorStop(0.55, rgba(PAL.iceplantBright, 0.55));
+    grad.addColorStop(1.00, rgba(blend(PAL.iceplantBright, PAL.amberCream, 0.2), 0.95));
+    tracePath();
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = max(1.4, 2.1 * SCL);
+    ctx.stroke();
+
+    /* pen dot + bloom at the writing edge */
+    const penX = pts[NSEG * 2], penY = pts[NSEG * 2 + 1];
+    const pr = 16 * SCL * (0.7 + 0.8 * bv);
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const penGlow = ctx.createRadialGradient(penX, penY, 0, penX, penY, pr);
+    penGlow.addColorStop(0.0, rgba(PAL.amberCream, 0.9));
+    penGlow.addColorStop(0.4, rgba(PAL.iceplantBright, 0.4));
+    penGlow.addColorStop(1.0, rgba(PAL.iceplantBright, 0));
+    ctx.fillStyle = penGlow;
+    ctx.fillRect(penX - pr, penY - pr, pr * 2, pr * 2);
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(penX, penY, max(1.6, 2.4 * SCL), 0, TAU);
+    ctx.fillStyle = rgba(PAL.parchment, 0.95);
+    ctx.fill();
+
+    /* ── soft vignette ── */
+    const vg = ctx.createRadialGradient(W / 2, H / 2, min(W, H) * 0.30, W / 2, H / 2, max(W, H) * 0.72);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, rgba(PAL.ink, 0.12));
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, W, H);
 
     scheduleNext(canvas, draw);
   }
@@ -1549,384 +1426,313 @@ function renderBenevolence(canvas) {
   requestAnimationFrame(draw);
 }
 
-/* ── 04 AESTHETICS: living mycelial network ──
- *  Engine: CRR hyphal growth (A. Sabine, temporalgrammar.ai). The dynamics
- *  in the §CRR ENGINE block below are the *exact* cohere.org.uk/mycelium
- *  algorithm — constants, sensing, accumulation, rupture/branching and field
- *  integration are transcribed verbatim and must not be retuned (the
- *  morphology is sensitive to every scale). Only render() is new: the growth
- *  field is recoloured to a subtle Space Zero palette. Public framing: a
- *  fungal network foraging across a substrate. */
+/* ── 04 AESTHETICS: the ocean at sunset — Song of the Wave ──
+ *  §CRR engine: the SO(2) swell is a living Coherence→Rupture→Regeneration
+ *  field. Every sin(k·x − ω·t) cycle is one complete C→δ→R event — phase
+ *  accumulates (C), wraps at 2π (the rupture δ, where C·Ω = 1) and resets (R);
+ *  exp(−α·Ω·d) is the regeneration kernel read as optical transmission, so a
+ *  single Ω (boundary permeability) governs amplitude, turbidity, whitecaps,
+ *  caustic focus and the morphology of the life on the bed. Here Ω is held calm
+ *  so the sea lies gentle while the sun gently lowers; the orange of the sky is
+ *  returned by the water as Fresnel reflection — a real sunset on the water.
+ *  Ported from the WebGL composition (temporalgrammar.ai); only the palette is
+ *  graded to sunset and the sun's descent is driven from JS. Public framing:
+ *  neuroaesthetics — beauty as a way of being alive, light given back as colour. */
 function renderAesthetics(canvas) {
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: false, depth: false });
+  if (!gl) { renderAestheticsFallback(canvas); return; }   // no WebGL → graceful 2D sunset
+
+  const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+  const FS = `precision highp float;
+uniform vec2 R;uniform float T,OM,ZM,SH;
+const float PI=3.14159265;
+const float R0=0.02037;              // Fresnel R₀=((n₂−n₁)/(n₂+n₁))²
+const vec3 AL=vec3(.50,.045,.005);   // absorption α (Pope & Fry 1997)
+
+float h2(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
+float n2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(h2(i),h2(i+vec2(1,0)),f.x),mix(h2(i+vec2(0,1)),h2(i+vec2(1,1)),f.x),f.y);}
+float fb(vec2 p){float v=0.,a=.5;for(int i=0;i<6;i++){v+=a*n2(p);p*=2.03;a*=.49;}return v;}
+
+// SO(2) swell field — Ω scales amplitude + Stokes nonlinearity
+float sea(vec2 p,float t,float lod){
+  float h=0.,om=OM,sk=min(1.,om*.4);
+  float a=p.x*.28-t*.35+p.y*.03, b=p.x*.55-t*.7+p.y*.07+.8;
+  float c=p.x*.22+p.y*.09-t*.3+2., d=p.x*.45+p.y*.12-t*.55+1.3;
+  h+=.3*om*(sin(a)+sk*.2*sin(2.*a)+sk*.06*sin(3.*a));
+  h+=.15*om*(sin(b)+sk*.2*sin(2.*b)+sk*.06*sin(3.*b));
+  h+=.2*om*(sin(c)+sk*.15*sin(2.*c));
+  h+=.08*om*(sin(d)+sk*.15*sin(2.*d));
+  if(lod<.8){h+=fb(p*1.8+vec2(-t*.25,-t*.08))*.08*om*(1.-lod);
+    h+=fb(p*3.5+vec2(t*.15,-t*.2))*.035*om*(1.-lod);}
+  if(lod<.5){float f=1.-lod*2.;
+    h+=n2(p*8.+vec2(-t*.7,t*.2))*.015*om*f;
+    h+=n2(p*16.+vec2(t*1.1,t*.4))*.006*om*f;
+    h+=n2(p*32.+vec2(-t*1.5,-t*.8))*.003*om*f;}
+  return h;
+}
+
+// Sky — sunset palette (artistic): molten gold at the horizon → coral → rose
+// → deep indigo at the zenith, with a warm aura + afterglow band on the sun.
+vec3 skyC(vec3 rd,vec3 sun,float t){
+  float g=max(0.,rd.y);
+  vec3 cGold=vec3(1.15,.60,.26), cCoral=vec3(.96,.41,.34);
+  vec3 cRose=vec3(.55,.34,.47), cZen=vec3(.13,.17,.35);
+  vec3 s=mix(cGold,cCoral,smoothstep(0.,.10,g));
+  s=mix(s,cRose,smoothstep(.07,.30,g));
+  s=mix(s,cZen,smoothstep(.22,.72,g));
+  float sd=max(0.,dot(rd,sun));
+  s+=vec3(.90,.34,.12)*pow(sd,4.)*.55;
+  s+=vec3(1.10,.52,.20)*pow(sd,18.)*1.10;
+  s+=vec3(1.20,.72,.34)*pow(sd,120.)*2.2;
+  s+=vec3(1.,.92,.78)*pow(sd,1400.)*16.;            // solar disc
+  float az=dot(normalize(vec2(rd.x,rd.z)+1e-5),normalize(vec2(sun.x,sun.z)));
+  float band=exp(-g*11.)*(.45+.55*smoothstep(-.2,1.,az));
+  s+=vec3(1.05,.46,.18)*band*.5;                    // horizon afterglow
+  if(rd.y>.03){vec2 cp=rd.xz/rd.y*2.;float cf=smoothstep(.03,.18,rd.y);
+    vec3 cw=vec3(1.05,.62,.42), cc=vec3(.30,.26,.42);
+    vec3 cl=mix(cc,cw,clamp(az*.5+.5,0.,1.));
+    s=mix(s,cl,smoothstep(.42,.70,fb(cp+vec2(t*.006,t*.003)))*.32*cf);
+    s=mix(s,cw,smoothstep(.50,.74,fb(cp*2.+vec2(-t*.010,t*.005)))*.16*cf);}
+  return s;
+}
+
+// Ocean surface: Fresnel + absorption + warm sunset glitter
+vec3 shade(vec3 N,vec3 rd,vec3 sun,float dist,float t){
+  float ci=max(0.,dot(N,-rd));
+  float fr=R0+(1.-R0)*pow(1.-ci,5.);                // Schlick Fresnel
+  float depth=1.5/max(.08,ci);
+  vec3 wc=exp(-AL*depth)*vec3(.01,.06,.08)+vec3(.004,.022,.032)*depth*.2;
+  float st=1.-N.y;                                   // Z₂ bubble glow ∝ steepness²·Ω
+  wc+=exp(-AL*.3)*vec3(.02,.12,.14)*min(1.,st*st*OM*.6);
+  wc+=vec3(.06,.035,.014)*pow(max(0.,dot(rd,sun)),2.)*pow(1.-ci,2.)*.45; // warm underlight
+  wc+=vec3(.005,.012,.016)*smoothstep(20.,3.,dist)*ci;
+  vec3 rf=reflect(rd,N),rc=skyC(rf,sun,t);           // reflection carries the sky's orange
+  float sr=max(0.,dot(rf,sun));
+  rc+=vec3(1.25,.62,.24)*pow(sr,250.)*11.;           // sharp sun core on the water
+  rc+=vec3(1.05,.50,.22)*pow(sr,22.)*1.8;            // broad shimmering glitter road
+  rc+=vec3(.90,.42,.20)*pow(sr,6.)*.5;               // wide warm sheen
+  return mix(wc,rc,fr);
+}
+
+void main(){
+  vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;
+  float t=T;
+  vec3 ro=vec3(0.,3.5*ZM,0.),fw=normalize(vec3(-20.*ZM,.5+.5*(ZM-1.),2.)-ro);
+  vec3 ri=normalize(cross(fw,vec3(0,1,0))),up=cross(ri,fw);
+  vec3 rd=normalize(fw+uv.x*ri*1.15+uv.y*up);
+  vec3 sun=normalize(vec3(-.55,SH,-.40));            // sun height SH driven from JS (gentle sunset)
+  vec3 sky=skyC(rd,sun,t),col=sky;
+
+  if(rd.y<.05){
+    // Analytical distant ocean (no raymarch cost)
+    float tF=max(.1,-ro.y/min(-.0001,rd.y));
+    vec3 aO=shade(vec3(0,1,0),rd,sun,min(tF,200.),t);
+    vec2 fp=ro.xz+rd.xz*min(tF,150.);
+    float tx=n2(fp*.25+vec2(-t*.2,t*.08))*.5+n2(fp*.6+vec2(t*.15,-t*.1))*.3;
+    aO+=vec3(.70,.34,.14)*pow(max(0.,dot(rd,sun)),3.)*(tx*.12+.04); // distant warm sheen
+    aO+=vec3(-.005,.003,.006)*(tx-.4)*.15;
+    col=rd.y<0.?aO:mix(aO,sky,smoothstep(0.,.03,rd.y));
+
+    // Raymarch with LOD
+    float tc=.5;bool hit=false;vec3 hp;
+    for(int i=0;i<100;i++){
+      vec3 p=ro+rd*tc;float lod=smoothstep(10.,80.,tc);
+      float h=sea(p.xz,t,lod),d=p.y-h;
+      if(d<.025){hit=true;hp=p;break;}
+      tc+=max(.03+lod*.15,d*.35);if(tc>150.)break;}
+
+    if(hit){
+      float dist=length(hp-ro),lod=smoothstep(10.,80.,dist),e=.05+lod*.1;
+      float hc=sea(hp.xz,t,lod);
+      float hx=sea(hp.xz+vec2(e,0),t,lod),hnx=sea(hp.xz-vec2(e,0),t,lod);
+      float hz=sea(hp.xz+vec2(0,e),t,lod),hnz=sea(hp.xz-vec2(0,e),t,lod);
+      vec3 N=normalize(vec3(hnx-hx,2.*e,hnz-hz));
+      vec3 ocean=shade(N,rd,sun,dist,t);
+
+      // ── Seabed ── visibility governed by α_eff = α·(0.2 + 0.8·Ω)
+      {vec3 rr=refract(rd,N,.75);              // Snell: η = 1/n
+       float pl=8./max(.05,-rr.y);             // path to bed at y = −8
+       vec3 tr=exp(-AL*(.2+.8*OM)*pl);         // CRR absorption kernel, Ω = turbidity
+       vec2 bp=hp.xz+rr.xz*pl;
+
+       // Sand with SO(2) ripple bedforms
+       float sa=.5+.2*n2(bp*.4)+.12*n2(bp*2.2)+.08*n2(bp*7.);
+       float rip=sin(bp.x*2.5+bp.y*.8+sin(bp.y*1.2)*.6)*.5+.5;
+       rip*=.5+.5*sin(bp.x*5.+bp.y*1.5+sin(bp.x*2.)*.4);
+       sa+=.08*rip+.04*sin(bp.x*8.+bp.y*2.5);
+       vec3 bed=vec3(sa*.55,sa*.48,sa*.3);
+
+       // Caustics — intensity ∝ 1/Ω (calm surface = coherent lens)
+       float ca=n2(bp*3.+vec2(-t*.4,t*.25))+n2(bp*5.5+vec2(t*.6,-t*.3));
+       bed+=vec3(.4,.35,.2)*max(0.,ca-.7)/((.3+.7*OM))*max(0.,N.y)*max(0.,dot(vec3(0,1,0),sun));
+
+       // Coral — morphology = Ω (low = dome, high = branching)
+       for(int i=0;i<8;i++){float ci=float(i);
+         float om=i<3?.6:i<6?1.2:2.;
+         vec2 cp=vec2(mod(ci*14.3+3.,40.)-20.,mod(ci*9.7+6.,16.)-8.);
+         vec2 cd=bp-cp;
+         cd.x*=1./(om*.7+.3);                  // high Ω elongates
+         float r=length(cd),mask=smoothstep(1.8*om,.1,r);
+         float tex=n2(cd*6./om+ci*4.)+.5*n2(cd*14./om+ci*7.)+.25*n2(cd*28./om);
+         tex=max(0.,tex-.4)*mask;
+         vec3 cc=i<3?vec3(.6,.18,.22):i<6?vec3(.65,.32,.1):vec3(.5,.18,.5);
+         cc+=vec3(.18,.1,.05)*sin(cd.x*12.+cd.y*8.);
+         bed=mix(bed,cc,.6*tex);}
+
+       // Seaweed — Ω gradient root→tip; sway ∝ distance from anchor
+       float sw=0.;
+       for(int i=0;i<10;i++){float si=float(i);
+         vec2 anch=vec2(mod(si*17.3+5.,50.)-25.,mod(si*13.1+8.,20.)-10.);
+         vec2 off=bp-anch;float dst=length(off);
+         off+=vec2(1.,.6)*dst*.25*sin(t*1.2+si*1.9);
+         off+=vec2(.5,-.8)*dst*.12*sin(t*1.7+si*3.1);
+         sw+=smoothstep(2.8,.2,length(off))*max(0.,n2(off*3.+vec2(si*5.,si*3.))-.25);}
+       bed=mix(bed,vec3(.04,.14,.04),.5*min(1.,sw));
+
+       // Fish — body = exp(−C²/Ω), size/speed/freq all scale with Ω
+       float fsh=0.;
+       for(int i=0;i<40;i++){float fi=float(i);
+         float sc=i<4?2.5:i<12?1.:i<24?.5:.25; // four Ω-classes
+         float sp=.55/sc;                        // drift ∝ 1/Ω
+         float wf=4.5/sc;                        // tail freq ∝ 1/Ω
+         float wx=4./(sc*sc),wy=90./(sc*sc);    // envelope width ∝ Ω²
+         vec2 fc=vec2(mod(fi*11.7+t*sp+30.,60.)-45.,mod(fi*7.3+fi*fi*.3+t*sp*.18+10.,24.)-12.);
+         vec2 dd=bp-fc;float ha=(.15/sc)*sin(fi*.7+t*.18*sp);
+         float ch=cos(ha),sh2=sin(ha);
+         vec2 r=vec2(dd.x*ch+dd.y*sh2,-dd.x*sh2+dd.y*ch);
+         r.y+=(.06*sc)*max(0.,r.x)*sin(r.x*wf+t*wf+fi*2.1); // SO(2) tail
+         fsh+=.7*sc*exp(-r.x*r.x*wx-r.y*r.y*wy);}
+       bed*=1.-.4*min(1.,fsh);
+
+       float fr0=R0+(1.-R0)*pow(1.-max(0.,dot(N,-rd)),5.);
+       ocean+=bed*tr*(1.-fr0);}
+
+      // Whitecap — C·Ω ≥ 1: slope (coherence) × Ω = rupture → foam (warm-lit at sunset)
+      float fs=max(0.,-(hnx-hx)/(2.*e));
+      float wc=smoothstep(.8,1.2,fs*OM)*smoothstep(-.1,.3,hc);
+      wc*=.5+.3*n2(hp.xz*8.+vec2(t*.3,-t*.2))+.2*n2(hp.xz*25.+vec2(-t*.5,t*.4));
+      ocean=mix(ocean,vec3(.92,.86,.78)+vec3(.10,.06,.02)*max(0.,dot(N,sun)),wc*.85);
+      col=mix(ocean,aO,lod);}
+  }
+
+  // Vignette + warm tonemap
+  vec2 v=gl_FragCoord.xy/R;
+  col*=.45+.55*smoothstep(0.,.4,v.x)*smoothstep(1.,.6,v.x)*smoothstep(0.,.25,v.y)*smoothstep(1.,.75,v.y);
+  col=col/(col+vec3(.38,.40,.45));
+  col=pow(col,vec3(.90,.96,1.02));   // lift reds, deepen blues — dusk warmth
+  gl_FragColor=vec4(col,1.);
+}`;
+
+  function mk(src, type) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  const pg = gl.createProgram();
+  gl.attachShader(pg, mk(VS, gl.VERTEX_SHADER));
+  gl.attachShader(pg, mk(FS, gl.FRAGMENT_SHADER));
+  gl.linkProgram(pg);
+  if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(pg));
+    gl.clearColor(0.82, 0.44, 0.27, 1.0);   // warm sunset wash so the panel is never blank
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    return;
+  }
+  gl.useProgram(pg);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const al = gl.getAttribLocation(pg, 'a');
+  gl.enableVertexAttribArray(al);
+  gl.vertexAttribPointer(al, 2, gl.FLOAT, false, 0, 0);
+
+  const uR = gl.getUniformLocation(pg, 'R');
+  const uT = gl.getUniformLocation(pg, 'T');
+  const uOM = gl.getUniformLocation(pg, 'OM');
+  const uZM = gl.getUniformLocation(pg, 'ZM');
+  const uSH = gl.getUniformLocation(pg, 'SH');
+
+  const OMEGA = 0.5;             // §CRR Ω — calm sea, gentle swell (the slider's "calm/gentle")
+  const ZOOM = 1.62;            // fixed framing for the panel (no zoom control here)
+  const dprCap = Math.min(window.devicePixelRatio || 1, 1.5);
+  let bw = 0, bh = 0;
+  function size() {
+    const rect = canvas.getBoundingClientRect();
+    const cw = rect.width  > 0 ? rect.width  : parseInt(canvas.getAttribute('width'));
+    const chh = rect.height > 0 ? rect.height : parseInt(canvas.getAttribute('height'));
+    const w = Math.max(1, Math.round(cw * dprCap));
+    const h = Math.max(1, Math.round(chh * dprCap));
+    if (w !== bw || h !== bh) { bw = w; bh = h; canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
+  }
+
+  let t0 = performance.now() / 1000;
+  function draw(now) {
+    const elapsed = (now / 1000) - t0;
+    size();
+    // The sun gently lowers toward the horizon and eases back — a slow, seamless sunset.
+    let s = 0.5 + 0.5 * Math.cos(elapsed * (TAU / 80));   // 1 (golden hour) → 0 (on the horizon) → 1, ~80 s
+    s = Math.pow(s, 1.5);                                 // linger low: dwell at the sunset moment
+    const sunH = 0.004 + 0.150 * s;
+    gl.uniform2f(uR, bw, bh);
+    gl.uniform1f(uT, elapsed * 0.42);    // gentle wave time
+    gl.uniform1f(uOM, OMEGA);
+    gl.uniform1f(uZM, ZOOM);
+    gl.uniform1f(uSH, sunH);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    scheduleNext(canvas, draw);
+  }
+  registerCanvas(canvas);
+  requestAnimationFrame(draw);
+}
+
+/* 2D sunset fallback — used only when WebGL is unavailable, so the panel still
+ * glows with a descending sun and a shimmering reflection rather than sitting blank. */
+function renderAestheticsFallback(canvas) {
   const cssW = parseInt(canvas.getAttribute('width'));
   const cssH = parseInt(canvas.getAttribute('height'));
   const { ctx, W, H } = setupCanvas(canvas, cssW, cssH);
-
-  /* ═══════════ §CRR ENGINE — exact mycelium dynamics (do not retune) ═══════════ */
-  const G = 700, CELLS = G * G, DT = 1 / 60;
-  const CDECAY = 0.9998;
-  const MEM_K = 10, MEM_DR = 0.15;
-  const THRESH = { MILD: .3, DMG: .6, RUPT: .75, LETH: .9 };
-  const SUB = { compost: { n: .8, c: [45, 35, 20] } };
-  let omega = 1 / Math.PI;          // Ω = 1/π  (Z₂)
-  let C_STAR = 1 / omega;           // fixed rupture threshold = π
-
-  const F = {
-    coh: new Float32Array(CELLS), den: new Float32Array(CELLS),
-    nut: new Float32Array(CELLS), moi: new Float32Array(CELLS),
-    dec: new Float32Array(CELLS), grw: new Float32Array(CELLS),
-    brn: new Float32Array(CELLS), tmp: new Float32Array(CELLS),
-  };
-
-  const ENV = { temp: 22, moist: 70, ph: 6.5, oxy: 21, co2: 400, sub: 'compost' };
-  const LIMITS = { temp: { o: [15, 25], l: [5, 35] }, ph: { o: [6, 7.5], l: [4, 9] }, moist: { o: [65, 85], l: [20, 95] }, oxy: { o: [18, 23], l: [5, 30] }, co2: { o: [300, 800], l: [0, 5000] } };
-  function bioStress(v, o, l) {
-    if (v >= o[0] && v <= o[1]) return 0;
-    const d = v < o[0] ? Math.min(1, (o[0] - v) / (o[0] - l[0])) : Math.min(1, (v - o[1]) / (l[1] - o[1]));
-    return d * d * d * .5 + d * .5;
-  }
-  function totalStress() {
-    const s = [bioStress(ENV.temp, LIMITS.temp.o, LIMITS.temp.l) * 1.5,
-    bioStress(ENV.ph, LIMITS.ph.o, LIMITS.ph.l) * 1.3,
-    bioStress(ENV.moist, LIMITS.moist.o, LIMITS.moist.l) * 1.2,
-    bioStress(ENV.oxy, LIMITS.oxy.o, LIMITS.oxy.l),
-    bioStress(ENV.co2, LIMITS.co2.o, LIMITS.co2.l) * .8];
-    const mx = Math.max(...s), av = s.reduce((a, b) => a + b) / s.length;
-    return { combined: Math.min(1, av + (mx - av) * .4), max: mx, ind: s };
-  }
-  function envHealth() { return Math.max(0, 1 - totalStress().combined); }
-
-  const memW = new Float32Array(MEM_K);
-  for (let i = 0; i < MEM_K; i++) memW[i] = Math.exp(-i * MEM_DR);
-
-  const tips = [];
-  const fruits = [];
-  let ruptCount = 0, simDay = 0, frame = 0;
-  // ── lifecycle (render-side; bounds tip growth & cost): grow → mature → fade → regrow ──
-  let phase = 'grow', life = 0, matureT = 0;
-
-  function Tip(x, y, par) {
-    this.x = x; this.y = y;
-    this.vx = (Math.random() - .5) * 2;
-    this.vy = (Math.random() - .5) * 2;
-    this.age = 0; this.energy = 1;
-    this.gen = par ? par.gen + 1 : 0;
-    const baseDiam = par ? par.diam * 0.8 : 0.7;
-    const localVar = par ? (Math.random() - 0.5) * 0.2 : 0;
-    this.diam = baseDiam * (1 + localVar);
-    this.cooldown = 0;
-    this.C = 0; this.phase = 0; this.beauty = 0; this.ruptured = false;
-    this.lastBranchDay = simDay;
-    this.caPhase = Math.random() * 6.283;
-    this.caPeriod = 1.8 + Math.random() * 0.8;
-    this.caGlow = 0; this.caInt = 0;
-    this.mem = new Float32Array(MEM_K);
-    this.trail = []; this.trailSkip = 0; this.regAmp = 1;
-  }
-  Tip.prototype.update = function (stress) {
-    this.age++;
-    const mx = stress.max, ov = stress.combined;
-    if (mx > THRESH.LETH) { ruptCount++; this.energy = 0; return null; }
-    if (ov > THRESH.RUPT && Math.random() < (ov - THRESH.RUPT) / (1 - THRESH.RUPT) * .8) { this.energy *= 0.7; ruptCount++; return null; }
-    if (ov > THRESH.DMG) this.energy *= 0.98 - (ov - THRESH.DMG) / (THRESH.RUPT - THRESH.DMG) * .03;
-    if (ov > THRESH.MILD) this.energy *= 0.999 - (ov - THRESH.MILD) / (THRESH.DMG - THRESH.MILD) * .001;
-
-    const sd = 15, ns = 6;
-    let bestSig = -1, bestAng = Math.atan2(this.vy, this.vx);
-    let localSig = 0;
-    for (let i = 0; i < ns; i++) {
-      const a = i * Math.PI * 2 / ns;
-      const sx = this.x + Math.cos(a) * sd, sy = this.y + Math.sin(a) * sd;
-      if (sx >= 0 && sx < G && sy >= 0 && sy < G) {
-        const idx = (sx | 0) + (sy | 0) * G;
-        let sig = F.nut[idx] * 2 + F.moi[idx] * .5 - F.den[idx] * .3 + (1 - F.dec[idx]) * .8;
-        if (i === 0) { this.mem.copyWithin(1, 0, MEM_K - 1); this.mem[0] = sig; localSig = sig; }
-        let ms = 0;
-        for (let m = 0; m < MEM_K; m++) ms += this.mem[m] * memW[m];
-        sig = sig * .7 + ms * .3;
-        if (sig > bestSig) { bestSig = sig; bestAng = a; }
-      }
-    }
-    const idx = (this.x | 0) + (this.y | 0) * G;
-    const locC = idx >= 0 && idx < CELLS ? F.coh[idx] : 0;
-    const rw = Math.exp(Math.min(locC / omega, 8));
-    this.regAmp = rw;
-    const L_local = Math.max(0.05, 0.5 + localSig * 0.1);
-    this.C += L_local * DT;
-    this.phase = Math.min(1, this.C / C_STAR);
-    const et = Math.exp(Math.min(this.C / omega, 12));
-    this.beauty = et * Math.max(0, C_STAR - this.C);
-    if (this.C >= C_STAR) this.ruptured = true;
-
-    this.caPhase += Math.PI * 2 / this.caPeriod * DT;
-    const cr = Math.sin(this.caPhase);
-    this.caInt = Math.max(0, cr);
-    this.caGlow *= 0.88;
-    if (cr > 0.95) this.caGlow = 1;
-
-    const sm = Math.pow(1 - ov, 2), bs = 0.96;
-    const pb = 1 + this.caInt * 0.4;
-    const spd = bs * rw * sm * pb;
-    const ca = Math.atan2(this.vy, this.vx);
-    const na = ca + normalA(bestAng - ca) * 0.3 * sm;
-    this.vx = Math.cos(na) * spd;
-    this.vy = Math.sin(na) * spd;
-    this.x += this.vx; this.y += this.vy;
-    this.x = Math.max(3, Math.min(G - 3, this.x));
-    this.y = Math.max(3, Math.min(G - 3, this.y));
-
-    deposit(this.x, this.y, this.diam + 1, spd);
-
-    if (++this.trailSkip >= 3) {
-      this.trailSkip = 0;
-      this.trail.push(this.x, this.y);
-      if (this.trail.length > 1600) this.trail.splice(0, 2);
-    }
-
-    this.cooldown = Math.max(0, this.cooldown - 1);
-    if (this.ruptured && this.energy > 0.4 && this.cooldown <= 0 && this.gen < 8) {
-      const interval = simDay - this.lastBranchDay;
-      this.lastBranchDay = simDay;
-      const ba = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * Math.PI * 0.6;
-      const child = new Tip(this.x, this.y, this);
-      child.vx = Math.cos(ba); child.vy = Math.sin(ba);
-      if (idx >= 0 && idx < CELLS) F.brn[idx] = Math.min(1, F.brn[idx] + 0.3 * sm);
-      this.C = 0; this.ruptured = false; this.phase = 0;
-      this.cooldown = 5; this.energy *= 0.8;
-      return child;
-    }
-    this.energy *= 0.9995 - ov * 0.002;
-    return null;
-  };
-
-  function normalA(a) { while (a > Math.PI) a -= 6.283; while (a < -Math.PI) a += 6.283; return a; }
-  function deposit(x, y, r, eff) {
-    const ri = Math.ceil(r);
-    for (let dy = -ri; dy <= ri; dy++) {
-      const py = y + dy | 0; if (py < 0 || py >= G) continue;
-      for (let dx = -ri; dx <= ri; dx++) {
-        const px = x + dx | 0; if (px < 0 || px >= G) continue;
-        const d2 = dx * dx + dy * dy; if (d2 > r * r) continue;
-        const idx = px + py * G, s = Math.exp(-d2 / (r * r));
-        F.den[idx] = Math.min(1, F.den[idx] + .04 * s * eff);
-        F.grw[idx] = Math.min(1, F.grw[idx] + .3 * s * eff);
-        F.nut[idx] = Math.max(0, F.nut[idx] - .001 * s * eff);
-        F.dec[idx] = Math.min(1, F.dec[idx] + .0005 * s * eff);
-      }
-    }
-  }
-  function diffuse(f, rate) {
-    F.tmp.fill(0);
-    for (let y = 1; y < G - 1; y++) {
-      for (let x = 1; x < G - 1; x++) {
-        const i = x + y * G;
-        F.tmp[i] = f[i] + rate * (f[i - 1] + f[i + 1] + f[i - G] + f[i + G] - 4 * f[i]);
-      }
-    }
-    for (let i = 0; i < CELLS; i++) f[i] = Math.max(0, F.tmp[i]);
-  }
-  function Fruit(x, y, h) { this.x = x; this.y = y; this.size = 1; this.max = 8 + Math.random() * 12 * h; this.gr = .1 * h; this.age = 0; }
-
-  function inoculate(x, y) { for (let i = 0; i < 20; i++) tips.push(new Tip(x + (Math.random() - .5) * 10, y + (Math.random() - .5) * 10, null)); }
-  function triggerFruiting() {
-    const h = envHealth();
-    for (let y = 20; y < G - 20; y += 30) for (let x = 20; x < G - 20; x += 30) {
-      let td = 0, tc = 0; const cr = 15;
-      for (let dy = -cr; dy <= cr; dy++) for (let dx = -cr; dx <= cr; dx++) {
-        const px = x + dx, py = y + dy;
-        if (px >= 0 && px < G && py >= 0 && py < G) { const i = px + py * G; td += F.den[i]; tc += F.coh[i]; }
-      }
-      const area = (cr * 2 + 1) ** 2, ad = td / area, ac = tc / area;
-      const cb = Math.min(2, 1 + ac * 2);
-      if (ad > .42 && Math.random() < .6 * h * cb) fruits.push(new Fruit(x + (Math.random() - .5) * 20, y + (Math.random() - .5) * 20, h));
-    }
-  }
-  function init() {
-    const sn = SUB[ENV.sub].n;
-    for (let i = 0; i < CELLS; i++) {
-      F.coh[i] = 0; F.den[i] = 0; F.grw[i] = 0; F.brn[i] = 0; F.dec[i] = 0;
-      F.nut[i] = sn * (0.8 + Math.random() * 0.4);
-      F.moi[i] = (ENV.moist / 100) * (0.9 + Math.random() * 0.2);
-    }
-    inoculate(G * 0.3, G * 0.5);
-    inoculate(G * 0.7, G * 0.5);
-  }
-  function resetCycle() {                 // clear everything and re-inoculate a fresh colony
-    tips.length = 0; fruits.length = 0;
-    ruptCount = 0; simDay = 0; frame = 0;
-    init();
-  }
-  function step() {
-    frame++;
-    const stress = totalStress(), h = envHealth();
-    for (let i = 0; i < CELLS; i++) {
-      const L = F.grw[i] * .1 + F.brn[i] * .2 + F.den[i] * .05;
-      F.coh[i] = (F.coh[i] + L * DT) * CDECAY;
-      F.grw[i] *= .95; F.brn[i] *= .9;
-    }
-    const newTips = [];
-    for (let i = tips.length - 1; i >= 0; i--) {
-      const child = tips[i].update(stress);
-      if (child) newTips.push(child);
-      if (tips[i].energy <= .1) { ruptCount++; tips.splice(i, 1); }
-    }
-    for (const t of newTips) tips.push(t);
-    if (frame % 3 === 0) {
-      diffuse(F.nut, .01 * h);
-      diffuse(F.moi, .005);
-      for (let i = 0; i < CELLS; i++) F.moi[i] *= .9999 + h * .0001;
-    }
-    for (const f of fruits) { f.age++; if (f.size < f.max) { f.size += f.gr * h; f.gr *= .99; } }
-    if (simDay > 7 && frame % 300 === 0 && Math.random() < .3 * h) triggerFruiting();
-    simDay += .1;
-  }
-  /* ═══════════════════ end §CRR ENGINE (exact) ═══════════════════ */
-
-  /* ── render: subtle Space Zero recolour (reads fields, never writes them) ── */
-  const RW = 350, STR = G / RW;                       // render at half-res (picture only; G stays 700)
-  const fld = document.createElement('canvas'); fld.width = RW; fld.height = RW;
-  const fctx = fld.getContext('2d');
-  const fimg = fctx.createImageData(RW, RW);
-  const fpx = fimg.data;
-  // low-frequency hue field — gives the network gentle teal↔amber↔rose drift, static, render-only
-  const hfLUT = new Float32Array(RW * RW);
-  for (let y = 0; y < RW; y++) for (let x = 0; x < RW; x++)
-    hfLUT[x + y * RW] = 0.5 + 0.5 * Math.sin(x * 0.018 + y * 0.011 + 1.7) * Math.cos(x * 0.006 - y * 0.013 + 0.4);
-
-  // cover-fit transform: 700×700 square → W×H panel
-  const scale = Math.max(W / G, H / G);
-  const drawSz = G * scale;
-  const offX = (W - drawSz) / 2, offY = (H - drawSz) / 2;
-  const FX = fx => offX + fx * scale, FY = fy => offY + fy * scale;
-
-  const SOIL_WARM = [40, 30, 20], SOIL_COOL = [24, 31, 32];
-  const SOIL_BASE_C = blend(SOIL_WARM, SOIL_COOL, 0.35);   // fade target (network dissolves into soil)
-  const HYPHA_WARM = [236, 224, 196], HYPHA_SAGE = [176, 184, 150];
-  const COH_SHEEN = [150, 196, 214];
-
-  init();
-  let t0 = performance.now() / 1000, tPrev = 0;
-
+  const horizonY = H * 0.52, sunX = W * 0.64;
+  let t0 = performance.now() / 1000;
   function draw(now) {
     const t = (now / 1000) - t0;
-    let dt = t - tPrev; tPrev = t;
-    if (!isFinite(dt) || dt < 0) dt = 1 / 60;
-    if (dt > 0.1) dt = 1 / 60;
+    const s = Math.pow(0.5 + 0.5 * Math.cos(t * (TAU / 80)), 1.5);
+    const sunY = horizonY - H * 0.03 - s * H * 0.30;     // sun descends toward the horizon
 
-    /* ── lifecycle ── grow & mature run the engine; fade freezes it (saves cost) ── */
-    if (phase === 'grow') {
-      life = Math.min(1, life + dt * 0.7);
-      step();
-      const mature = (simDay > 95 && (fruits.length >= 4 || simDay > 150)) || tips.length > 1300;
-      if (mature) { phase = 'mature'; matureT = 0; }
-    } else if (phase === 'mature') {
-      life = Math.min(1, life + dt * 0.7);
-      step();                              // let the mushroom caps finish growing
-      matureT += dt;
-      if (matureT > 4.5) phase = 'fade';
-    } else if (phase === 'fade') {
-      life = Math.max(0, life - dt * 0.28); // ~3.6s dissolve; engine is frozen here
-      if (life <= 0.001) { resetCycle(); phase = 'grow'; life = 0; }
-    }
-
-    // soil substrate base — always opaque, so the network fades *into* it
     ctx.clearRect(0, 0, W, H);
-    const soil = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
-    soil.addColorStop(0, rgba(SOIL_WARM, 1));
-    soil.addColorStop(1, rgba(SOIL_COOL, 1));
-    ctx.fillStyle = soil;
-    ctx.fillRect(0, 0, W, H);
+    const sky = ctx.createLinearGradient(0, 0, 0, horizonY);
+    sky.addColorStop(0.00, rgba([34, 40, 78], 1));
+    sky.addColorStop(0.55, rgba([210, 96, 78], 1));
+    sky.addColorStop(1.00, rgba([255, 168, 86], 1));
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, horizonY + 1);
 
-    // 1. field → recoloured pixels (half-res buffer)
-    for (let ry = 0; ry < RW; ry++) {
-      const gy = (ry * STR) | 0;
-      for (let rx = 0; rx < RW; rx++) {
-        const gx = (rx * STR) | 0;
-        const gi = gx + gy * G;
-        const hf = hfLUT[rx + ry * RW];
-        const d = F.den[gi], co = F.coh[gi], gr = F.grw[gi];
-        const bR = SOIL_WARM[0] + (SOIL_COOL[0] - SOIL_WARM[0]) * hf * 0.62;
-        const bG = SOIL_WARM[1] + (SOIL_COOL[1] - SOIL_WARM[1]) * hf * 0.62;
-        const bB = SOIL_WARM[2] + (SOIL_COOL[2] - SOIL_WARM[2]) * hf * 0.62;
-        const pR = HYPHA_WARM[0] + (HYPHA_SAGE[0] - HYPHA_WARM[0]) * hf * 0.58;
-        const pG = HYPHA_WARM[1] + (HYPHA_SAGE[1] - HYPHA_WARM[1]) * hf * 0.58;
-        const pB = HYPHA_WARM[2] + (HYPHA_SAGE[2] - HYPHA_WARM[2]) * hf * 0.58;
-        const tt = d > .02 ? Math.min(1, d * 2) : 0;
-        let r = bR + (pR - bR) * tt, g = bG + (pG - bG) * tt, b = bB + (pB - bB) * tt;
-        const cg = Math.min(1, co * 4);
-        r += COH_SHEEN[0] * cg * 0.11; g += COH_SHEEN[1] * cg * 0.11; b += COH_SHEEN[2] * cg * 0.11;
-        r += 236 * gr * 0.14; g += 200 * gr * 0.14; b += 150 * gr * 0.14;   // warm growth fronts
-        const pi = (rx + ry * RW) * 4;
-        fpx[pi] = r > 255 ? 255 : r; fpx[pi + 1] = g > 255 ? 255 : g; fpx[pi + 2] = b > 255 ? 255 : b; fpx[pi + 3] = 255;
-      }
+    const halo = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, H * 0.5);
+    halo.addColorStop(0.00, rgba([255, 224, 170], 0.95));
+    halo.addColorStop(0.18, rgba([255, 150, 70], 0.55));
+    halo.addColorStop(1.00, rgba([255, 150, 70], 0));
+    ctx.fillStyle = halo; ctx.fillRect(0, 0, W, horizonY + H * 0.12);
+    ctx.beginPath(); ctx.arc(sunX, sunY, H * 0.055, 0, TAU);
+    ctx.fillStyle = rgba([255, 238, 200], 0.98); ctx.fill();
+
+    const sea = ctx.createLinearGradient(0, horizonY, 0, H);
+    sea.addColorStop(0.00, rgba([200, 96, 64], 0.85));
+    sea.addColorStop(0.22, rgba([70, 112, 120], 1));
+    sea.addColorStop(1.00, rgba([18, 40, 54], 1));
+    ctx.fillStyle = sea; ctx.fillRect(0, horizonY, W, H - horizonY);
+
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    for (let i = 0; i < 26; i++) {
+      const p = i / 26;
+      const y = horizonY + (H - horizonY) * p;
+      const spread = H * 0.02 * (0.4 + p * 5);
+      const jx = Math.sin(t * 1.6 + i * 1.7) * spread;
+      const a = (0.5 - p * 0.4) * (0.6 + 0.4 * Math.sin(t * 3 + i));
+      ctx.fillStyle = rgba([255, 180, 96], Math.max(0, a) * 0.5);
+      ctx.fillRect(sunX + jx - spread * 0.5, y, spread, 2 + p * 2);
     }
-    fctx.putImageData(fimg, 0, 0);
-    ctx.save();
-    ctx.globalAlpha = life;                       // whole network fades with the lifecycle
-    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(fld, offX, offY, drawSz, drawSz);
-
-    // 2. hyphal trails — faint pale filaments
-    ctx.lineCap = 'round';
-    ctx.lineWidth = Math.max(0.6, 0.8 * scale);
-    for (const tp of tips) {
-      if (tp.trail.length < 6) continue;
-      ctx.strokeStyle = rgba(PAL.amberCream, 0.05 + tp.energy * 0.07);
-      ctx.beginPath();
-      ctx.moveTo(FX(tp.trail[0]), FY(tp.trail[1]));
-      for (let i = 2; i < tp.trail.length; i += 2) ctx.lineTo(FX(tp.trail[i]), FY(tp.trail[i + 1]));
-      ctx.stroke();
-    }
-
-    // 3. §CRR tip glow — Spitzenkörper / beauty function B(C), Ca²⁺ pulse gold→rose
-    ctx.globalCompositeOperation = 'screen';
-    for (const tp of tips) {
-      const bn = Math.min(1, tp.beauty / 3), cg = tp.caGlow;
-      const a = 0.10 + bn * 0.20 + cg * 0.16;
-      if (a < 0.02) continue;
-      const px = FX(tp.x), py = FY(tp.y);
-      const gr = (tp.diam + 2 + bn * 3 + cg * 8) * scale;
-      const warm = blend(PAL.amberCream, PAL.iceplantBright, tp.phase * 0.5 + cg * 0.2);
-      const grd = ctx.createRadialGradient(px, py, 0, px, py, gr);
-      grd.addColorStop(0, rgba(warm, a));
-      grd.addColorStop(0.4, rgba(warm, a * 0.3));
-      grd.addColorStop(1, rgba(warm, 0));
-      ctx.fillStyle = grd;
-      ctx.fillRect(px - gr, py - gr, gr * 2, gr * 2);
-    }
-    ctx.globalCompositeOperation = 'source-over';
-    for (const tp of tips) {
-      const bn = Math.min(1, tp.beauty / 3);
-      const px = FX(tp.x), py = FY(tp.y);
-      ctx.fillStyle = rgba(PAL.parchment, 0.35 + bn * 0.4);
-      ctx.beginPath();
-      ctx.arc(px, py, Math.max(0.8, tp.diam * 0.6 * scale), 0, TAU);
-      ctx.fill();
-    }
-
-    // 4. mushrooms — small muted fruiting caps with pale stems
-    for (const f of fruits) {
-      const px = FX(f.x), py = FY(f.y), sz = f.size * scale;
-      ctx.fillStyle = rgba(PAL.parchmentWarm, 0.55);
-      ctx.fillRect(px - sz * 0.10, py - sz * 0.20, sz * 0.20, sz * 0.62);
-      const cap = blend(PAL.cinnamon, PAL.sage, 0.35 + (f.x % 7) / 20);
-      const grd = ctx.createRadialGradient(px, py - sz, 0, px, py - sz, sz * 0.85);
-      grd.addColorStop(0, rgba(blend(cap, PAL.amberCream, 0.3), 0.85));
-      grd.addColorStop(1, rgba(blend(cap, PAL.redwoodBark, 0.3), 0.7));
-      ctx.fillStyle = grd;
-      ctx.beginPath();
-      ctx.ellipse(px, py - sz, sz * 0.8, sz * 0.42, 0, 0, TAU);
-      ctx.fill();
-    }
-    ctx.restore();   // end network life-alpha
-
-    // 5. soft vignette
-    const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.28, W / 2, H / 2, Math.max(W, H) * 0.72);
-    vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(1, rgba(PAL.ink, 0.30));
-    ctx.fillStyle = vg;
-    ctx.fillRect(0, 0, W, H);
-
+    ctx.restore();
     scheduleNext(canvas, draw);
   }
   registerCanvas(canvas);
