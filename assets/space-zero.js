@@ -1850,7 +1850,6 @@ function renderFooter() {
   <div class="footer-bottom">
     <div>&copy; 2026 Space Zero &middot; 501(c)(3)</div>
     <div>Crescent City &middot; California</div>
-    <div>Living simulations &middot; <a href="https://www.temporalgrammar.ai">temporalgrammar.ai</a></div>
   </div>
 </footer>`;
 }
