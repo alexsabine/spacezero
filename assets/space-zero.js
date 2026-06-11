@@ -83,9 +83,48 @@ const _io = 'IntersectionObserver' in window
     }, { rootMargin: '80px' })
   : null;
 
+/* ═══ FIREFOX ADAPTIVE PERFORMANCE ═══
+ * Firefox's Canvas2D handles per-frame gradient allocation, blend modes and
+ * backdrop-filter far slower than Chrome. Fixes: (a) all per-fish / glow
+ * gradients are cached (exact-equivalent, see renderers); (b) the .ff-perf
+ * class lets CSS swap the header blur for a solid tint; (c) a governor
+ * watches the real frame rate in Firefox and only if it struggles
+ * (<45fps for two consecutive 2s windows) latches canvas painting to ~30fps.
+ * Simulation is fixed-step, so the fallback changes smoothness only — never
+ * behaviour. Chrome's path is byte-identical to the original. */
+const FF_PERF = typeof navigator !== 'undefined' && /Firefox/i.test(navigator.userAgent);
+let FRAME_MIN_MS = 0;
+if (FF_PERF && typeof document !== 'undefined') {
+  document.documentElement.classList.add('ff-perf');
+  let fr = 0, w0 = performance.now(), bad = 0, latched = false;
+  requestAnimationFrame(function gov(now) {
+    fr++;
+    if (now - w0 >= 2000) {
+      if (!latched) {
+        bad = (fr * 1000 / (now - w0)) < 45 ? bad + 1 : 0;
+        if (bad >= 2) { latched = true; FRAME_MIN_MS = 31; }
+      }
+      fr = 0; w0 = now;
+    }
+    requestAnimationFrame(gov);
+  });
+}
+const _lastPaint = new Map();
+
 function scheduleNext(canvas, draw) {
   if ((!_io || _visible.has(canvas)) && !document.hidden) {
-    requestAnimationFrame(draw);
+    if (!FRAME_MIN_MS) { requestAnimationFrame(draw); return; }
+    requestAnimationFrame(function paced(now) {
+      const last = _lastPaint.get(canvas) || 0;
+      if (now - last >= FRAME_MIN_MS) {
+        _lastPaint.set(canvas, now);
+        draw(now);
+      } else if ((!_io || _visible.has(canvas)) && !document.hidden) {
+        requestAnimationFrame(paced);
+      } else {
+        _pending.set(canvas, () => requestAnimationFrame(draw));
+      }
+    });
   } else {
     _pending.set(canvas, () => requestAnimationFrame(draw));
   }
@@ -1034,7 +1073,7 @@ function renderAlign(canvas) {
     const idx = s * (pr.length - 1), lo = floor(idx), hi = min(lo + 1, pr.length - 1);
     const hw = L * (pr[lo] * (1 - (idx - lo)) + pr[hi] * (idx - lo));
     const bx = (.42 - s) * L, by = wave + side * hw;
-    return { x: f.x + cos(f.ang) * bx - sin(f.ang) * by, y: f.y + sin(f.ang) * bx + cos(f.ang) * by };
+    return { x: bx, y: by };   /* local frame — drawFish applies translate+rotate */
   }
   const NG = 1.83;
   function tF(th, a) {
@@ -1047,26 +1086,33 @@ function renderAlign(canvas) {
   }
 
   function drawFish(f) {
-    const L = f.len, ca = cos(f.ang), sa2 = sin(f.ang), nx = -sa2, ny = ca;
+    /* drawn in the fish's own frame so every gradient is a constant,
+       built once per fish and reused — zero per-frame allocations */
+    const L = f.len, ca = 1, sa2 = 0, nx = 0, ny = 1;
     const dp = f.depth, depthAlpha = .65 + dp * .35;
+    const cA = cos(f.ang), sA = sin(f.ang);
     X.save(); X.globalAlpha = depthAlpha;
+    X.translate(f.x, f.y); X.rotate(f.ang);
     X.save(); X.globalAlpha = .04 * depthAlpha;
-    X.beginPath(); X.ellipse(f.x + 3, f.y + L * .06, L * .3, L * .035, f.ang, 0, T); X.fillStyle = '#000'; X.fill(); X.restore();
+    X.beginPath(); X.ellipse(3 * cA + L * .06 * sA, -3 * sA + L * .06 * cA, L * .3, L * .035, 0, 0, T); X.fillStyle = '#000'; X.fill(); X.restore();
     // tail fin
     const tb = bP(f, .88, 0), tt = bP(f, 1, 0);
     X.save(); X.globalAlpha = .5;
-    const tA = f.ang + P, tpx = cos(tA), tpy = sin(tA), sp = L * .14, tl = L * .12;
+    const tpx = -1, tpy = 0, sp = L * .14, tl = L * .12;
     X.beginPath(); X.moveTo(tb.x, tb.y);
     X.bezierCurveTo(tt.x + tpx * tl * .3 + nx * sp * .6, tt.y + tpy * tl * .3 + ny * sp * .6, tt.x + tpx * tl + nx * sp, tt.y + tpy * tl + ny * sp, tt.x + tpx * tl * .5, tt.y + tpy * tl * .5);
     X.lineTo(tt.x, tt.y); X.lineTo(tt.x + tpx * tl * .5, tt.y + tpy * tl * .5);
     X.bezierCurveTo(tt.x + tpx * tl - nx * sp, tt.y + tpy * tl - ny * sp, tt.x + tpx * tl * .3 - nx * sp * .6, tt.y + tpy * tl * .3 - ny * sp * .6, tb.x, tb.y);
-    const tg = X.createLinearGradient(tt.x + nx * sp, tt.y + ny * sp, tt.x - nx * sp, tt.y - ny * sp);
-    tg.addColorStop(0, `hsla(${f.h + 8},${f.s - 12}%,${f.l - 5}%,.35)`); tg.addColorStop(.5, `hsla(${f.h},${f.s}%,${f.l + 5}%,.5)`); tg.addColorStop(1, `hsla(${f.h + 8},${f.s - 12}%,${f.l - 5}%,.35)`);
-    X.fillStyle = tg; X.fill();
+    if (!f._tg) {
+      const tg = X.createLinearGradient(tt.x + nx * sp, tt.y + ny * sp, tt.x - nx * sp, tt.y - ny * sp);
+      tg.addColorStop(0, `hsla(${f.h + 8},${f.s - 12}%,${f.l - 5}%,.35)`); tg.addColorStop(.5, `hsla(${f.h},${f.s}%,${f.l + 5}%,.5)`); tg.addColorStop(1, `hsla(${f.h + 8},${f.s - 12}%,${f.l - 5}%,.35)`);
+      f._tg = tg;
+    }
+    X.fillStyle = f._tg; X.fill();
     if (dp > .3) { X.strokeStyle = `hsla(${f.h},${f.s - 20}%,${f.l + 10}%,.12)`; X.lineWidth = .4; for (let i = 0; i < 7; i++) { const sv = (i / 6) * 2 - 1; X.beginPath(); X.moveTo(tb.x, tb.y); X.quadraticCurveTo(tt.x + tpx * tl * .3 + nx * sv * sp * .3, tt.y + tpy * tl * .3 + ny * sv * sp * .3, tt.x + tpx * tl * .7 + nx * sv * sp * .85, tt.y + tpy * tl * .7 + ny * sv * sp * .85); X.stroke(); } }
     X.restore();
     // dorsal
-    if (dp > .25) { const d1 = bP(f, .22, -1), d2 = bP(f, .52, -1), dH = L * .1 + sin(t * 1.3 + f.id) * .003 * L; X.save(); X.globalAlpha = .4; X.beginPath(); X.moveTo(d1.x, d1.y); X.bezierCurveTo(d1.x + nx * dH * .4, d1.y + ny * dH * .4, (d1.x + d2.x) / 2 + nx * dH, (d1.y + d2.y) / 2 + ny * dH, d2.x, d2.y); const dg = X.createLinearGradient(d1.x + nx * dH, d1.y + ny * dH, d1.x, d1.y); dg.addColorStop(0, `hsla(${f.h},${f.s - 10}%,${f.l - 5}%,.12)`); dg.addColorStop(1, `hsla(${f.h + 5},${f.s - 5}%,${f.l}%,.35)`); X.fillStyle = dg; X.fill(); X.restore(); }
+    if (dp > .25) { const d1 = bP(f, .22, -1), d2 = bP(f, .52, -1), dH = L * .1 + sin(t * 1.3 + f.id) * .003 * L; X.save(); X.globalAlpha = .4; X.beginPath(); X.moveTo(d1.x, d1.y); X.bezierCurveTo(d1.x + nx * dH * .4, d1.y + ny * dH * .4, (d1.x + d2.x) / 2 + nx * dH, (d1.y + d2.y) / 2 + ny * dH, d2.x, d2.y); if (!f._dg) { const dg = X.createLinearGradient(d1.x + nx * dH, d1.y + ny * dH, d1.x, d1.y); dg.addColorStop(0, `hsla(${f.h},${f.s - 10}%,${f.l - 5}%,.12)`); dg.addColorStop(1, `hsla(${f.h + 5},${f.s - 5}%,${f.l}%,.35)`); f._dg = dg; } X.fillStyle = f._dg; X.fill(); X.restore(); }
     // anal
     if (dp > .3) { const a1 = bP(f, .52, 1), a2 = bP(f, .7, 1); X.save(); X.globalAlpha = .3; X.beginPath(); X.moveTo(a1.x, a1.y); X.quadraticCurveTo((a1.x + a2.x) / 2 - nx * L * .06, (a1.y + a2.y) / 2 - ny * L * .06, a2.x, a2.y); X.fillStyle = `hsla(${f.h + 5},${f.s - 12}%,${f.l - 3}%,.3)`; X.fill(); X.restore(); }
     // body
@@ -1075,14 +1121,17 @@ function renderAlign(canvas) {
     for (let s = 0; s <= 1; s += bStep) { const p = bP(f, s, -1); s === 0 ? X.moveTo(p.x, p.y) : X.lineTo(p.x, p.y); }
     for (let s = 1; s >= 0; s -= bStep) { const p = bP(f, s, 1); X.lineTo(p.x, p.y); }
     X.closePath(); X.save(); X.clip();
-    const bg = X.createLinearGradient(f.x + nx * L * .13, f.y + ny * L * .13, f.x - nx * L * .13, f.y - ny * L * .13);
+    if (!f._bg) {
+    const bg = X.createLinearGradient(nx * L * .13, ny * L * .13, -nx * L * .13, -ny * L * .13);
     bg.addColorStop(0, `hsla(${f.h - 5},${f.s + 5}%,${max(25, f.l - 12)}%,.9)`);
     bg.addColorStop(.2, `hsla(${f.h + 10},${f.s + 16}%,${min(90, f.l + 14)}%,.93)`);
     bg.addColorStop(.42, `hsla(${f.h + 18},${f.s + 6}%,${min(93, f.l + 22)}%,.91)`);
     bg.addColorStop(.6, `hsla(${f.h + 5},${f.s + 2}%,${min(90, f.l + 15)}%,.91)`);
     bg.addColorStop(.8, `hsla(${f.h},${f.s}%,${min(88, f.l + 8)}%,.9)`);
     bg.addColorStop(1, `hsla(${f.h + 15},${f.s - 5}%,${min(95, f.l + 25)}%,.88)`);
-    X.fillStyle = bg; X.fill();
+    f._bg = bg;
+    }
+    X.fillStyle = f._bg; X.fill();
     // iridescence
     const sR = L * .009;
     const spd = hypot(f.vx, f.vy);
@@ -1100,7 +1149,8 @@ function renderAlign(canvas) {
       const dorsalB = max(0, 1 - vF * 1.5) * .12;
       const inten = .11 + .26 * (1 - vF) + dorsalB + f.tail.sa * .1 + ir2 * .04 + ir3 * .03;
       X.fillStyle = `rgba(${round(cl.r * 255)},${round(cl.g * 255)},${round(cl.b * 255)},${inten})`;
-      X.beginPath(); X.arc(p.x, p.y, sR * (.85 + vF * .3), -P * .7, P * .7); X.fill();
+      if (FF_PERF) { const rr = sR * (.85 + vF * .3); X.fillRect(p.x - rr, p.y - rr, rr * 2, rr * 2); }
+      else { X.beginPath(); X.arc(p.x, p.y, sR * (.85 + vF * .3), -P * .7, P * .7); X.fill(); }
     }
     if (dp > .4) {
       const sh = sin(t * 3.5 + f.id * 2.3 + f.x * .02) * .12 + .035 + spd * .01;
@@ -1114,15 +1164,17 @@ function renderAlign(canvas) {
     // gills
     if (dp > .4) { const go = .25 + f.gill.sa * .45 + sin(f.gill.ph * 3) * .06, gp = bP(f, .16, .25); X.save(); X.globalAlpha = .3; for (let i = 0; i < 3; i++) { X.beginPath(); X.moveTo(gp.x + ca * i * L * .008, gp.y + sa2 * i * L * .008); X.lineTo(gp.x + ca * i * L * .008 - nx * L * .01 * go, gp.y + sa2 * i * L * .008 - ny * L * .01 * go); X.strokeStyle = `rgba(${155 + i * 20},${45 + i * 10},${35 + i * 10},${.1 + go * .12})`; X.lineWidth = 1.2; X.stroke(); } X.restore(); }
     // pectoral
-    if (dp > .35) { const pa = sin(f.pect.ph * 2.5) * .3 + f.pect.sa * .15, pp = bP(f, .2, .55); X.save(); X.globalAlpha = .25; X.translate(pp.x, pp.y); X.rotate(f.ang + P * .3 + pa); X.beginPath(); X.moveTo(0, 0); X.bezierCurveTo(-L * .01, L * .035, -L * .05, L * .06, -L * .07, L * .048); X.bezierCurveTo(-L * .055, L * .02, -L * .02, L * .005, 0, 0); const pfg = X.createLinearGradient(0, 0, -L * .06, L * .05); pfg.addColorStop(0, `hsla(${f.h},${f.s - 15}%,${f.l + 5}%,.4)`); pfg.addColorStop(1, `hsla(${f.h + 10},${f.s - 20}%,${f.l + 10}%,.1)`); X.fillStyle = pfg; X.fill(); X.restore(); }
+    if (dp > .35) { const pa = sin(f.pect.ph * 2.5) * .3 + f.pect.sa * .15, pp = bP(f, .2, .55); X.save(); X.globalAlpha = .25; X.translate(pp.x, pp.y); X.rotate(P * .3 + pa); X.beginPath(); X.moveTo(0, 0); X.bezierCurveTo(-L * .01, L * .035, -L * .05, L * .06, -L * .07, L * .048); X.bezierCurveTo(-L * .055, L * .02, -L * .02, L * .005, 0, 0); if (!f._pg) { const pfg = X.createLinearGradient(0, 0, -L * .06, L * .05); pfg.addColorStop(0, `hsla(${f.h},${f.s - 15}%,${f.l + 5}%,.4)`); pfg.addColorStop(1, `hsla(${f.h + 10},${f.s - 20}%,${f.l + 10}%,.1)`); f._pg = pfg; } X.fillStyle = f._pg; X.fill(); X.restore(); }
     // eye
     const ep = bP(f, .07, -.14), eR = L * .017;
     X.beginPath(); X.arc(ep.x, ep.y, eR, 0, T);
-    const eg = X.createRadialGradient(ep.x - eR * .1, ep.y - eR * .1, 0, ep.x, ep.y, eR);
-    eg.addColorStop(0, '#e8e4d8'); eg.addColorStop(.8, '#d0ccc0'); eg.addColorStop(1, '#a09888'); X.fillStyle = eg; X.fill();
+    if (!f._eg) { const eg = X.createRadialGradient(ep.x - eR * .1, ep.y - eR * .1, 0, ep.x, ep.y, eR);
+    eg.addColorStop(0, '#e8e4d8'); eg.addColorStop(.8, '#d0ccc0'); eg.addColorStop(1, '#a09888'); f._eg = eg; }
+    X.fillStyle = f._eg; X.fill();
     X.beginPath(); X.arc(ep.x + eR * .1, ep.y, eR * .55, 0, T);
-    const ig2 = X.createRadialGradient(ep.x + eR * .1, ep.y, eR * .08, ep.x + eR * .1, ep.y, eR * .55);
-    ig2.addColorStop(0, '#806830'); ig2.addColorStop(.5, '#503815'); ig2.addColorStop(1, '#201005'); X.fillStyle = ig2; X.fill();
+    if (!f._ig) { const ig2 = X.createRadialGradient(ep.x + eR * .1, ep.y, eR * .08, ep.x + eR * .1, ep.y, eR * .55);
+    ig2.addColorStop(0, '#806830'); ig2.addColorStop(.5, '#503815'); ig2.addColorStop(1, '#201005'); f._ig = ig2; }
+    X.fillStyle = f._ig; X.fill();
     X.beginPath(); X.arc(ep.x + eR * .14, ep.y, eR * .25, 0, T); X.fillStyle = '#080404'; X.fill();
     X.beginPath(); X.arc(ep.x + eR * .25, ep.y - eR * .18, eR * .1, 0, T); X.fillStyle = 'rgba(255,255,255,.5)'; X.fill();
     X.restore();
@@ -1130,23 +1182,31 @@ function renderAlign(canvas) {
 
   /* ── underwater field ── */
   function drawWater() {
-    const bg = X.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0.00, rgba(blend(PAL.waterJade, PAL.amberCream, 0.30), 1.0));
-    bg.addColorStop(0.30, rgba(PAL.waterEmerald, 1.0));
-    bg.addColorStop(0.66, rgba(PAL.waterAqua, 1.0));
-    bg.addColorStop(1.00, rgba(blend(PAL.waterCobalt, PAL.ink, 0.45), 1.0));
-    X.fillStyle = bg; X.fillRect(0, 0, W, H);
+    if (!drawWater._bg) {
+      const bg = X.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0.00, rgba(blend(PAL.waterJade, PAL.amberCream, 0.30), 1.0));
+      bg.addColorStop(0.30, rgba(PAL.waterEmerald, 1.0));
+      bg.addColorStop(0.66, rgba(PAL.waterAqua, 1.0));
+      bg.addColorStop(1.00, rgba(blend(PAL.waterCobalt, PAL.ink, 0.45), 1.0));
+      drawWater._bg = bg;
+    }
+    X.fillStyle = drawWater._bg; X.fillRect(0, 0, W, H);
     // god-rays from upper-left
     X.save(); X.globalCompositeOperation = 'screen';
     for (let i = 0; i < 5; i++) {
       const bx = W * (0.12 + i * 0.2) + sin(t * 0.12 + i) * W * 0.03;
       const wdt = W * (0.05 + 0.02 * sin(t * 0.2 + i * 1.3));
       const a = 0.05 + 0.03 * (0.5 + 0.5 * sin(t * 0.3 + i * 2));
-      const g = X.createLinearGradient(bx, 0, bx + W * 0.12, H);
-      g.addColorStop(0, rgba(PAL.amberCream, a));
-      g.addColorStop(1, rgba(PAL.waterJade, 0));
-      X.fillStyle = g;
-      X.beginPath(); X.moveTo(bx - wdt, 0); X.lineTo(bx + wdt, 0); X.lineTo(bx + W * 0.12 + wdt * 2, H); X.lineTo(bx + W * 0.12 - wdt * 2, H); X.closePath(); X.fill();
+      if (!drawWater._ray) {
+        const g = X.createLinearGradient(0, 0, W * 0.12, H);
+        g.addColorStop(0, rgba(PAL.amberCream, 1));
+        g.addColorStop(1, rgba(PAL.waterJade, 0));
+        drawWater._ray = g;
+      }
+      X.save(); X.translate(bx, 0); X.globalAlpha = a;
+      X.fillStyle = drawWater._ray;
+      X.beginPath(); X.moveTo(-wdt, 0); X.lineTo(wdt, 0); X.lineTo(W * 0.12 + wdt * 2, H); X.lineTo(W * 0.12 - wdt * 2, H); X.closePath(); X.fill();
+      X.restore();
     }
     // caustic net
     X.globalAlpha = 0.10;
@@ -1179,7 +1239,12 @@ function renderAlign(canvas) {
     let dt = t - tPrev; tPrev = t;
     if (!isFinite(dt) || dt < 0 || dt > 0.1) dt = 1 / 60;
     drawWater();
-    upd(dt);
+    /* fixed 60 Hz substeps: the flocking impulses are tuned per-tick, so this
+       keeps schooling identical at any paint rate */
+    upd._acc = (upd._acc || 0) + dt;
+    let simSteps = 0;
+    while (upd._acc >= 1 / 60 && simSteps < 4) { upd(1 / 60); upd._acc -= 1 / 60; simSteps++; }
+    if (simSteps === 4) upd._acc = 0;
     fishes.sort((a, b) => a.depth - b.depth);
     for (const f of fishes) drawFish(f);
     // predator-strike ripples
@@ -1194,10 +1259,13 @@ function renderAlign(canvas) {
       X.stroke();
     }
     // gentle depth vignette
-    const vg = X.createRadialGradient(W / 2, H / 2, min(W, H) * 0.3, W / 2, H / 2, max(W, H) * 0.72);
-    vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(1, rgba(blend(PAL.waterCobalt, PAL.ink, 0.5), 0.45));
-    X.fillStyle = vg; X.fillRect(0, 0, W, H);
+    if (!draw._vg) {
+      const vg = X.createRadialGradient(W / 2, H / 2, min(W, H) * 0.3, W / 2, H / 2, max(W, H) * 0.72);
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(1, rgba(blend(PAL.waterCobalt, PAL.ink, 0.5), 0.45));
+      draw._vg = vg;
+    }
+    X.fillStyle = draw._vg; X.fillRect(0, 0, W, H);
     scheduleNext(canvas, draw);
   }
   registerCanvas(canvas);
@@ -1221,6 +1289,8 @@ function renderBenevolence(canvas) {
   const { ctx, W, H } = setupCanvas(canvas, cssW, cssH);
   const { sin, cos, exp, pow, min, max, abs } = Math;
   const SCL = W / 460;
+  const GC = new Map();                          // gradient cache (bounded by 1/64 quantisation)
+  const Q = (v, n2) => Math.round(v * n2) / n2;
   const sstep = (a, b, x) => { const k = min(1, max(0, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
 
   /* two agents — detuned CRR limit-cycle oscillators (heart + breath) */
@@ -1313,7 +1383,7 @@ function renderBenevolence(canvas) {
     const uA = (thA / TAU) % 1, uB = (thB / TAU) % 1;
     const bvA = beat(uA), bvB = beat(uB), bvMix = (bvA + bvB) * 0.5;
     const brA = 0.5 + 0.5 * sin(beA), brB = 0.5 + 0.5 * sin(beB);
-    const en = E, coh = cohC;
+    const en = E, coh = cohC, qe = Q(en, 64);
     const colA = blend(C_A, GOLD, 0.80 * en);
     const colB = blend(C_B, GOLD, 0.80 * en);
     const sepF = 0.178 - 0.034 * en;                   // lean in as they cohere
@@ -1321,14 +1391,20 @@ function renderBenevolence(canvas) {
     const Mx = W * 0.5, My = hcy;
 
     /* inner painters (close over this frame's colours + geometry) */
-    function drawHeart(cx, cy, s, col, bv) {
+    function drawHeart(cx, cy, s, col, bv, hid) {
       ctx.save(); ctx.globalCompositeOperation = 'screen';
       const bR = heartH * (0.55 + 0.18 * bv), ba = 0.14 + 0.24 * bv;
-      const bl = ctx.createRadialGradient(cx, cy, 0, cx, cy, bR);
-      bl.addColorStop(0.00, rgba(blend(col, PAL.amberCream, 0.25), ba));
-      bl.addColorStop(0.45, rgba(col, ba * 0.4));
-      bl.addColorStop(1.00, rgba(col, 0));
-      ctx.fillStyle = bl; ctx.fillRect(cx - bR, cy - bR, bR * 2, bR * 2);
+      const blId = 'bl' + hid + ':' + qe;
+      let bl = GC.get(blId);
+      if (!bl) {
+        bl = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        bl.addColorStop(0.00, rgba(blend(col, PAL.amberCream, 0.25), 1));
+        bl.addColorStop(0.45, rgba(col, 0.4));
+        bl.addColorStop(1.00, rgba(col, 0));
+        GC.set(blId, bl);
+      }
+      ctx.translate(cx, cy); ctx.scale(bR, bR); ctx.globalAlpha = ba;
+      ctx.fillStyle = bl; ctx.fillRect(-1, -1, 2, 2);
       ctx.restore();
       heartPath(cx, cy, s);
       const top = cy - 12 * s, bot = cy + 17 * s;
@@ -1352,7 +1428,7 @@ function renderBenevolence(canvas) {
       ctx.stroke();
     }
 
-    function drawTrace(buf, baseY, amp, col) {
+    function drawTrace(buf, baseY, amp, col, gid) {
       if (filled < 2) return;
       const n = filled, start = (head - filled + NV) % NV, x0 = W * 0.06, x1 = W * 0.94;
       const X = i => x0 + (i / (n - 1)) * (x1 - x0);
@@ -1361,17 +1437,26 @@ function renderBenevolence(canvas) {
       ctx.beginPath(); ctx.moveTo(X(0), Y(0)); for (let i = 1; i < n; i++) ctx.lineTo(X(i), Y(i));
       ctx.strokeStyle = rgba(col, 0.16); ctx.lineWidth = max(3, 5 * SCL); ctx.stroke();
       ctx.restore();
-      const g = ctx.createLinearGradient(x0, 0, x1, 0);
-      g.addColorStop(0.0, rgba(col, 0.0));
-      g.addColorStop(0.5, rgba(col, 0.5));
-      g.addColorStop(1.0, rgba(blend(col, PAL.amberCream, 0.2), 0.95));
+      let g = GC.get('tg' + gid + ':' + qe);
+      if (!g) {
+        g = ctx.createLinearGradient(x0, 0, x1, 0);
+        g.addColorStop(0.0, rgba(col, 0.0));
+        g.addColorStop(0.5, rgba(col, 0.5));
+        g.addColorStop(1.0, rgba(blend(col, PAL.amberCream, 0.2), 0.95));
+        GC.set('tg' + gid + ':' + qe, g);
+      }
       ctx.beginPath(); ctx.moveTo(X(0), Y(0)); for (let i = 1; i < n; i++) ctx.lineTo(X(i), Y(i));
       ctx.strokeStyle = g; ctx.lineWidth = max(1.3, 1.9 * SCL); ctx.stroke();
       const px = X(n - 1), py = Y(n - 1), pr = 13 * SCL;
       ctx.save(); ctx.globalCompositeOperation = 'screen';
-      const pg = ctx.createRadialGradient(px, py, 0, px, py, pr);
-      pg.addColorStop(0, rgba(PAL.amberCream, 0.85)); pg.addColorStop(0.4, rgba(col, 0.4)); pg.addColorStop(1, rgba(col, 0));
-      ctx.fillStyle = pg; ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+      let pg = GC.get('pg' + gid + ':' + qe);
+      if (!pg) {
+        pg = ctx.createRadialGradient(0, 0, 0, 0, 0, pr);
+        pg.addColorStop(0, rgba(PAL.amberCream, 0.85)); pg.addColorStop(0.4, rgba(col, 0.4)); pg.addColorStop(1, rgba(col, 0));
+        GC.set('pg' + gid + ':' + qe, pg);
+      }
+      ctx.translate(px, py);
+      ctx.fillStyle = pg; ctx.fillRect(-pr, -pr, pr * 2, pr * 2);
       ctx.restore();
       ctx.beginPath(); ctx.arc(px, py, max(1.4, 2.0 * SCL), 0, TAU);
       ctx.fillStyle = rgba(PAL.parchment, 0.95); ctx.fill();
@@ -1379,21 +1464,32 @@ function renderBenevolence(canvas) {
 
     /* ── background: warm parchment, sunset-gold halo warming as they cohere ── */
     ctx.clearRect(0, 0, W, H);
-    const bg = ctx.createRadialGradient(Mx, My, 0, Mx, My, max(W, H) * 0.8);
-    bg.addColorStop(0.00, rgba(blend(PAL.parchment, GOLD, 0.04 + 0.17 * en + 0.05 * bvMix), 1));
-    bg.addColorStop(0.42, rgba(PAL.parchment, 1));
-    bg.addColorStop(1.00, rgba(PAL.parchmentWarm, 1));
+    const bgK = Q(0.04 + 0.17 * en + 0.05 * bvMix, 128);
+    let bg = GC.get('bg:' + bgK);
+    if (!bg) {
+      bg = ctx.createRadialGradient(Mx, My, 0, Mx, My, max(W, H) * 0.8);
+      bg.addColorStop(0.00, rgba(blend(PAL.parchment, GOLD, bgK), 1));
+      bg.addColorStop(0.42, rgba(PAL.parchment, 1));
+      bg.addColorStop(1.00, rgba(PAL.parchmentWarm, 1));
+      GC.set('bg:' + bgK, bg);
+    }
     ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
     /* ── breath halos behind each heart (swell together when breath entrains) ── */
     ctx.save(); ctx.globalCompositeOperation = 'screen';
-    for (const a of [[xA, brA, colA], [xB, brB, colB]]) {
+    for (const a of [[xA, brA, colA, 'hA:'], [xB, brB, colB, 'hB:']]) {
       const hx = a[0], br = a[1], col = a[2];
       const r = heartH * (1.05 + 0.45 * br), al = (0.05 + 0.07 * br) * (0.55 + 0.45 * en);
-      const g = ctx.createRadialGradient(hx, hcy, 0, hx, hcy, r);
-      g.addColorStop(0, rgba(blend(col, PAL.amberCream, 0.35), al));
-      g.addColorStop(1, rgba(col, 0));
-      ctx.fillStyle = g; ctx.fillRect(hx - r, hcy - r, r * 2, r * 2);
+      const id = a[3] + qe;
+      let g = GC.get(id);
+      if (!g) {
+        g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0, rgba(blend(col, PAL.amberCream, 0.35), 1));
+        g.addColorStop(1, rgba(col, 0));
+        GC.set(id, g);
+      }
+      ctx.save(); ctx.translate(hx, hcy); ctx.scale(r, r); ctx.globalAlpha = al;
+      ctx.fillStyle = g; ctx.fillRect(-1, -1, 2, 2); ctx.restore();
     }
     ctx.restore();
 
@@ -1401,11 +1497,16 @@ function renderBenevolence(canvas) {
     ctx.save(); ctx.globalCompositeOperation = 'screen';
     if (en > 0.04) {                                    // continuous shared aura — radiate together
       const r = heartH * (1.7 + 0.5 * bvMix), al = en * (0.10 + 0.17 * bvMix);
-      const g = ctx.createRadialGradient(Mx, My, 0, Mx, My, r);
-      g.addColorStop(0.00, rgba(blend(GOLD, PAL.amberCream, 0.35), al));
-      g.addColorStop(0.55, rgba(GOLD, al * 0.35));
-      g.addColorStop(1.00, rgba(GOLD, 0));
-      ctx.fillStyle = g; ctx.fillRect(Mx - r, My - r, r * 2, r * 2);
+      let g = GC.get('aura');
+      if (!g) {
+        g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0.00, rgba(blend(GOLD, PAL.amberCream, 0.35), 1));
+        g.addColorStop(0.55, rgba(GOLD, 0.35));
+        g.addColorStop(1.00, rgba(GOLD, 0));
+        GC.set('aura', g);
+      }
+      ctx.save(); ctx.translate(Mx, My); ctx.scale(r, r); ctx.globalAlpha = al;
+      ctx.fillStyle = g; ctx.fillRect(-1, -1, 2, 2); ctx.restore();
     }
     for (const rg of ringsShared) {                     // one expanding ring per shared beat
       const age = simT - rg.t; if (age > 1.9) continue;
@@ -1419,22 +1520,33 @@ function renderBenevolence(canvas) {
     const mb = bvMix * en;                              // bright bloom as both beat as one
     if (mb > 0.03) {
       const r = heartH * (0.8 + 0.9 * mb);
-      const g = ctx.createRadialGradient(Mx, My, 0, Mx, My, r);
-      g.addColorStop(0, rgba(blend(GOLD, PAL.amberCream, 0.45), 0.38 * mb));
-      g.addColorStop(1, rgba(GOLD, 0));
-      ctx.fillStyle = g; ctx.fillRect(Mx - r, My - r, r * 2, r * 2);
+      let g = GC.get('mb');
+      if (!g) {
+        g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0, rgba(blend(GOLD, PAL.amberCream, 0.45), 1));
+        g.addColorStop(1, rgba(GOLD, 0));
+        GC.set('mb', g);
+      }
+      ctx.save(); ctx.translate(Mx, My); ctx.scale(r, r); ctx.globalAlpha = 0.38 * mb;
+      ctx.fillStyle = g; ctx.fillRect(-1, -1, 2, 2); ctx.restore();
     }
     ctx.restore();
 
     /* ── connection bridge ∝ entrainment ── */
     if (en > 0.05) {
       ctx.save(); ctx.globalCompositeOperation = 'screen';
-      const g = ctx.createLinearGradient(xA, 0, xB, 0), al = 0.18 * en * (0.5 + 0.5 * bvMix);
-      g.addColorStop(0.0, rgba(colA, al * 0.4));
-      g.addColorStop(0.5, rgba(blend(GOLD, PAL.amberCream, 0.25), al));
-      g.addColorStop(1.0, rgba(colB, al * 0.4));
+      const al = 0.18 * en * (0.5 + 0.5 * bvMix), sx = xB - xA;
+      let g = GC.get('br:' + qe);
+      if (!g) {
+        g = ctx.createLinearGradient(-0.5, 0, 0.5, 0);
+        g.addColorStop(0.0, rgba(colA, 0.4));
+        g.addColorStop(0.5, rgba(blend(GOLD, PAL.amberCream, 0.25), 1));
+        g.addColorStop(1.0, rgba(colB, 0.4));
+        GC.set('br:' + qe, g);
+      }
+      ctx.translate(Mx, 0); ctx.scale(sx, 1); ctx.globalAlpha = al;
       ctx.fillStyle = g;
-      ctx.beginPath(); ctx.ellipse(Mx, My, abs(xB - xA) * 0.5, heartH * 0.5, 0, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, My, 0.5, heartH * 0.5, 0, 0, TAU); ctx.fill();
       ctx.restore();
     }
 
@@ -1454,8 +1566,8 @@ function renderBenevolence(canvas) {
     ctx.restore();
 
     /* ── the two hearts ── */
-    drawHeart(xA, hcy, baseS * (1 + 0.09 * bvA) * (1 + 0.02 * brA), colA, bvA);
-    drawHeart(xB, hcy, baseS * (1 + 0.09 * bvB) * (1 + 0.02 * brB), colB, bvB);
+    drawHeart(xA, hcy, baseS * (1 + 0.09 * bvA) * (1 + 0.02 * brA), colA, bvA, 'A');
+    drawHeart(xB, hcy, baseS * (1 + 0.09 * bvB) * (1 + 0.02 * brB), colB, bvB, 'B');
 
     /* ── dual ECG monitor: graticule + two traces sliding into alignment ── */
     const amp = H * 0.052, top = H * 0.64, bottom = H * 0.99;
@@ -1467,14 +1579,17 @@ function renderBenevolence(canvas) {
     for (let y = top + gs; y < bottom; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
     ctx.restore();
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    drawTrace(yA, H * 0.745 + H * 0.012 * sin(beA), amp, colA);   // breath baseline wander
-    drawTrace(yB, H * 0.895 + H * 0.012 * sin(beB), amp, colB);
+    drawTrace(yA, H * 0.745 + H * 0.012 * sin(beA), amp, colA, 'A');   // breath baseline wander
+    drawTrace(yB, H * 0.895 + H * 0.012 * sin(beB), amp, colB, 'B');
 
     /* ── soft vignette ── */
-    const vg = ctx.createRadialGradient(W / 2, H / 2, min(W, H) * 0.32, W / 2, H / 2, max(W, H) * 0.74);
-    vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(1, rgba(PAL.ink, 0.12));
-    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+    if (!draw._vg) {
+      const vg = ctx.createRadialGradient(W / 2, H / 2, min(W, H) * 0.32, W / 2, H / 2, max(W, H) * 0.74);
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(1, rgba(PAL.ink, 0.12));
+      draw._vg = vg;
+    }
+    ctx.fillStyle = draw._vg; ctx.fillRect(0, 0, W, H);
 
     scheduleNext(canvas, draw);
   }
