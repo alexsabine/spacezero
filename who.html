@@ -825,6 +825,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
+    // Per-canvas gradient cache. Gradients with fixed geometry/stop-ratios
+    // are built once and reused (animated via transform + globalAlpha,
+    // which is mathematically identical) — Firefox's Canvas2D is far
+    // slower than Chrome's at per-frame gradient allocation.
+    const sizeKey = canvas.width + 'x' + canvas.height;
+    if (canvas._gcKey !== sizeKey) { canvas._gcKey = sizeKey; canvas._gc = {}; }
+    const GCv = canvas._gc;
+
     const totalWeight = patches.reduce((s, p) => s + p.weight, 0);
     const phaseSeed = seed * 0.137;
 
@@ -847,10 +855,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── Step 1: parchment-warm ground — soft radial halo ──────────
     const groundOuter = photoR + 38;
-    const groundGrad = ctx.createRadialGradient(ringCx, ringCy, photoR, ringCx, ringCy, groundOuter);
-    groundGrad.addColorStop(0,    rgba(PAL.parchmentWarm, 0.14));
-    groundGrad.addColorStop(0.55, rgba(PAL.parchmentWarm, 0.08));
-    groundGrad.addColorStop(1,    rgba(PAL.parchmentWarm, 0));
+    let groundGrad = GCv.ground;
+    if (!groundGrad) {
+      groundGrad = ctx.createRadialGradient(ringCx, ringCy, photoR, ringCx, ringCy, groundOuter);
+      groundGrad.addColorStop(0,    rgba(PAL.parchmentWarm, 0.14));
+      groundGrad.addColorStop(0.55, rgba(PAL.parchmentWarm, 0.08));
+      groundGrad.addColorStop(1,    rgba(PAL.parchmentWarm, 0));
+      GCv.ground = groundGrad;
+    }
     ctx.fillStyle = groundGrad;
     ctx.fillRect(0, 0, W, H);
 
@@ -900,12 +912,20 @@ document.addEventListener('DOMContentLoaded', () => {
       // Softer alpha — the wash is a halo, not a stroke
       const a = 0.31 * (p.weight / totalWeight) * patches.length * (0.70 + 0.30 * breath);
 
-      const g = ctx.createRadialGradient(px, py, 0, px, py, r);
-      g.addColorStop(0.00, rgba(p.col, Math.min(a, 0.45)));
-      g.addColorStop(0.55, rgba(p.col, Math.min(a * 0.55, 0.25)));
-      g.addColorStop(1.00, rgba(p.col, 0));
+      const qa = Math.round(a * 128) / 128;
+      const gid = 'p' + i + ':' + qa;
+      let g = GCv[gid];
+      if (!g) {
+        g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0.00, rgba(p.col, Math.min(qa, 0.45)));
+        g.addColorStop(0.55, rgba(p.col, Math.min(qa * 0.55, 0.25)));
+        g.addColorStop(1.00, rgba(p.col, 0));
+        GCv[gid] = g;
+      }
+      ctx.save(); ctx.translate(px, py); ctx.scale(r, r);
       ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
+      ctx.fillRect(-1, -1, 2, 2);   // gradient is zero beyond r — identical to the full-canvas fill
+      ctx.restore();
     }
 
     // ─── Step 4: grain over the wash ───────────────────────────────
@@ -956,13 +976,21 @@ document.addEventListener('DOMContentLoaded', () => {
       // strength but the falloff is broader.
       const rDot = 5 + 6 * fade;
       const aDot = 0.42 * fade;
-      const g = ctx.createRadialGradient(x, y, 0, x, y, rDot * 3.0);
-      g.addColorStop(0,    rgba(col, aDot));
-      g.addColorStop(0.30, rgba(col, aDot * 0.70));
-      g.addColorStop(0.65, rgba(col, aDot * 0.25));
-      g.addColorStop(1,    rgba(col, 0));
+      const gid = 'pk:' + (col[0] | 0) + ',' + (col[1] | 0) + ',' + (col[2] | 0);
+      let g = GCv[gid];
+      if (!g) {
+        g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0,    rgba(col, 1));
+        g.addColorStop(0.30, rgba(col, 0.70));
+        g.addColorStop(0.65, rgba(col, 0.25));
+        g.addColorStop(1,    rgba(col, 0));
+        GCv[gid] = g;
+      }
+      const rr = rDot * 3.0;
+      ctx.save(); ctx.translate(x, y); ctx.scale(rr, rr); ctx.globalAlpha = aDot;
       ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
+      ctx.fillRect(-1, -1, 2, 2);
+      ctx.restore();
     }
 
     const PACKET_DURATION = 2.8;            // slower crossings — more time to notice
@@ -1080,11 +1108,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const fadeEnd   = Math.min(W, H) * 0.5;              // fade reaches canvas edge
     ctx.save();
     ctx.globalCompositeOperation = 'destination-out';
-    const fade = ctx.createRadialGradient(ringCx, ringCy, keepFull, ringCx, ringCy, fadeEnd);
-    fade.addColorStop(0.00, 'rgba(0,0,0,0)');         // ring fully kept
-    fade.addColorStop(0.45, 'rgba(0,0,0,0.05)');      // bridge zone barely touched
-    fade.addColorStop(0.75, 'rgba(0,0,0,0.45)');      // gentle ramp begins
-    fade.addColorStop(1.00, 'rgba(0,0,0,0.95)');      // outer corner fully erased
+    let fade = GCv.fade;
+    if (!fade) {
+      fade = ctx.createRadialGradient(ringCx, ringCy, keepFull, ringCx, ringCy, fadeEnd);
+      fade.addColorStop(0.00, 'rgba(0,0,0,0)');         // ring fully kept
+      fade.addColorStop(0.45, 'rgba(0,0,0,0.05)');      // bridge zone barely touched
+      fade.addColorStop(0.75, 'rgba(0,0,0,0.45)');      // gentle ramp begins
+      fade.addColorStop(1.00, 'rgba(0,0,0,0.95)');      // outer corner fully erased
+      GCv.fade = fade;
+    }
     ctx.fillStyle = fade;
     ctx.fillRect(0, 0, W, H);
     ctx.restore();
@@ -1157,11 +1189,18 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.save();
     ctx.translate(brushCx, brushCy);
     ctx.scale(halfW / halfH, 1);   // scale x so unit-r ellipse = our ellipse
-    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, halfH);
-    g.addColorStop(0.00, rgba(mix, aPeak));
-    g.addColorStop(0.40, rgba(mix, aPeak * 0.75));
-    g.addColorStop(0.75, rgba(mix, aPeak * 0.30));
-    g.addColorStop(1.00, rgba(mix, 0));
+    const store = ctx.canvas._gc || (ctx.canvas._gc = {});
+    const gid = 'br' + side + ':' + halfH.toFixed(1);
+    let g = store[gid];
+    if (!g) {
+      g = ctx.createRadialGradient(0, 0, 0, 0, 0, halfH);
+      g.addColorStop(0.00, rgba(mix, 1));
+      g.addColorStop(0.40, rgba(mix, 0.75));
+      g.addColorStop(0.75, rgba(mix, 0.30));
+      g.addColorStop(1.00, rgba(mix, 0));
+      store[gid] = g;
+    }
+    ctx.globalAlpha = aPeak;
     ctx.fillStyle = g;
     // Fill a generous rectangle; the gradient is zero past halfH
     ctx.fillRect(-halfH * 1.2, -halfH * 1.2, halfH * 2.4, halfH * 2.4);
@@ -1259,6 +1298,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   recomputeNeighbours();
 
+  // ─── Visibility gating ─────────────────────────────────────────────
+  // Offscreen portraits keep integrating (phases + packets evolve
+  // exactly as before) but skip the paint nobody can see. With ~15
+  // portraits and only a handful in view, this removes most of the
+  // per-frame cost without changing anything visible.
+  const visibleCanvases = new Set();
+  const portraitIO = 'IntersectionObserver' in window
+    ? new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (e.isIntersecting) visibleCanvases.add(e.target);
+          else visibleCanvases.delete(e.target);
+        }
+      }, { rootMargin: '140px' })
+    : null;
+  for (const p of portraits) {
+    if (portraitIO) portraitIO.observe(p.canvas);
+    else visibleCanvases.add(p.canvas);
+  }
+
   // ─── Frame loop with phase integration ────────────────────────────
   // The phase grows MONOTONICALLY (no modulo). All visible quantities
   // are derived from sin(phase) or cos(phase), which are inherently
@@ -1330,6 +1388,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── Paint each portrait ───────────────────────────────────────
     for (const p of portraits) {
+      if (portraitIO && !visibleCanvases.has(p.canvas)) continue;
       const bridge = {
         left:       p.leftNeighbour  ? p.leftNeighbour.patches[0].col  : null,
         leftPhase:  p.leftNeighbour  ? p.leftNeighbour.phase           : 0,
