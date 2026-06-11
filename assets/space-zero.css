@@ -209,3 +209,12 @@ a:hover { color: var(--iceplant); }
   .header-nav a { font-size: 12px; letter-spacing: 0.12em; }
   .header-nav { gap: 14px; }
 }
+
+/* ═══ FIREFOX PERFORMANCE MODE — applied when JS adds .ff-perf to <html>.
+ * backdrop-filter over animating canvas is extremely expensive in Firefox;
+ * a slightly more opaque solid tint reads almost identically. ═══ */
+.ff-perf .site-header {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(244, 241, 235, 0.94);
+}
