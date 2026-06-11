@@ -252,6 +252,7 @@ body {
   opacity: 0.65;
   transition: opacity 0.25s ease;
   user-select: none;
+  cursor: pointer;
 }
 .bio-hint::before {
   content: "+ ";
@@ -264,6 +265,10 @@ body {
 }
 .person.is-open .bio-hint::before {
   content: "− ";
+}
+.bio-hint:hover,
+.person.is-open .bio-hint:hover {
+  opacity: 1;
 }
 .person-bio {
   font-family: 'Cormorant Garamond', serif;
@@ -634,6 +639,17 @@ body {
         e.preventDefault();
         toggle(article);
       });
+
+      // The "Read more" hint is aria-hidden (the portrait is the
+      // accessible button), but pointer users expect the text itself
+      // to be clickable too.
+      const hint = article.querySelector('.bio-hint');
+      if (hint) {
+        hint.addEventListener('click', (e) => {
+          e.preventDefault();
+          toggle(article);
+        });
+      }
 
       wrap.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
