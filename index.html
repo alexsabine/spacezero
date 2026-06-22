@@ -36,6 +36,29 @@
 }
 .strapline-sep { color: var(--muted-light); font-style: normal; opacity: 0.5; }
 
+/* ── Liminal strapline: "Where Knowable Meets Unknowable" ──
+   The two key words breathe a soft, slow halo. Knowable carries a warm
+   amber light (the lighthouse, the illuminated/known); Unknowable a cool
+   ocean glow (the Pacific, the depths). They pulse in counterpoint, so
+   the line reads as a quiet meeting of the two rather than a blink. */
+.strapline-lead { color: var(--muted); }
+.glow-word { color: var(--ink); position: relative; }
+.glow-word--know { animation: knowableGlow 8.5s ease-in-out infinite; }
+.glow-word--un   { animation: unknowableGlow 8.5s ease-in-out infinite; }
+@keyframes knowableGlow {
+  0%, 100% { text-shadow: 0 0 7px rgba(200,145,91,0.07), 0 0 16px rgba(200,145,91,0.03); }
+  50%      { text-shadow: 0 0 9px rgba(200,145,91,0.34), 0 0 20px rgba(200,145,91,0.18); }
+}
+@keyframes unknowableGlow {
+  0%, 100% { text-shadow: 0 0 9px rgba(58,150,150,0.32), 0 0 20px rgba(58,150,150,0.17); }
+  50%      { text-shadow: 0 0 7px rgba(58,150,150,0.07), 0 0 16px rgba(58,150,150,0.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-word--know, .glow-word--un { animation: none; }
+  .glow-word--know { text-shadow: 0 0 9px rgba(200,145,91,0.18), 0 0 18px rgba(200,145,91,0.09); }
+  .glow-word--un   { text-shadow: 0 0 9px rgba(58,150,150,0.18), 0 0 18px rgba(58,150,150,0.09); }
+}
+
 .hero-loc {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px; text-transform: uppercase;
@@ -94,9 +117,10 @@
     <canvas id="heroLogo" width="820" height="560"></canvas>
   </div>
   <div class="strapline" id="strapline">
-    <span class="strapline-word" data-w="0">Trust</span><span class="strapline-sep">&middot;</span>
-    <span class="strapline-word" data-w="1">Attune</span><span class="strapline-sep">&middot;</span>
-    <span class="strapline-word" data-w="2">Flourish</span>
+    <span class="strapline-lead">Where</span>
+    <span class="glow-word glow-word--know">Knowable</span>
+    <span class="strapline-lead">Meets</span>
+    <span class="glow-word glow-word--un">Unknowable</span>
   </div>
   <div class="hero-loc">Crescent City &middot; California</div>
 </section>
