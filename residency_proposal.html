@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Space Zero &middot; Lab Zero Residency &middot; A Proposal</title>
+<meta name="description" content="A three-year residency programme bringing one scientist, one artist and one philosopher to Crescent City each season to answer the deepest questions of AI alignment and planetary care — and to make the answers public, beautiful and useful.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   SELF-CONTAINED. This page is built to be emailed, printed to PDF, or
+   opened anywhere without the site's asset folder. Palette + type are
+   inlined from the Space Zero design system (assets/space-zero.css / .js).
+   Type is deliberately LARGE and high-contrast for funder review.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --parchment:      #f4f1eb;
+  --parchment-warm: #ede6d4;
+  --card:           #fbf9f4;
+  --ink:            #1a1612;
+  --ink-soft:       #322d27;
+  --muted:          #5f5648;
+  --muted-light:    #837868;
+  --rule:           rgba(26, 22, 18, 0.12);
+  --rule-strong:    rgba(26, 22, 18, 0.22);
+
+  /* Accents drawn from PAL in space-zero.js */
+  --iceplant:   #da58a8;   /* iceplantBright — the signature bloom   */
+  --iceplant-deep: #973d7c; /* deepened for label/link contrast on parchment */
+  --amber:      #c8915b;   /* amberWarm — the lighthouse / the known */
+  --water:      #3a9696;   /* waterCobalt — the Pacific / depths     */
+  --moss:       #62794c;   /* moss — the redwood ground              */
+  --ember:      #d86034;
+
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--parchment);
+  color: var(--ink-soft);
+  font-family: var(--serif);
+  font-size: 21px;            /* large base for readability */
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── shared rhythm ─── */
+.section { padding: 96px 40px; }
+.section-inner { max-width: 1060px; margin: 0 auto; }
+.narrow { max-width: 760px; margin-left: auto; margin-right: auto; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 16px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.26em;
+  color: var(--iceplant-deep);
+  margin: 0 0 22px;
+}
+.eyebrow.on-dark { color: var(--iceplant); }
+
+h1, h2, h3 { color: var(--ink); font-weight: 600; letter-spacing: 0.004em; }
+h2 {
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  line-height: 1.12;
+  margin: 0 0 28px;
+}
+h3 {
+  font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+p { margin: 0 0 22px; }
+p:last-child { margin-bottom: 0; }
+em { font-style: italic; color: var(--ink); }
+strong { font-weight: 600; color: var(--ink); }
+a { color: var(--iceplant-deep); text-decoration: none; border-bottom: 1px solid rgba(168,70,138,0.3); }
+a:hover { border-bottom-color: var(--iceplant-deep); }
+
+.lead {
+  font-size: clamp(1.3rem, 2.3vw, 1.6rem);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+/* ════════ HEADER ════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(244,241,235,0.86);
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.header-inner {
+  max-width: 1160px; margin: 0 auto;
+  padding: 18px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.header-brand {
+  font-family: var(--serif);
+  font-size: 23px; font-weight: 600;
+  color: var(--ink); border: none; letter-spacing: 0.02em;
+}
+.header-brand span { color: var(--iceplant); }
+.header-tag {
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+/* ════════ HERO ════════ */
+.hero-logo {
+  display: flex; justify-content: center;
+  margin-bottom: 8px;
+  position: relative;
+  min-height: 4px;
+}
+.hero-logo canvas { display: block; max-width: 340px; width: 100%; height: auto; }
+/* Fallback wordmark — shown only if the canvas script never loads (e.g.
+   the file is opened standalone without the assets folder). JS hides it
+   the moment the real logo renders. */
+.logo-fallback {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.logo-fallback span { color: var(--iceplant); }
+.logo-fallback .lf-sub {
+  display: block;
+  font-family: var(--mono);
+  font-size: 15px; font-weight: 400;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 12px;
+}
+.hero {
+  position: relative;
+  padding: 132px 40px 104px;
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 80% at 50% -10%, rgba(218,88,168,0.10), transparent 60%),
+    radial-gradient(ellipse 60% 70% at 85% 30%, rgba(58,150,150,0.10), transparent 55%),
+    radial-gradient(ellipse 60% 60% at 12% 70%, rgba(200,145,91,0.10), transparent 55%);
+  border-bottom: 1px solid var(--rule);
+}
+.hero-inner { max-width: 940px; margin: 0 auto; position: relative; }
+.hero h1 {
+  font-size: clamp(2.8rem, 7vw, 5.2rem);
+  line-height: 1.04;
+  font-weight: 600;
+  margin: 14px 0 22px;
+  letter-spacing: -0.01em;
+}
+.hero h1 .em { font-style: italic; color: var(--iceplant-deep); font-weight: 500; }
+.hero-sub {
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+  font-style: italic; font-weight: 400;
+  color: var(--ink-soft);
+  max-width: 720px; margin: 0 auto 34px;
+  line-height: 1.45;
+}
+.hero-meta {
+  display: inline-flex; flex-wrap: wrap; justify-content: center;
+  gap: 14px 26px;
+  font-family: var(--mono);
+  font-size: 16px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--muted);
+  padding-top: 26px;
+  border-top: 1px solid var(--rule);
+}
+.hero-meta b { color: var(--ink); font-weight: 500; }
+
+/* ════════ THE ASK STRIP ════════ */
+.ask {
+  background: var(--ink);
+  color: #ece6da;
+  text-align: center;
+}
+.ask .section-inner { padding: 0; }
+.ask-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.ask-cell {
+  padding: 44px 28px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.ask-cell:last-child { border-right: none; }
+.ask-num {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.ask-num .unit { font-size: 0.5em; color: var(--iceplant); }
+.ask-label {
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: rgba(236,230,218,0.72);
+  line-height: 1.5;
+}
+
+/* ════════ generic prose block ════════ */
+.prose-block { border-top: 1px solid var(--rule); }
+.prose-block:first-of-type { border-top: none; }
+
+/* ════════ PROVOCATIONS ════════ */
+.provocations { background: var(--parchment-warm); border-top: 1px solid var(--rule); }
+.prov-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin-top: 48px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.prov {
+  background: var(--card);
+  padding: 40px 36px;
+}
+.prov-num {
+  font-family: var(--mono);
+  font-size: 16px; letter-spacing: 0.2em; font-weight: 500;
+  color: var(--iceplant-deep);
+  margin-bottom: 16px;
+}
+.prov-q {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 2.6vw, 1.95rem);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.28;
+  margin: 0 0 16px;
+}
+.prov-body {
+  font-size: 18px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ════════ HOW IT WORKS — seasonal arc ════════ */
+.arc { border-top: 1px solid var(--rule); }
+.arc-rail {
+  margin-top: 52px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.arc-step {
+  position: relative;
+  padding: 34px 26px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+.arc-season {
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--iceplant-deep);
+  margin-bottom: 14px;
+}
+.arc-step h3 { font-size: 1.4rem; margin-bottom: 10px; }
+.arc-step p { font-size: 18.5px; line-height: 1.55; color: var(--ink-soft); }
+
+.tri {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin: 40px 0 8px;
+  justify-content: center;
+}
+.tri-chip {
+  font-family: var(--mono);
+  font-size: 16px; letter-spacing: 0.08em;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  background: var(--card);
+}
+.tri-chip b { color: var(--iceplant-deep); }
+
+/* ════════ OUTPUT / DELIVERABLE ════════ */
+.outputs { background: var(--parchment-warm); border-top: 1px solid var(--rule); }
+.out-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 44px;
+}
+.out {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--iceplant);
+  padding: 32px 28px;
+}
+.out:nth-child(2) { border-top-color: var(--water); }
+.out:nth-child(3) { border-top-color: var(--amber); }
+.out h3 { font-size: 1.4rem; }
+.out p { font-size: 18.5px; line-height: 1.56; color: var(--ink-soft); margin: 0; }
+
+/* ════════ PLACE ════════ */
+.place { border-top: 1px solid var(--rule); }
+.place-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+  margin-top: 16px;
+}
+.place-stats { display: grid; gap: 22px; }
+.place-stat {
+  border-left: 3px solid var(--moss);
+  padding: 6px 0 6px 22px;
+}
+.place-stat .big {
+  font-family: var(--serif);
+  font-size: 2.4rem; font-weight: 600; color: var(--ink); line-height: 1;
+}
+.place-stat .small {
+  font-size: 18.5px; color: var(--ink-soft); margin-top: 6px;
+}
+
+/* ════════ TEAM / PARTNERS ════════ */
+.team { background: var(--parchment-warm); border-top: 1px solid var(--rule); }
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin-top: 44px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.member {
+  background: var(--card);
+  padding: 30px 32px;
+}
+.member-name {
+  font-family: var(--serif);
+  font-size: 1.45rem; font-weight: 600; color: var(--ink);
+  margin: 0 0 4px;
+}
+.member-role {
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--iceplant-deep);
+  margin: 0 0 12px;
+}
+.member-body { font-size: 18px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
+.member-pending .member-name { color: var(--muted); }
+
+.partners {
+  margin-top: 52px;
+  padding-top: 44px;
+  border-top: 1px solid var(--rule-strong);
+}
+.partner-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 28px;
+}
+.partner h4 {
+  font-family: var(--serif);
+  font-size: 1.3rem; color: var(--ink); margin: 0 0 8px; font-weight: 600;
+}
+.partner p { font-size: 18px; line-height: 1.5; color: var(--ink-soft); margin: 0; }
+
+/* ════════ BUDGET ════════ */
+.budget { border-top: 1px solid var(--rule); }
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 40px;
+  font-size: 18px;
+}
+.budget-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted);
+  font-weight: 500;
+  padding: 0 16px 16px;
+  border-bottom: 2px solid var(--rule-strong);
+}
+.budget-table th:last-child, .budget-table td:last-child { text-align: right; }
+.budget-table td {
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  vertical-align: top;
+}
+.budget-table td .b-item { color: var(--ink); font-weight: 500; display: block; font-size: 19px; }
+.budget-table td .b-note { font-size: 17.5px; color: var(--muted); display: block; margin-top: 4px; }
+.budget-table td .b-amt { font-family: var(--mono); font-size: 18.5px; color: var(--ink); white-space: nowrap; }
+.budget-table tr.total td {
+  border-bottom: none;
+  border-top: 2px solid var(--ink);
+  padding-top: 22px;
+}
+.budget-table tr.total .b-item { font-size: 21px; }
+.budget-table tr.total .b-amt { font-size: 21px; color: var(--ink); font-weight: 500; }
+.budget-note {
+  font-size: 18px; color: var(--muted); font-style: italic;
+  margin-top: 22px; max-width: 760px;
+}
+
+/* ════════ ALIGNMENT (with Imagine) ════════ */
+.align { background: var(--ink); color: #ece6da; border-top: 1px solid var(--rule); }
+.align h2 { color: #fff; }
+.align .lead { color: rgba(236,230,218,0.85); }
+.align-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  margin-top: 48px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.align-cell { background: #211c17; padding: 34px 32px; }
+.align-cell h4 {
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--iceplant);
+  margin: 0 0 12px;
+}
+.align-cell p { font-size: 18.5px; line-height: 1.58; color: rgba(236,230,218,0.82); margin: 0; }
+
+/* ════════ CLOSE ════════ */
+.close {
+  text-align: center;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 0%, rgba(218,88,168,0.10), transparent 60%);
+  border-top: 1px solid var(--rule);
+}
+.close blockquote {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  font-style: italic; font-weight: 400;
+  color: var(--ink);
+  max-width: 800px; margin: 0 auto 36px;
+  line-height: 1.4;
+}
+.close .signoff {
+  font-family: var(--mono);
+  font-size: 16px; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.close .contact {
+  margin-top: 30px;
+  font-size: 19px;
+  color: var(--ink-soft);
+}
+.close .contact a { font-weight: 500; }
+
+/* ════════ FOOTER ════════ */
+.site-footer {
+  background: var(--ink);
+  color: rgba(236,230,218,0.7);
+  padding: 48px 40px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 15px; letter-spacing: 0.08em;
+}
+.site-footer .f-brand {
+  font-family: var(--serif);
+  font-size: 22px; color: #fff; letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+.site-footer .f-brand span { color: var(--iceplant); }
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 920px) {
+  .section { padding: 72px 28px; }
+  .ask-grid { grid-template-columns: repeat(2, 1fr); }
+  .ask-cell:nth-child(2) { border-right: none; }
+  .ask-cell:nth-child(1), .ask-cell:nth-child(2) { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .prov-grid { grid-template-columns: 1fr; }
+  .arc-rail { grid-template-columns: 1fr 1fr; }
+  .out-grid { grid-template-columns: 1fr; }
+  .place-grid { grid-template-columns: 1fr; gap: 36px; }
+  .team-grid { grid-template-columns: 1fr; }
+  .partner-grid { grid-template-columns: 1fr; gap: 24px; }
+  .align-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  body { font-size: 19px; }
+  .header-tag { display: none; }
+  .section { padding: 60px 22px; }
+  .hero { padding: 96px 24px 72px; }
+  .ask-grid { grid-template-columns: 1fr; }
+  .ask-cell { border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .arc-rail { grid-template-columns: 1fr; }
+  .budget-table { font-size: 18px; }
+  .budget-table td, .budget-table th { padding-left: 8px; padding-right: 8px; }
+}
+
+@media print {
+  .site-header { position: static; }
+  .hero, .provocations, .outputs, .team, .close { background: #fff; }
+  .ask, .align, .site-footer { background: #1a1612 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ HEADER ════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="header-brand">Space<span>&middot;</span>Zero</a>
+    <div class="header-tag">Lab Zero Residency &middot; Proposal 2026</div>
+  </div>
+</header>
+
+<!-- ════════ HERO ════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-logo">
+      <canvas id="heroLogo" width="680" height="460" aria-label="Space Zero"></canvas>
+      <div class="logo-fallback" id="logoFallback">Space<span>&middot;</span>Zero<span class="lf-sub">Creative advance for future flourishing</span></div>
+    </div>
+    <p class="eyebrow">A Three-Year Residency &middot; Crescent City, California</p>
+    <h1>Where the people who build the future<br><span class="em">come to remember the ground</span></h1>
+    <p class="hero-sub">Each season, one scientist, one artist and one philosopher arrive on the far northern coast of California to answer — together — the questions that decide whether intelligence serves life. The work they make is recorded, exhibited, and given to the world.</p>
+    <div class="hero-meta">
+      <span><b>$2M</b> sought</span>
+      <span><b>3 years</b></span>
+      <span><b>9 residencies</b></span>
+      <span><b>3 annual exhibitions</b></span>
+      <span>In partnership with <b>Imagine</b></span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ THE ASK ════════ -->
+<section class="ask">
+  <div class="section-inner">
+    <div class="ask-grid">
+      <div class="ask-cell">
+        <div class="ask-num">$2<span class="unit">M</span></div>
+        <div class="ask-label">Three-year programme<br>investment</div>
+      </div>
+      <div class="ask-cell">
+        <div class="ask-num">3&times;3</div>
+        <div class="ask-label">A trio in residence<br>each season, three seasons a year</div>
+      </div>
+      <div class="ask-cell">
+        <div class="ask-num">1</div>
+        <div class="ask-label">Public exhibition<br>at the close of every year</div>
+      </div>
+      <div class="ask-cell">
+        <div class="ask-num">&infin;</div>
+        <div class="ask-label">Open, beautiful, useful work<br>released to all</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ THE INVITATION ════════ -->
+<section class="section prose-block">
+  <div class="section-inner narrow">
+    <p class="eyebrow">The Invitation</p>
+    <h2>AI is being built in the noise. We are offering the ground.</h2>
+    <p class="lead">Eighty-five percent of people do not trust artificial intelligence, and do not believe it is being built for them. That distrust is not a failure of engineering. It is a failure of <em>ground</em> — of the conditions, attention and care from which good things are made.</p>
+    <p>Space Zero sits six hours' drive north of San Francisco, where the redwoods meet the Pacific, deliberately away from the velocity of the city. This is the flagship build-out of <strong>Lab Zero</strong>, our practice of bringing lived experience and scientific curiosity into the same room. We propose to take three of the most significant minds in their fields each season — a scientist, an artist, a philosopher — and hold them here long enough to think differently.</p>
+    <p>Not a conference. Not a sprint. A residency, in nature, with time and care, answering provocations that matter, and producing something the public can see, hold and use.</p>
+  </div>
+</section>
+
+<!-- ════════ THE PROVOCATIONS ════════ -->
+<section class="section provocations">
+  <div class="section-inner">
+    <div class="narrow" style="margin-bottom:0;">
+      <p class="eyebrow">The Provocations</p>
+      <h2>Alignment as ecological care</h2>
+      <p class="lead">Each trio is given a provocation to live inside for their season. They are not abstract. They treat the alignment of intelligence and the flourishing of the planet as a single question — because they are one.</p>
+    </div>
+
+    <div class="prov-grid">
+      <div class="prov">
+        <div class="prov-num">01</div>
+        <p class="prov-q">What does an intelligence that is aligned <em>with life</em> actually feel like from the inside?</p>
+        <p class="prov-body">Alignment is usually framed as control. We ask the trio to render it instead as attunement — the way a body, an ecosystem or a community knows what it owes the whole. What would it mean to build that, not bolt it on?</p>
+      </div>
+      <div class="prov">
+        <div class="prov-num">02</div>
+        <p class="prov-q">If the planet could speak to the people building AI, what would it ask of them?</p>
+        <p class="prov-body">The compute behind frontier AI carries a planetary cost. We ask the trio to make that relationship visible and felt — to translate ecological stakes into something a technologist cannot look away from.</p>
+      </div>
+      <div class="prov">
+        <div class="prov-num">03</div>
+        <p class="prov-q">Where do frontier technology and ancient wisdom actually touch — and what is made there?</p>
+        <p class="prov-body">Contemplative traditions have studied mind, attention and interdependence for millennia. We ask the trio to find the genuine point of contact with machine intelligence, and to build something real on it.</p>
+      </div>
+      <div class="prov">
+        <div class="prov-num">04</div>
+        <p class="prov-q">How do we return wonder — and trust — to a public that has been given neither?</p>
+        <p class="prov-body">The work must reach beyond the gallery. We ask each trio to produce an artefact of genuine utility and aesthetic quality, in the name of scientific democratisation: science made open, beautiful and shared.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ HOW IT WORKS ════════ -->
+<section class="section arc">
+  <div class="section-inner">
+    <div class="narrow" style="margin-bottom:0;">
+      <p class="eyebrow">How a Season Works</p>
+      <h2>Three people. One ground. One question.</h2>
+      <p class="lead">Each season convenes a single interdisciplinary trio, held end-to-end by the Space Zero team. The rhythm follows the coast and the calendar — arrival, immersion, making, and the seasonal exhibition that opens the work to the community.</p>
+    </div>
+
+    <div class="tri">
+      <span class="tri-chip"><b>One</b> &nbsp;scientist</span>
+      <span class="tri-chip"><b>One</b> &nbsp;artist</span>
+      <span class="tri-chip"><b>One</b> &nbsp;philosopher or wisdom teacher</span>
+    </div>
+
+    <div class="arc-rail">
+      <div class="arc-step">
+        <div class="arc-season">Arrive</div>
+        <h3>Held on arrival</h3>
+        <p>Travel, accommodation and a working subsidy are provided. The team grounds each resident in the place, the practice and — where appropriate and welcomed — the indigenous community of this coast.</p>
+      </div>
+      <div class="arc-step">
+        <div class="arc-season">Immerse</div>
+        <h3>Think differently</h3>
+        <p>Daily embodied practice, deep conversation and somatic sharing loosen the priors each resident arrives with. The provocation moves from idea to lived enquiry.</p>
+      </div>
+      <div class="arc-step">
+        <div class="arc-season">Make</div>
+        <h3>Build something real</h3>
+        <p>The trio produces a work of functional utility and aesthetic quality. Throughout, they are filmed and interviewed — the process itself becomes an open resource.</p>
+      </div>
+      <div class="arc-step">
+        <div class="arc-season">Exhibit</div>
+        <h3>Open the work</h3>
+        <p>Each season culminates in exhibition. Three seasons gather, once a year, into the annual <em>Emergent Exhibition</em> — a moment of collective seeing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ WHAT GETS MADE ════════ -->
+<section class="section outputs">
+  <div class="section-inner">
+    <div class="narrow" style="margin-bottom:0;">
+      <p class="eyebrow">What Gets Made</p>
+      <h2>Useful. Beautiful. Public.</h2>
+      <p class="lead">Every residency leaves three things behind — and the technologists, machine-learning researchers and decision-makers we convene are brought into embodied contact with all of them.</p>
+    </div>
+    <div class="out-grid">
+      <div class="out">
+        <h3>The Artefact</h3>
+        <p>A made thing of real utility and aesthetic quality — environmentally aware, awareness-raising — that carries the season's enquiry into the world and stands on its own.</p>
+      </div>
+      <div class="out">
+        <h3>The Record</h3>
+        <p>Filmed and interviewed throughout, each trio's process becomes an open multimedia resource — distributed freely in the name of scientific democratisation.</p>
+      </div>
+      <div class="out">
+        <h3>The Exhibition</h3>
+        <p>A seasonal show, gathered yearly into the Emergent Exhibition, where AI specialists and tech leaders meet the work in person — embodied, not on a screen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ WHY HERE ════════ -->
+<section class="section place">
+  <div class="section-inner">
+    <p class="eyebrow">Why Crescent City</p>
+    <h2>The distance is the point.</h2>
+    <div class="place-grid">
+      <div>
+        <p>The people shaping artificial intelligence work at the centre of enormous noise. Space Zero is built at the opposite pole — held by the beauty of the Northern California coast, where redwoods meet the Pacific and beauty itself becomes a working condition. It sits six hours' drive north of San Francisco.</p>
+        <p>To attune to the nature of intelligence, a person must first attune to their own. The remoteness of this place is not an inconvenience to be apologised for. It is the instrument. Here, those who build with technology can become embodied in a natural aesthetic, and from that ground, build differently.</p>
+        <p>Residents are not left to fend for themselves. They are <em>held</em> — logistically, pastorally, and creatively — by a team whose whole practice is the art of holding.</p>
+      </div>
+      <div class="place-stats">
+        <div class="place-stat">
+          <div class="big">~6 hrs</div>
+          <div class="small">drive north of San Francisco — beyond the reach of the city's velocity</div>
+        </div>
+        <div class="place-stat">
+          <div class="big">Redwood &amp; Pacific</div>
+          <div class="small">a liminal coast between the oldest forest and the open ocean</div>
+        </div>
+        <div class="place-stat">
+          <div class="big">Held, not hosted</div>
+          <div class="small">pastoral, logistical and creative support for every resident</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ WHO HOLDS IT ════════ -->
+<section class="section team">
+  <div class="section-inner">
+    <div class="narrow" style="margin-bottom:0;">
+      <p class="eyebrow">Who Holds It</p>
+      <h2>The team, and the ground around it</h2>
+      <p class="lead">Space Zero is a 501(c)(3) non-profit. Residents are held by a dedicated team and a network of trusted local and scientific partners — the overheads of that holding are built into this proposal.</p>
+    </div>
+
+    <div class="team-grid">
+      <div class="member">
+        <p class="member-name">Yen Chen</p>
+        <p class="member-role">Founder &amp; Director</p>
+        <p class="member-body">Founder and Executive Director of Space Zero. A decade leading transformative spaces across China, Vancouver, San Francisco and New York; holds a Master's in Integral Psychology (CIIS) with intensive training in somatic and ecosystem leadership. Carries overall direction and care of the programme.</p>
+      </div>
+      <div class="member">
+        <p class="member-name">Alexander Sabine</p>
+        <p class="member-role">Consultancy &amp; Creative Education &middot; O-1A pending</p>
+        <p class="member-body">Independent researcher in human–AI alignment and change. Leads the intellectual framing of the provocations, the scientific-democratisation outputs, and the bridge between residents, technologists and the wider research community.</p>
+      </div>
+      <div class="member">
+        <p class="member-name">Amelia Thomley</p>
+        <p class="member-role">Art Therapist</p>
+        <p class="member-body">Holds the somatic and pastoral core of each residency — the embodied, art-therapeutic practice through which residents loosen their priors and meet the work differently.</p>
+      </div>
+      <div class="member member-pending">
+        <p class="member-name">Pastoral &amp; Local Lead</p>
+        <p class="member-role">To be appointed</p>
+        <p class="member-body">A dedicated team member overseeing pastoral support, local orientation and day-to-day guidance — ensuring every resident is genuinely held from arrival to exhibition.</p>
+      </div>
+    </div>
+
+    <div class="partners">
+      <p class="eyebrow" style="margin-bottom:8px;">The Ground Around the Work</p>
+      <h3 style="margin-bottom:4px;">Partners &amp; advisors</h3>
+      <div class="partner-grid">
+        <div class="partner">
+          <h4>True North Organizing Network</h4>
+          <p>Our partner for sensitive, direct and appropriate liaison with the indigenous communities of Del Norte County — so residents engage with care, never extraction.</p>
+        </div>
+        <div class="partner">
+          <h4>Del Norte County &amp; Crescent City</h4>
+          <p>Strong working relationships with key decision-makers in county and city government, grounding the programme in its place and opening civic doors for the work.</p>
+        </div>
+        <div class="partner">
+          <h4>Hum Lab</h4>
+          <p>A neighbouring Crescent City AI-alignment lab (Bill Duane, Adam Goldstein) — a partner in convening the technologists and researchers who meet the work.</p>
+        </div>
+      </div>
+      <p style="font-size:18px; color:var(--ink-soft); margin-top:28px; font-style:italic;">Supported by Space Zero's wider Board, Wisdom Council and Scientific Advisors — the calibre of thinkers gathered around the work, profiled at <a href="who.html">spacezero &middot; who</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ BUDGET ════════ -->
+<section class="section budget">
+  <div class="section-inner">
+    <div class="narrow" style="margin-bottom:0;">
+      <p class="eyebrow">The Investment</p>
+      <h2>$2M across three years</h2>
+      <p class="lead">Indicative allocation. Figures are rounded planning bands across the full three-year programme — nine residencies and three annual exhibitions — and would be finalised with Imagine at award.</p>
+    </div>
+
+    <table class="budget-table">
+      <thead>
+        <tr>
+          <th>Allocation</th>
+          <th>Over three years</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="b-item">Resident support</span>
+            <span class="b-note">Travel, accommodation and working subsidy for 27 residents (9 trios)</span>
+          </td>
+          <td><span class="b-amt">$520k – $620k</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="b-item">Team &amp; pastoral holding</span>
+            <span class="b-note">Director, consultancy/creative education, art therapy, and the pastoral & local lead</span>
+          </td>
+          <td><span class="b-amt">$560k – $660k</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="b-item">Production &amp; the artefacts</span>
+            <span class="b-note">Materials, fabrication and tooling for each season's made work</span>
+          </td>
+          <td><span class="b-amt">$200k – $260k</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="b-item">Recording &amp; open release</span>
+            <span class="b-note">Filming, interviews, editing and multimedia distribution for democratisation</span>
+          </td>
+          <td><span class="b-amt">$140k – $180k</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="b-item">Exhibitions</span>
+            <span class="b-note">Three seasonal shows per year, gathered into the annual Emergent Exhibition</span>
+          </td>
+          <td><span class="b-amt">$180k – $240k</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="b-item">Partnerships &amp; convening</span>
+            <span class="b-note">True North liaison, civic engagement, and convening technologists & researchers</span>
+          </td>
+          <td><span class="b-amt">$90k – $130k</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="b-item">Programme administration &amp; contingency</span>
+            <span class="b-note">Coordination, insurance, compliance and reserve across the programme</span>
+          </td>
+          <td><span class="b-amt">$120k – $160k</span></td>
+        </tr>
+        <tr class="total">
+          <td><span class="b-item">Total programme</span></td>
+          <td><span class="b-amt">$2,000,000</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="budget-note">Bands are indicative and overlap by design; the final budget would be set with Imagine, with annual reporting against residencies delivered, work produced and reach achieved.</p>
+  </div>
+</section>
+
+<!-- ════════ ALIGNMENT WITH IMAGINE ════════ -->
+<section class="section align">
+  <div class="section-inner">
+    <div class="narrow" style="margin-bottom:0;">
+      <p class="eyebrow on-dark">Why Imagine, Why Now</p>
+      <h2>Putting humanity and the planet at the core</h2>
+      <p class="lead">Imagine exists to put technology, humanity and the planet at the centre — and to build the human and emotional resilience the people behind technology need to do good work. Space Zero is the ground where that happens. We see this not as a grant spent, but as ecosystem infrastructure: an investment in the inner conditions of the people who build the future.</p>
+    </div>
+    <div class="align-grid">
+      <div class="align-cell">
+        <h4>People, planet, profit</h4>
+        <p>Our provocations treat aligned intelligence and a flourishing planet as one question. The work raises awareness of the critical issues facing the planet, and returns trust to a public that has lost it.</p>
+      </div>
+      <div class="align-cell">
+        <h4>Resilient builders</h4>
+        <p>Imagine invests in founders' mental and emotional resilience. Space Zero is where the people building AI become embodied, attuned and resourced — the inner work that better building depends on.</p>
+      </div>
+      <div class="align-cell">
+        <h4>A node in the ecosystem</h4>
+        <p>Space Zero connects labs, universities and communities — Hum Lab, True North, county and city — into a living exchange. This is the kind of human-centred ecosystem Imagine was built to grow.</p>
+      </div>
+      <div class="align-cell">
+        <h4>More voices at the table</h4>
+        <p>Artists, contemplatives and indigenous communities are brought into direct contact with frontier technology. Inclusion is not a value statement here; it is the method.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ CLOSE ════════ -->
+<section class="section close">
+  <div class="section-inner narrow">
+    <p class="eyebrow">The Invitation, Again</p>
+    <blockquote>“Beauty is the intrinsic order of things finding its own form.”</blockquote>
+    <p class="signoff">Creative Advance for Future Flourishing</p>
+    <p class="contact">
+      To discuss this proposal, contact Space Zero at <a href="mailto:info@spacezero.net">info@spacezero.net</a><br>
+      Space Zero &middot; 983 3rd St &middot; Crescent City, CA 95531
+    </p>
+  </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer class="site-footer">
+  <div class="f-brand">Space<span>&middot;</span>Zero</div>
+  <div>A 501(c)(3) non-profit &middot; for the creative advance toward future flourishing</div>
+  <div style="margin-top:10px; color:rgba(236,230,218,0.5);">&copy; 2026 Space Zero &middot; Crescent City &middot; California</div>
+</footer>
+
+<!-- The shared runtime renders the authentic watercolour logo onto #heroLogo.
+     When the page is served inside the Space Zero site this loads from the
+     assets folder; opened standalone (no assets), the CSS wordmark above
+     remains as a graceful fallback. -->
+<script src="assets/space-zero.js" defer></script>
+<script>
+  // Hide the text fallback only if the real logo canvas actually painted.
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var c = document.getElementById('heroLogo');
+      var fb = document.getElementById('logoFallback');
+      if (!c || !fb) return;
+      try {
+        var ctx = c.getContext('2d');
+        var data = ctx.getImageData(0, 0, c.width, c.height).data;
+        var painted = false;
+        for (var i = 3; i < data.length; i += 4) { if (data[i] !== 0) { painted = true; break; } }
+        if (painted) fb.style.display = 'none';
+        else c.style.display = 'none';
+      } catch (e) { /* keep fallback visible */ c.style.display = 'none'; }
+    }, 350);
+  });
+</script>
+
+</body>
+</html>
