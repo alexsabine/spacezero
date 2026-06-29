@@ -1958,7 +1958,7 @@ function renderFooter() {
     <div class="footer-col">
       <h4>Contact</h4>
       <ul>
-        <li><a href="mailto:info@spacezero.net">info@spacezero.net</a></li>
+        <li><a href="mailto:info@space-zero.org">info@space-zero.org</a></li>
       </ul>
     </div>
   </div>
