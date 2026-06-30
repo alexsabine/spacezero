@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Space Zero &middot; Page Not Found</title>
+<meta name="description" content="The page you sought has returned to the Zero State. Find your way back to Space Zero." />
+<meta name="robots" content="noindex" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<!-- Shared stylesheet (loads when served from the site root, e.g. the live custom domain). -->
+<link rel="stylesheet" href="/assets/space-zero.css">
+
+<style>
+/* ──────────────────────────────────────────────────────────────────────
+   Self-contained brand tokens + layout.
+   These mirror assets/space-zero.css so the page reads correctly even if
+   the shared stylesheet isn't reachable (e.g. previewed under /spacezero/).
+   When served from the site root, the shared CSS + JS also load and the
+   crescent logo animates exactly as on the homepage.
+   ────────────────────────────────────────────────────────────────────── */
+:root {
+  --parchment:       #f4f1eb;
+  --parchment-warm:  #ede6d4;
+  --ink:             #1a1612;
+  --ink-soft:        #3a2e24;
+  --muted:           #5e5347;
+  --muted-light:     #7a6f5f;
+  --rule:            rgba(58, 46, 36, 0.12);
+  --amber:           #c8915b;
+  --water:           #3c8f87;
+}
+
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--parchment);
+  color: var(--ink-soft);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.error {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 100px 40px 80px;
+  text-align: center;
+  position: relative;
+}
+
+.error-logo { width: 100%; max-width: 640px; display: flex; justify-content: center; margin-bottom: 40px; }
+.error-logo canvas { display: block; max-width: 100%; height: auto; }
+
+.error-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 400;
+  text-transform: uppercase; letter-spacing: 0.32em;
+  color: var(--muted-light);
+  margin-bottom: 30px;
+}
+
+/* Headline echoes the homepage strapline: "Where … Meets …" */
+.error-line {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  font-weight: 400; font-style: italic;
+  color: var(--ink-soft);
+  letter-spacing: 0.01em; line-height: 1.45;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.32em; flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.error-line .lead { color: var(--muted); }
+.glow-word { color: var(--ink); position: relative; }
+.glow-word--un { animation: unknowableGlow 8.5s ease-in-out infinite; }
+@keyframes unknowableGlow {
+  0%, 100% { text-shadow: 0 0 9px rgba(58,150,150,0.32), 0 0 20px rgba(58,150,150,0.17); }
+  50%      { text-shadow: 0 0 7px rgba(58,150,150,0.07), 0 0 16px rgba(58,150,150,0.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-word--un { animation: none; text-shadow: 0 0 9px rgba(58,150,150,0.18), 0 0 18px rgba(58,150,150,0.09); }
+}
+
+.error-body {
+  max-width: 540px;
+  font-size: 17px; line-height: 1.65; font-weight: 300;
+  color: var(--ink-soft);
+  margin: 0 0 44px;
+}
+
+.error-return {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.24em; color: var(--muted);
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--rule);
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+.error-return:hover {
+  color: var(--ink);
+  border-bottom-color: var(--amber);
+}
+
+@media (max-width: 560px) {
+  .error { padding: 80px 22px 60px; }
+  .error-line { font-size: 1.45rem; }
+}
+</style>
+</head>
+
+<body data-page="404">
+
+<section class="error">
+  <div class="error-logo">
+    <canvas id="heroLogo" width="640" height="440"></canvas>
+  </div>
+
+  <div class="error-eyebrow">404 &middot; Page Not Found</div>
+
+  <div class="error-line">
+    <span class="lead">Where the Path Meets</span>
+    <span class="glow-word glow-word--un">Emptiness</span>
+  </div>
+
+  <p class="error-body">
+    The page you sought has returned to the Zero State &mdash; the ground from
+    which all forms arise. Every absence is also an opening.
+  </p>
+
+  <a class="error-return" href="/">Return to Space Zero</a>
+</section>
+
+<!-- Shared runtime: auto-renders the crescent on #heroLogo when served from the site root. -->
+<script src="/assets/space-zero.js" defer></script>
+</body>
+</html>
