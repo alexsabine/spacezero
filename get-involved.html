@@ -9,6 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/space-zero.css">
+<script
+  async
+  src="https://widgets.givebutter.com/latest.umd.cjs?acct=oDYrHxPN6Ndxld9d&p=other"
+></script>
 <style>
 /* ── Intro ── */
 .gi-intro {
@@ -202,6 +206,48 @@
   margin-bottom: 4px;
 }
 
+/* ── Generosity visual (above the donate widget) ── */
+.generosity-visual {
+  margin: 26px 0 28px;
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+  padding: 20px 20px 16px;
+}
+.generosity-visual canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 640 / 260;
+}
+.generosity-caption {
+  margin: 14px 0 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── Givebutter widget, framed to sit inside the page rather than beside it ── */
+.donate-widget-frame {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 22px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 18px;
+}
+.donate-widget-frame givebutter-widget {
+  display: block;
+}
+.donate-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.2em; color: var(--muted);
+  text-align: center;
+  margin: 0 0 16px;
+}
+
 /* ── Closing ── */
 .closing {
   border-top: 1px solid var(--rule);
@@ -242,8 +288,9 @@
   padding: 28px 32px 34px;
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0) 55%,
-    rgba(0,0,0,0.42) 100%
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0.16) 62%,
+    rgba(0,0,0,0.56) 100%
   );
   color: #fff;
   text-align: center;
@@ -252,12 +299,12 @@
 .gi-interlude-caption {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.05rem, 2.1vw, 1.45rem);
-  font-weight: 300;
+  font-weight: 400;
   font-style: italic;
   line-height: 1.4;
   letter-spacing: 0.005em;
   max-width: 620px;
-  text-shadow: 0 2px 18px rgba(0,0,0,0.55);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.92), 0 6px 22px rgba(0,0,0,0.6);
   margin: 0 0 8px;
 }
 .gi-interlude-meta {
@@ -265,8 +312,8 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.28em;
-  color: rgba(255,255,255,0.78);
-  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 2px 14px rgba(0,0,0,0.55);
 }
 @media (max-width: 600px) {
   .gi-interlude-img { min-height: 22vh; max-height: 36vh; }
@@ -375,7 +422,24 @@
     </div>
     <div class="involve-right">
       <p>Every contribution matters; a single gift, however small, changes the field. Whether you are an individual who feels the pull of this work, a philanthropist, or an investor exploring what it means to fund emergence rather than outcomes, you are welcome here.</p>
-      <p>If you are moved to contribute, we welcome a conversation. Write to us at <a href="mailto:info@space-zero.org?subject=Supporting%20Space%20Zero">info@space-zero.org</a> and we will explore together how your support might meet the work.</p>
+
+      <div class="generosity-visual">
+        <canvas data-element="generosity" width="640" height="260" role="img" aria-label="A current of colour gathering into a slow, breathing pool of gold."></canvas>
+        <p class="generosity-caption">Support finds its way into form.</p>
+      </div>
+
+      <div class="donate-box">
+        <div class="donate-eyebrow">Give</div>
+        <div class="donate-widget-frame">
+          <givebutter-widget id="pXvYno"></givebutter-widget>
+        </div>
+        <div class="donate-meta">
+          <span class="label">Processed via Givebutter</span>
+          Space Zero Foundation is a registered 501(c)(3) nonprofit (EIN 41-4479580). Your gift is processed securely by Givebutter, our payment partner, and you'll receive an automatic receipt by email.
+        </div>
+      </div>
+
+      <p>Prefer to talk it through first, explore a larger gift, or give in another way? Write to us at <a href="mailto:info@space-zero.org?subject=Supporting%20Space%20Zero">info@space-zero.org</a> and we will explore together how your support might meet the work.</p>
     </div>
   </div>
 </section>
