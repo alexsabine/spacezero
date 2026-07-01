@@ -8,6 +8,7 @@
  *    SpaceZero.renderAlign(canvas)
  *    SpaceZero.renderBenevolence(canvas)
  *    SpaceZero.renderAesthetics(canvas)
+ *    SpaceZero.renderGenerosity(canvas)
  *    SpaceZero.initStrapline(rootEl)
  *    SpaceZero.mountChrome(currentPage)  — injects header + footer
  *    SpaceZero.bootElements()            — auto-mounts any canvas[data-element]
@@ -1911,6 +1912,118 @@ function renderAestheticsFallback(canvas) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+ *  GENEROSITY — what arrives as support returns as form
+ *  A loose bundle of the site's own hues arcs across the field, dissolving
+ *  at its point of origin (still just possibility) and gathering at the
+ *  other end into a slow, breathing pool of gold (now tangible, held).
+ *  §CRR: pool luminance tracks accumulated coherence C(t); C rises slowly
+ *  and at threshold releases δ — a soft ring — then relaxes and rebuilds.
+ *  Public framing: resourcing as a living current, not a transaction. */
+function renderGenerosity(canvas) {
+  const cssW = parseInt(canvas.getAttribute('width'));
+  const cssH = parseInt(canvas.getAttribute('height'));
+  const { ctx, W, H } = setupCanvas(canvas, cssW, cssH);
+  const { sin, cos, min, max } = Math;
+  const SCL = W / 640;
+
+  /* five bands drawn from the site's own spectrum — not literal ROYGBIV */
+  const BANDS = [
+    { col: PAL.iceplantBright, w: 1.00, ph: 0.0 },
+    { col: blend(PAL.iceplantBright, PAL.waterCobalt, 0.5), w: 0.92, ph: 1.15 },
+    { col: PAL.waterAqua,      w: 0.86, ph: 2.35 },
+    { col: PAL.fern,           w: 0.80, ph: 3.70 },
+    { col: PAL.amberWarm,      w: 0.76, ph: 4.60 },
+  ];
+
+  const geom = () => ({
+    x0: W * 0.07, y0: H * 0.32,      // origin — dissolves, still just an idea
+    x1: W * 0.80, y1: H * 0.64,      // the pool — accumulated, held
+    cx: W * 0.44, cy: H * 0.03,      // the arc's rise
+  });
+
+  let C = 0.2, pulses = [];          // coherence accumulator + rupture events
+  let simT = 0, tPrev = performance.now() / 1000;
+
+  function draw(now) {
+    const t = now / 1000;
+    let dt = t - tPrev; tPrev = t;
+    if (!isFinite(dt) || dt < 0) dt = 1 / 60;
+    if (dt > 0.1) dt = 0.1;
+    simT += dt;
+
+    C += dt * 0.045;                                  // slow accumulation
+    if (C >= 1) { C = 0.15; pulses.push(simT); }       // rupture — release
+    pulses = pulses.filter(p => simT - p < 1.6);
+
+    ctx.clearRect(0, 0, W, H);
+    const { x0, y0, x1, y1, cx, cy } = geom();
+
+    /* ── the arc: many small currents, converging ── */
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    BANDS.forEach((b, i) => {
+      const wob = 7 * SCL * sin(simT * 0.32 + b.ph);
+      const off = (i - (BANDS.length - 1) / 2) * 9 * SCL;
+      ctx.beginPath();
+      ctx.moveTo(x0, y0 + off * 0.4);
+      ctx.quadraticCurveTo(cx + wob, cy + off, x1 + off * 0.28, y1 - off * 0.18);
+      const grad = ctx.createLinearGradient(x0, y0, x1, y1);
+      grad.addColorStop(0.00, rgba(b.col, 0));
+      grad.addColorStop(0.32, rgba(b.col, 0.05));
+      grad.addColorStop(0.74, rgba(b.col, 0.30 * b.w));
+      grad.addColorStop(1.00, rgba(blend(b.col, PAL.amberCream, 0.4), 0.44 * b.w));
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = (6.5 - i * 0.45) * SCL;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    });
+    ctx.restore();
+
+    /* ── the pool: breathing, glooping gold ── */
+    const breath = 0.5 + 0.5 * sin(simT * TAU / T_BREATH_BASE);
+    const rBase = 30 * SCL * (0.90 + 0.16 * breath) * (0.86 + 0.5 * C);
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const N = 40;
+    ctx.beginPath();
+    for (let i = 0; i <= N; i++) {
+      const a = (i / N) * TAU;
+      const wob = 1 + 0.11 * sin(a * 3 + simT * 0.55) + 0.06 * sin(a * 5 - simT * 0.85);
+      const r = rBase * wob;
+      const px = x1 + r * cos(a), py = y1 + r * sin(a) * 0.60;   // squashed — a puddle, not a sphere
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    const pg = ctx.createRadialGradient(x1, y1, 0, x1, y1, rBase * 1.35);
+    pg.addColorStop(0.00, rgba(blend(PAL.amberCream, PAL.parchment, 0.2), 0.95));
+    pg.addColorStop(0.45, rgba(PAL.amberWarm, 0.72 + 0.16 * breath));
+    pg.addColorStop(1.00, rgba(PAL.lichenOchre, 0));
+    ctx.fillStyle = pg;
+    ctx.fill();
+    ctx.restore();
+
+    /* ── rupture rings: coherence, released ── */
+    pulses.forEach(p => {
+      const age = simT - p, k = age / 1.6;
+      if (k > 1) return;
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.beginPath();
+      ctx.ellipse(x1, y1, rBase * (1 + k * 1.9), rBase * (1 + k * 1.9) * 0.60, 0, 0, TAU);
+      ctx.strokeStyle = rgba(PAL.amberCream, 0.46 * (1 - k));
+      ctx.lineWidth = max(1, 2 * SCL * (1 - k));
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    scheduleNext(canvas, draw);
+  }
+
+  registerCanvas(canvas);
+  requestAnimationFrame(draw);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
  *  CHROME — shared header & footer injection
  *  Every page includes <div id="site-header"></div> near the top and
  *  <div id="site-footer"></div> before </body>. This function writes the
@@ -1986,6 +2099,7 @@ const ELEMENT_RENDERERS = {
   align: renderAlign,
   benevolence: renderBenevolence,
   aesthetics: renderAesthetics,
+  generosity: renderGenerosity,
 };
 
 function bootElements() {
@@ -2027,6 +2141,7 @@ if (document.readyState === 'loading') {
 /* Public API */
 window.SpaceZero = {
   renderLogo, renderWisdom, renderAlign, renderBenevolence, renderAesthetics,
+  renderGenerosity,
   initStrapline, mountChrome, bootElements,
   PAL, ROUGH_PAPER,
 };
