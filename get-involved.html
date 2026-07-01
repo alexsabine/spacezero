@@ -220,13 +220,15 @@
   aspect-ratio: 640 / 260;
 }
 .generosity-caption {
-  margin: 14px 0 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  text-align: center;
+  margin: 16px auto 0;
+  max-width: 460px;
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
   font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+  text-align: center;
 }
 
 /* ── Givebutter widget, framed to sit inside the page rather than beside it ── */
@@ -424,8 +426,8 @@
       <p>Every contribution matters; a single gift, however small, changes the field. Whether you are an individual who feels the pull of this work, a philanthropist, or an investor exploring what it means to fund emergence rather than outcomes, you are welcome here.</p>
 
       <div class="generosity-visual">
-        <canvas data-element="generosity" width="640" height="260" role="img" aria-label="A current of colour gathering into a slow, breathing pool of gold."></canvas>
-        <p class="generosity-caption">Support finds its way into form.</p>
+        <canvas data-element="generosity" width="640" height="260" role="img" aria-label="A current of rainbow-coloured light, currency symbols glimpsed within it, twisting into a traditional pot of gold. Hover the pot to see it candle open."></canvas>
+        <p class="generosity-caption">We Hereby Promise that Your Financial Support will Transmute into Beautiful Form and Function</p>
       </div>
 
       <div class="donate-box">
