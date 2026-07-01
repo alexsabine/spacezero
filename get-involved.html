@@ -219,6 +219,21 @@
   height: auto;
   aspect-ratio: 640 / 260;
 }
+
+/* ── running total, under the pot of gold ── */
+.sz-total-frame {
+  margin: 4px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+.sz-total-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.16em; color: var(--muted);
+  text-align: center;
+  margin: 0 0 10px;
+}
+
 .generosity-caption {
   margin: 16px auto 0;
   max-width: 460px;
@@ -245,9 +260,49 @@
 .donate-eyebrow {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.2em; color: var(--muted);
+  letter-spacing: 0.06em; color: var(--muted);
   text-align: center;
   margin: 0 0 16px;
+}
+
+/* ── Space Zero themed donate button — triggers the Givebutter checkout
+ * popup directly (see "Advanced: Make any website element into a Widget"
+ * in Givebutter's docs). Gold ramp matches the pot-of-gold canvas exactly:
+ * GOLD.light/mid/deep/hi from space-zero.js, converted to hex. ── */
+.sz-donate-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0 22px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 18px;
+}
+.sz-donate-btn {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
+  color: #3a2410;
+  background: linear-gradient(180deg, #f8de96 0%, #d8ae56 48%, #a87830 100%);
+  border: 1px solid rgba(104,72,30,0.45);
+  border-radius: 999px;
+  padding: 14px 46px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(104,72,30,0.28), inset 0 1px 0 rgba(255,248,224,0.65);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.4s ease;
+}
+.sz-donate-btn:hover {
+  background: linear-gradient(180deg, #fff8e0 0%, #f8de96 48%, #d8ae56 100%);
+  box-shadow: 0 5px 16px rgba(104,72,30,0.38), inset 0 1px 0 rgba(255,248,224,0.75);
+  transform: translateY(-1px);
+}
+.sz-donate-btn:active { transform: translateY(0); box-shadow: 0 1px 3px rgba(104,72,30,0.32); }
+.sz-donate-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 0.03em;
 }
 
 /* ── Closing ── */
@@ -427,11 +482,61 @@
 
       <div class="generosity-visual">
         <canvas data-element="generosity" width="640" height="260" role="img" aria-label="A current of rainbow-coloured light, currency symbols glimpsed within it, twisting into a traditional pot of gold. Hover the pot to see it candle open."></canvas>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             Running total, under the pot of gold — DISABLED FOR NOW, no
+             goal amount set yet. To bring it back later:
+             1. In Givebutter: campaign → Sharing tab → Widgets → New widget
+                → "Goal bar" (Progress Bar or Thermometer) → pick this
+                campaign → set a goal amount → Publish → Embed → copy its id
+             2. Uncomment the block below and paste that id in place of
+                REPLACE_WITH_GOALBAR_WIDGET_ID
+             No API key involved either way — Goal Bar is a public embed
+             widget, same no-auth family as the button below.
+
+             <div class="sz-total-frame">
+               <div class="sz-total-label">Raised so far</div>
+               <givebutter-widget id="REPLACE_WITH_GOALBAR_WIDGET_ID"></givebutter-widget>
+             </div>
+             ═══════════════════════════════════════════════════════════════ -->
+
         <p class="generosity-caption">We Hereby Promise that Your Financial Support will Transmute into Beautiful Form and Function</p>
       </div>
 
       <div class="donate-box">
         <div class="donate-eyebrow">All Donations Are Received with Deep Gratitude</div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             Space Zero themed donate button — opens the Givebutter checkout
+             as a popup on click, styled to match the site (see Givebutter's
+             "Advanced: Make any website element into a Widget").
+
+             data-gb-account = oDYrHxPN6Ndxld9d — this turned out to be the
+             same value already in the <script acct=…> tag up in <head>;
+             confirmed by format (16-char mixed-case, matching Givebutter's
+             own example) and by Givebutter's own instructions to use it.
+
+             data-gb-campaign = SDXTRM — this is the campaign's public slug.
+             UNVERIFIED: Givebutter's docs describe a distinct "Campaign ID"
+             shown at the top of the campaign page in the dashboard (above
+             the campaign name), which may or may not be the same string as
+             the slug. If the button doesn't open the checkout popup once
+             this is live, that's the first thing to check — open the
+             campaign in the dashboard and compare what's shown there
+             against SDXTRM.
+
+             Either way, the existing pXvYno widget just below is untouched
+             and keeps working regardless — this button can't break donations.
+             ═══════════════════════════════════════════════════════════════ -->
+        <div class="sz-donate-cta">
+          <button type="button" class="sz-donate-btn"
+            data-gb-account="oDYrHxPN6Ndxld9d"
+            data-gb-campaign="SDXTRM">
+            Give to Space&nbsp;Zero
+          </button>
+          <span class="sz-donate-note">opens a secure Givebutter checkout</span>
+        </div>
+
         <div class="donate-widget-frame">
           <givebutter-widget id="pXvYno"></givebutter-widget>
         </div>
