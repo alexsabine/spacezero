@@ -246,17 +246,6 @@
   text-align: center;
 }
 
-/* ── Givebutter widget, framed to sit inside the page rather than beside it ── */
-.donate-widget-frame {
-  display: flex;
-  justify-content: center;
-  padding: 6px 0 22px;
-  border-bottom: 1px solid var(--rule);
-  margin-bottom: 18px;
-}
-.donate-widget-frame givebutter-widget {
-  display: block;
-}
 .donate-eyebrow {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; text-transform: uppercase;
@@ -522,9 +511,6 @@
              this is live, that's the first thing to check — open the
              campaign in the dashboard and compare what's shown there
              against SDXTRM.
-
-             Either way, the existing pXvYno widget just below is untouched
-             and keeps working regardless — this button can't break donations.
              ═══════════════════════════════════════════════════════════════ -->
         <div class="sz-donate-cta">
           <button type="button" class="sz-donate-btn"
@@ -535,9 +521,6 @@
           <span class="sz-donate-note">opens a secure Givebutter checkout</span>
         </div>
 
-        <div class="donate-widget-frame">
-          <givebutter-widget id="pXvYno"></givebutter-widget>
-        </div>
         <div class="donate-meta">
           <span class="label">Processed via Givebutter</span>
           Space Zero Foundation is a registered 501(c)(3) nonprofit (EIN 41-4479580). Your gift is processed securely by Givebutter, our payment partner, and you'll receive an automatic receipt by email.
