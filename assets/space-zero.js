@@ -1912,109 +1912,777 @@ function renderAestheticsFallback(canvas) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
- *  GENEROSITY — what arrives as support returns as form
- *  A loose bundle of the site's own hues arcs across the field, dissolving
- *  at its point of origin (still just possibility) and gathering at the
- *  other end into a slow, breathing pool of gold (now tangible, held).
- *  §CRR: pool luminance tracks accumulated coherence C(t); C rises slowly
- *  and at threshold releases δ — a soft ring — then relaxes and rebuilds.
- *  Public framing: resourcing as a living current, not a transaction. */
+ *  GENEROSITY — liquid light, twisting into gold
+ *
+ *  §CRR optics: every wavelength's Ω(λ) = 1/(π·n(λ)) comes from real Cauchy
+ *  dispersion, n(λ) = 1.3199 + 6320/λ² (water) — the equations behind Song
+ *  of the Rainbow (cohere.org.uk / CRR_Raindrop_Rainbow.html). Each colour's
+ *  true caustic angle sets its radius on the bow — physics, not a ramp.
+ *
+ *  The bow has no beginning: it enters from beyond the frame already in
+ *  motion (there is no first moment of giving, only the current already
+ *  flowing) and is painted throughout as soft liquid-light patches rather
+ *  than a flat band — smoke with colour memory, not a rainbow emoji. Multi-
+ *  octave turbulence keeps the whole length moving, not just the vortex
+ *  near the vessel, so it reads as one cohesive fluid system.
+ *
+ *  §CRR rupture, made visible: coherence accumulates along the ribbon until
+ *  C·Ω = 1 — it can no longer hold as a flat band, so it spirals: the same
+ *  wavelength-dependent Ω now expressed as spin rate, narrowing into a
+ *  vortex that turns into the vessel. As it goes the hue is drawn toward
+ *  gold (R = ∫φ·exp(C/Ω)dτ, colour becoming metal) and a few currency
+ *  marks — $, £, ¥, € — surface in the mist and sink again: what's really
+ *  flowing, glimpsed rather than announced. Moving the pointer through the
+ *  stream stirs it physically (a light touch on hover, a fuller push on
+ *  click-and-drag); it settles back into the flow on its own — the same
+ *  rupture-then-regeneration CRR runs everywhere else here, just handed to
+ *  the visitor.
+ *
+ *  The vessel is a traditional pot of gold — round-bellied, wide-mouthed,
+ *  small stubby feet, modest loop handles — in a warm, mostly-matte gold
+ *  (form + occlusion for volume, sheen kept low). Hover "candles" it exactly
+ *  as the egg is candled: a dark void fills the interior first so colour
+ *  reads as luminous against it, a slow warm glow blooms, Space Zero's own
+ *  swirl (plus a few of those same currency marks) lights up inside, and
+ *  only then does the gold wall itself go translucent over it — never
+ *  vanishing, just letting the light through. The flat isometric "lid" at
+ *  the mouth fades away on hover so nothing fights the reveal.
+ *
+ *  Public framing: giving as a current of light, resourced as it falls.
+ * ═════════════════════════════════════════════════════════════════════════ */
 function renderGenerosity(canvas) {
   const cssW = parseInt(canvas.getAttribute('width'));
   const cssH = parseInt(canvas.getAttribute('height'));
   const { ctx, W, H } = setupCanvas(canvas, cssW, cssH);
-  const { sin, cos, min, max } = Math;
+  const { sin, cos, sqrt, min, max, exp, atan2, hypot, pow, acos, asin, abs } = Math;
   const SCL = W / 640;
+  const smooth = (a, b, x) => { const k = clamp01((x - a) / (b - a)); return k * k * (3 - 2*k); };
 
-  /* five bands drawn from the site's own spectrum — not literal ROYGBIV */
-  const BANDS = [
-    { col: PAL.iceplantBright, w: 1.00, ph: 0.0 },
-    { col: blend(PAL.iceplantBright, PAL.waterCobalt, 0.5), w: 0.92, ph: 1.15 },
-    { col: PAL.waterAqua,      w: 0.86, ph: 2.35 },
-    { col: PAL.fern,           w: 0.80, ph: 3.70 },
-    { col: PAL.amberWarm,      w: 0.76, ph: 4.60 },
+  /* ── photorealistic gold ramp — a precious-metal palette that stays warm
+   * even in shadow, borrowed verbatim from the candling egg's gilding. ── */
+  const GOLD = {
+    hi:     [255, 248, 224],
+    light:  [248, 222, 150],
+    mid:    [216, 174,  86],
+    deep:   [168, 120,  48],
+    shadow: [104,  72,  30],
+    rim:    [255, 240, 198],
+  };
+  /* Space Zero's own colour set — what swirls inside the vessel once it's
+   * candled open. Same palette, same curl-field swirl technique as the
+   * egg's interior nebula, ported here rather than reinvented. */
+  const INTERIOR_COLS = [
+    PAL.waterCobalt, PAL.waterAqua, PAL.waterEmerald, PAL.waterJade,
+    PAL.iceplantBright, PAL.iceplantDeep, PAL.iceplantPale, PAL.skyBlue,
+    PAL.amberCream, PAL.amberWarm, PAL.ember, PAL.lichenOchre,
+    PAL.fern, PAL.sage, PAL.cinnamon, PAL.russet,
   ];
+  const OMEGA_SO2 = 1 / (2 * PI);
+  const CURRENCY_GLYPHS = ['$', '£', '¥', '€'];
 
-  const geom = () => ({
-    x0: W * 0.07, y0: H * 0.32,      // origin — dissolves, still just an idea
-    x1: W * 0.80, y1: H * 0.64,      // the pool — accumulated, held
-    cx: W * 0.44, cy: H * 0.03,      // the arc's rise
+  /* ── §1 real rainbow optics (Sabine, CRR_Raindrop_Rainbow.html) ── */
+  const nWater    = nm => 1.3199 + 6320.0 / (nm * nm);
+  const rbAngle   = n  => { const c2 = (n*n - 1) / 3; return (c2 < 0 || c2 > 1) ? null : acos(sqrt(c2)); };
+  const deviation = (i, n) => { const sr = sin(i) / n; return abs(sr) > 1 ? null : 2*i - 4*asin(sr) + PI; };
+  function spectralRGB(nm) {
+    const t = (nm - 380) / 340;
+    let r, g, b;
+    if (t < 0.17) { const s = t/0.17; r = 0.4*(1-s)+0.05*s; g = 0; b = 0.6*(1-s)+1.0*s; }
+    else if (t < 0.33) { const s = (t-0.17)/0.16; r = 0.05*(1-s); g = s*0.9; b = 1.0; }
+    else if (t < 0.45) { const s = (t-0.33)/0.12; r = 0; g = 0.9+0.1*s; b = 1.0*(1-s); }
+    else if (t < 0.58) { const s = (t-0.45)/0.13; r = s; g = 1.0; b = 0; }
+    else if (t < 0.72) { const s = (t-0.58)/0.14; r = 1.0; g = 1.0-0.45*s; b = 0; }
+    else if (t < 0.88) { const s = (t-0.72)/0.16; r = 1.0; g = 0.55*(1-s); b = 0; }
+    else { const s = (t-0.88)/0.12; r = 1.0-0.2*s; g = 0; b = 0; }
+    let i = 1;
+    if (nm < 420) i = 0.3 + 0.7*(nm-380)/40;
+    if (nm > 680) i = 0.3 + 0.7*(720-nm)/40;
+    return [r*255*i|0, g*255*i|0, b*255*i|0];
+  }
+  const SPECTRUM = (() => {
+    const rows = [];
+    for (let nm = 400; nm <= 690; nm += 3) {
+      const n = nWater(nm), i = rbAngle(n);
+      if (!i) continue;
+      const D = deviation(i, n);
+      if (D == null) continue;
+      rows.push({ nm, ang: PI - D, rgb: spectralRGB(nm) });
+    }
+    const lo = rows[0].ang, hi = rows[rows.length - 1].ang;
+    for (const r of rows) r.u = clamp01((r.ang - lo) / (hi - lo));
+    return rows;
+  })();
+  function specAt(u) {
+    const idx = clamp01(u) * (SPECTRUM.length - 1);
+    return SPECTRUM[Math.round(idx)].rgb;
+  }
+
+  /* ── §2 the bow, and the vessel it pours into. The origin sits beyond the
+   * left edge — the current has no first moment, it's already flowing when
+   * it enters the frame. ── */
+  const x0 = -W * 0.20, y0 = H * 0.34;
+  const potCx = W * 0.80, potTopY = H * 0.60;
+  const potW = 116 * SCL, potH = 84 * SCL;
+  const drainX = potCx, drainY = potTopY + potH * 0.14;
+
+  const BOW = (() => {
+    const dx = potCx - x0, dy = potTopY - y0, L = hypot(dx, dy);
+    const bulgeX = dy / L, bulgeY = -dx / L;
+    const s = H * 0.34, c = L / 2, R = (c*c + s*s) / (2*s);
+    const midX = (x0 + potCx) / 2, midY = (y0 + potTopY) / 2;
+    const cx = midX - bulgeX * (R - s), cy = midY - bulgeY * (R - s);
+    const a0 = atan2(y0 - cy, x0 - cx), a1 = atan2(potTopY - cy, potCx - cx);
+    return { cx, cy, R, a0, a1, ccw: a1 < a0 };
+  })();
+  const bandHalf = 15 * SCL;
+
+  /* the rupture: past this fraction of the sweep, the ribbon stops being a
+   * flat band on the bow's circle and spirals down into the vessel. */
+  const VORTEX_START = 0.62;
+  const SPIN_TURNS = 2.2;
+  let _simTRef = 0;
+
+  function arcPoint(frac) {
+    const f = clamp01(frac);
+    const ang = BOW.a0 + (BOW.a1 - BOW.a0) * f;
+    return { x: BOW.cx + cos(ang) * BOW.R, y: BOW.cy + sin(ang) * BOW.R, ang };
+  }
+  function centerline(frac) {
+    const p = arcPoint(frac);
+    const vt = smooth(VORTEX_START, 1, frac);
+    return { x: p.x + (drainX - p.x) * vt, y: p.y + (drainY - p.y) * vt, vt, ang: p.ang };
+  }
+  function perpAngle(frac, cl) {
+    const e = 0.004;
+    const a = centerline(clamp01(frac - e)), b = centerline(clamp01(frac + e));
+    const tangent = atan2(b.y - a.y, b.x - a.x);
+    const spin = SPIN_TURNS * TAU * cl.vt * cl.vt + _simTRef * 1.35 * cl.vt;
+    return tangent + PI/2 + spin;
+  }
+  function ribbonHalf(vt) { return bandHalf * 0.85 * (1 - 0.93 * vt) + 1.2 * SCL; }
+  function goldMixAt(frac) { return smooth(0.86, 1.0, frac); }
+
+  /* ── §3 the vessel silhouette — a traditional round-bellied pot of gold:
+   * wide flared mouth, rolled lip, full belly, small rounded base. No tall
+   * elegant stem — this reads as folklore treasure, not a museum urn. ── */
+  const PROFILE = [
+    { fy: 0.000, fx: 0.470 },   // rim, wide flared mouth
+    { fy: 0.050, fx: 0.395 },   // rolled lip underside
+    { fy: 0.150, fx: 0.430 },   // shoulder — bulges back out (the rolled-rim cue)
+    { fy: 0.380, fx: 0.500 },   // belly — widest, near-spherical
+    { fy: 0.640, fx: 0.455 },
+    { fy: 0.850, fx: 0.310 },   // taper toward base
+    { fy: 0.960, fx: 0.160 },
+    { fy: 1.000, fx: 0.120 },   // small rounded base, no stem
+  ];
+  function smoothSpline(c, pts) {
+    c.moveTo(pts[0].x, pts[0].y);
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      c.bezierCurveTo(
+        p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6,
+        p2.x - (p3.x - p1.x) / 6, p2.y - (p3.y - p1.y) / 6,
+        p2.x, p2.y
+      );
+    }
+  }
+  function vesselPath(c) {
+    const right = PROFILE.map(p => ({ x: potCx + p.fx * potW, y: potTopY + p.fy * potH }));
+    const left  = PROFILE.slice().reverse().map(p => ({ x: potCx - p.fx * potW, y: potTopY + p.fy * potH }));
+    c.beginPath();
+    smoothSpline(c, right.concat(left));
+    c.closePath();
+  }
+  const rimRX = PROFILE[0].fx * potW, rimRY = rimRX * 0.32;
+  const shoulderY = potTopY + PROFILE[2].fy * potH;
+  const shoulderRX = PROFILE[2].fx * potW;
+  const baseY = potTopY + potH;
+
+  /* small stubby feet + modest loop handles — the folklore-pot cues */
+  function drawFeetAndHandles(c, edgeA) {
+    c.save();
+    for (const sgn of [-1, 0, 1]) {
+      if (sgn === 0) continue; // centre foot sits behind the belly, unseen
+      const fx = potCx + sgn * potW * 0.20, fy = baseY - 1 * SCL;
+      c.beginPath();
+      c.ellipse(fx, fy + 3*SCL, 8*SCL, 4.2*SCL, 0, 0, TAU);
+      c.fillStyle = rgba(GOLD.deep, 0.85 * edgeA);
+      c.fill();
+      const hi = c.createRadialGradient(fx - 2*SCL, fy + 1*SCL, 0, fx, fy + 3*SCL, 7*SCL);
+      hi.addColorStop(0, rgba(GOLD.light, 0.5 * edgeA));
+      hi.addColorStop(1, rgba(GOLD.light, 0));
+      c.fillStyle = hi;
+      c.fill();
+    }
+    for (const sgn of [-1, 1]) {
+      const hx = potCx + sgn * shoulderRX * 1.03, hy = shoulderY + potH * 0.06;
+      c.beginPath();
+      c.ellipse(hx, hy, 7 * SCL, 11 * SCL, 0, 0, TAU);
+      c.lineWidth = 2.6 * SCL;
+      c.strokeStyle = rgba(GOLD.deep, 0.75 * edgeA);
+      c.stroke();
+      c.beginPath();
+      c.ellipse(hx - sgn*1.2*SCL, hy - 2*SCL, 7 * SCL, 11 * SCL, 0, PI*1.15, PI*1.75);
+      c.lineWidth = 1.3 * SCL;
+      c.strokeStyle = rgba(GOLD.hi, 0.45 * edgeA);
+      c.stroke();
+    }
+    c.restore();
+  }
+
+  /* photorealistic but MATTE gold: base → form-light → ambient occlusion →
+   * a soft (not glossy) sheen → fresnel rim. `glass` slides the wall from
+   * solid metal (0) toward candled-translucent (1) — but per the egg, the
+   * wall never disappears; it keeps a floor of presence throughout. */
+  function paintGoldSurface(c, glass) {
+    const topY = potTopY, botY = potTopY + potH, halfW = potW * 0.5;
+    const fillA = 1 - glass * 0.90;   // much more see-through at full candle
+    const edgeA = 1 - glass * 0.30;
+
+    c.save();
+    vesselPath(c);
+    c.clip();
+
+    const base = c.createLinearGradient(0, topY, 0, botY);
+    base.addColorStop(0.00, rgba(GOLD.light,  fillA));
+    base.addColorStop(0.30, rgba(GOLD.mid,    fillA));
+    base.addColorStop(0.68, rgba(GOLD.deep,   fillA));
+    base.addColorStop(1.00, rgba(GOLD.shadow, fillA));
+    c.fillStyle = base;
+    c.fillRect(potCx - halfW - 4, topY - 4, halfW*2 + 8, potH + 8);
+
+    c.globalCompositeOperation = 'lighter';
+    const lx = potCx - halfW * 0.42, ly = topY + potH * 0.34, lr = potH * 0.80;
+    const form = c.createRadialGradient(lx, ly, 0, lx, ly, lr);
+    form.addColorStop(0.00, rgba(GOLD.light, 0.34 * fillA));
+    form.addColorStop(0.40, rgba(GOLD.light, 0.14 * fillA));
+    form.addColorStop(0.72, rgba(GOLD.light, 0.04 * fillA));
+    form.addColorStop(1.00, rgba(GOLD.light, 0));
+    c.fillStyle = form;
+    c.fillRect(potCx - halfW - 4, topY - 4, halfW*2 + 8, potH + 8);
+    c.globalCompositeOperation = 'source-over';
+
+    c.globalCompositeOperation = 'multiply';
+    const ax = potCx + halfW * 0.40, ay = topY + potH * 0.82, ar = potH * 0.62;
+    const ao = c.createRadialGradient(ax, ay, 0, ax, ay, ar);
+    ao.addColorStop(0.00, rgba(GOLD.shadow, 0.50 * fillA));
+    ao.addColorStop(0.6,  rgba(GOLD.shadow, 0.20 * fillA));
+    ao.addColorStop(1.00, rgba(GOLD.shadow, 0));
+    c.fillStyle = ao;
+    c.fillRect(potCx - halfW - 4, topY - 4, halfW*2 + 8, potH + 8);
+    c.globalCompositeOperation = 'source-over';
+    c.restore();
+
+    // a soft, broad sheen — present but modest; this is brushed treasure,
+    // not a showroom mirror.
+    c.save();
+    vesselPath(c); c.clip();
+    c.globalCompositeOperation = 'lighter';
+    const hx = potCx - halfW * 0.34, hy = topY + potH * 0.24, hr = halfW * 1.15;
+    const spec = c.createRadialGradient(hx, hy, 0, hx, hy, hr);
+    spec.addColorStop(0.00, rgba(GOLD.hi, 0.20 * edgeA));
+    spec.addColorStop(0.35, rgba(GOLD.hi, 0.08 * edgeA));
+    spec.addColorStop(0.70, rgba(GOLD.hi, 0.02 * edgeA));
+    spec.addColorStop(1.00, rgba(GOLD.hi, 0));
+    c.fillStyle = spec;
+    c.fillRect(hx - hr, hy - hr, hr*2, hr*2);
+    c.restore();
+
+    // fresnel rim — warm limb brightening at the silhouette
+    c.save();
+    c.globalCompositeOperation = 'lighter';
+    vesselPath(c);
+    c.strokeStyle = rgba(GOLD.rim, 0.24 * edgeA);
+    c.lineWidth = max(1.2, halfW * 0.045);
+    c.filter = 'blur(' + max(0.6, halfW * 0.02) + 'px)';
+    c.stroke();
+    c.restore();
+
+    drawFeetAndHandles(c, edgeA);
+    return edgeA;
+  }
+
+  /* ── §3b the vessel's interior — a divergence-free curl-field nebula of
+   * Space Zero colour, ported from the egg's own interior technique. ── */
+  function makeInterior() {
+    const M = 16;
+    const patches = [];
+    let seed = 9173;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    let gi = 0;
+    for (let i = 0; i < M; i++) {
+      const col = INTERIOR_COLS[i % INTERIOR_COLS.length];
+      const a = i * TAU * (1 / PHI);
+      const rad = sqrt((i + 0.5) / M);
+      const nx = cos(a) * rad * 0.88;
+      const ny = 0.5 + sin(a) * rad * 0.46;
+      const isGlyph = i % 4 === 1;
+      patches.push({
+        col, nx, ny, hx0: nx, hy0: ny,
+        homeR: 0.10 + 0.20 * rnd(), homeAng: rnd() * TAU,
+        homeOmega: (rnd() < 0.5 ? 1 : -1) * (0.05 + 0.10 * rnd()),
+        phase0: ((i * PHI) % 1) * TAU,
+        omega: OMEGA_SO2 * (0.72 + 0.55 * rnd()),
+        baseR: 0.24 + 0.22 * rnd(),
+        cAcc: rnd(), cRate: 0.5 + 0.9 * rnd(),
+        depth: rnd(),
+        glyph: isGlyph ? CURRENCY_GLYPHS[gi++ % CURRENCY_GLYPHS.length] : null,
+        rotSpeed: (rnd() < 0.5 ? -1 : 1) * (0.04 + 0.06 * rnd()),
+      });
+    }
+    return patches;
+  }
+  function interiorFlow(nx, ny, t) {
+    const yc = ny - 0.5;
+    const w0 = 0.10;
+    let vx = -yc * w0, vy = nx * w0;
+    const k1 = 2.1, k2 = 3.3, k3 = 5.0;
+    const p1 = t * 0.060, p2 = t * 0.041, p3 = t * 0.085;
+    vx +=  0.06 * cos(k1 * ny + p1) * cos(k2 * nx - p2);
+    vy += -0.06 * sin(k1 * nx - p1) * sin(k2 * ny + p2);
+    vx +=  0.03 * sin(k3 * ny - p3);
+    vy +=  0.03 * cos(k3 * nx + p3);
+    const prec = t * 0.05;
+    vx += 0.012 * cos(prec); vy += 0.012 * sin(prec);
+    return [vx, vy];
+  }
+  function stepInterior(patches, dt, t) {
+    for (const p of patches) {
+      p.homeAng += p.homeOmega * dt;
+      const hx = p.hx0 + p.homeR * cos(p.homeAng);
+      const hy = p.hy0 + p.homeR * sin(p.homeAng) * 0.7;
+      const [vx, vy] = interiorFlow(p.nx, p.ny, t);
+      p.nx += vx * dt; p.ny += vy * dt;
+      p.nx += (hx - p.nx) * 0.02;
+      p.ny += (hy - p.ny) * 0.02;
+      const dcx = p.nx, dcy = (p.ny - 0.5);
+      const rc = hypot(dcx, dcy * 1.4);
+      if (rc < 0.40) {
+        const push = (0.40 - rc) * 0.02, inv = rc > 1e-4 ? 1 / rc : 0;
+        p.nx += dcx * inv * push; p.ny += dcy * 1.4 * inv * push;
+      }
+      const ex = p.nx / 0.90, ey = (p.ny - 0.5) / 0.55;
+      const rr = ex*ex + ey*ey;
+      if (rr > 1) { const s = 1/sqrt(rr); p.nx *= s*0.985; p.ny = 0.5 + (p.ny-0.5)*s*0.985; }
+      const shear = hypot(vx, vy);
+      const L = p.cRate * (0.5 + 4.0 * shear);
+      p.cAcc += L * dt * 0.6;
+      const Csat = 1 / p.omega;
+      if (p.cAcc >= Csat) p.cAcc -= Csat;
+    }
+  }
+  function interiorToPx(nx, ny) {
+    return [potCx + nx * potW * 0.40, potTopY + potH*0.56 + (ny - 0.5) * potH * 0.90];
+  }
+  function drawInterior(c, patches, t, candle) {
+    if (candle < 0.01) return;
+    c.save();
+    c.globalCompositeOperation = 'lighter';
+    const order = patches.map((_, i) => i).sort((a, b) => patches[b].depth - patches[a].depth);
+    for (const idx of order) {
+      const p = patches[idx];
+      const [x, y] = interiorToPx(p.nx, p.ny);
+      const Csat = 1 / p.omega;
+      const phi = clamp01(p.cAcc / Csat);
+      const envelope = 0.5 - 0.5 * cos(phi * TAU);
+      const flare = 0.55 + 0.45 * envelope;
+      const depthDim = 0.68 + 0.32 * (1 - p.depth);
+      const vis = candle * depthDim * flare;
+      if (vis < 0.02) continue;
+      const breath = 0.9 + 0.18 * sin(t * 0.5 + p.phase0);
+      const R = p.baseR * potW * 0.56 * breath;
+      if (R < 0.5) continue;
+      const col = blend(p.col, GOLD.light, 0.08 * envelope);
+      const aCore = 0.78 * vis;
+      const g = c.createRadialGradient(x, y, 0, x, y, R);
+      g.addColorStop(0.00, rgba(col, aCore));
+      g.addColorStop(0.32, rgba(col, aCore * 0.66));
+      g.addColorStop(0.66, rgba(col, aCore * 0.26));
+      g.addColorStop(1.00, rgba(col, 0));
+      c.fillStyle = g;
+      c.fillRect(x - R, y - R, R * 2, R * 2);
+      if (p.glyph) {
+        const glyphCol = blend(col, GOLD.hi, 0.4 + 0.4 * envelope);
+        c.save();
+        c.translate(x, y);
+        c.rotate(t * p.rotSpeed + p.phase0);
+        c.filter = 'blur(' + max(0.4, R * 0.05) + 'px)';
+        c.font = '600 ' + (R * 0.95).toFixed(1) + 'px Georgia, "Cormorant Garamond", serif';
+        c.textAlign = 'center';
+        c.textBaseline = 'middle';
+        c.fillStyle = rgba(glyphCol, min(0.85, aCore * 1.3));
+        c.fillText(p.glyph, 0, 0);
+        c.restore();
+      }
+    }
+    c.restore();
+  }
+  /* the warm lamp wash and the rim transmission, exactly the egg's own two
+   * candling cues, re-parametrised to the vessel's geometry. */
+  function drawCandleGlow(c, t, candle) {
+    if (candle < 0.02) return;
+    c.save();
+    const lampX = potCx, lampY = potTopY + potH * 0.58;
+    const Rg = potW * 1.15;
+    const breath = 0.9 + 0.1 * sin(t * 0.4);
+    const a = 0.16 * candle * breath;
+    c.globalCompositeOperation = 'lighter';
+    const core = c.createRadialGradient(lampX, lampY, potW * 0.12, lampX, lampY, Rg);
+    core.addColorStop(0.00, rgba(PAL.amberCream, a * 0.30));
+    core.addColorStop(0.30, rgba(PAL.amberWarm, a * 0.22));
+    core.addColorStop(0.62, rgba(PAL.amberWarm, a * 0.10));
+    core.addColorStop(1.00, rgba(PAL.amberWarm, 0));
+    c.fillStyle = core;
+    c.fillRect(lampX - Rg, lampY - Rg, Rg * 2, Rg * 2);
+    c.restore();
+  }
+  function drawCandleRim(c, candle, t) {
+    if (candle < 0.04) return;
+    c.save();
+    c.globalCompositeOperation = 'lighter';
+    vesselPath(c);
+    const pulse = 0.85 + 0.15 * sin(t * 0.5);
+    c.strokeStyle = rgba(PAL.amberCream, 0.30 * candle * pulse);
+    c.lineWidth = max(2, potW * 0.018);
+    c.filter = 'blur(' + max(1, potW * 0.01) + 'px)';
+    c.stroke();
+    c.restore();
+  }
+  const interiorPatches = makeInterior();
+
+  /* ── §4 pointer: hover candles the vessel; the stream can be stirred ── */
+  let potHoverTarget = 0, potHover = 0, wasHovering = false;
+  function localPt(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (W / (r.width || W)), y: (e.clientY - r.top) * (H / (r.height || H)) };
+  }
+  function hitPot(p) {
+    const dx = (p.x - potCx) / (potW * 0.58), dy = (p.y - (potTopY + potH*0.52)) / (potH * 0.62);
+    return dx*dx + dy*dy <= 1;
+  }
+
+  /* ── stir: moving through the rainbow physically displaces the smoke —
+   * a light touch on plain hover, a fuller push when you click and drag.
+   * No scripted burst or ring, just a trail of recent contact points that
+   * push nearby colour outward and fade with age. It settles back into the
+   * flow on its own — the same rupture-then-regeneration CRR already runs
+   * everywhere else here; "regeneration" is just what happens once nothing
+   * is left pushing. ── */
+  let dragging = false;
+  let trail = [];
+  const TRAIL_MAX_AGE = 1.2, TRAIL_MAX_N = 60;
+  function pushTrailPoint(p, strength) {
+    const last = trail[trail.length - 1];
+    if (last && hypot(p.x - last.x, p.y - last.y) < 2.5 * SCL) return;
+    trail.push({ x: p.x, y: p.y, t: simT, strength });
+    if (trail.length > TRAIL_MAX_N) trail.shift();
+  }
+  function pruneTrail() {
+    while (trail.length && simT - trail[0].t > TRAIL_MAX_AGE) trail.shift();
+  }
+  function stirAt(px, py) {
+    let dx = 0, dy = 0, mag = 0;
+    for (const tp of trail) {
+      const ddx = px - tp.x, ddy = py - tp.y;
+      const d = sqrt(ddx*ddx + ddy*ddy) + 1e-3;
+      const falloffR = 52 * SCL;
+      const spatial = exp(-(d*d) / (2 * falloffR * falloffR));
+      const age = simT - tp.t;
+      const timeDecay = exp(-age * 2.0);
+      const push = spatial * timeDecay * tp.strength;
+      dx += (ddx / d) * push;
+      dy += (ddy / d) * push;
+      mag += push;
+    }
+    return { dx: dx * 22 * SCL, dy: dy * 22 * SCL, mag: min(1, mag) };
+  }
+  canvas.addEventListener('pointermove', e => {
+    const p = localPt(e);
+    potHoverTarget = hitPot(p) ? 1 : 0;
+    canvas.style.cursor = potHoverTarget ? 'pointer' : (dragging ? 'grabbing' : 'default');
+    if (!potHoverTarget) pushTrailPoint(p, dragging ? 1.0 : 0.34);
   });
+  canvas.addEventListener('pointerdown', e => {
+    const p = localPt(e);
+    if (hitPot(p)) return;
+    dragging = true;
+    pushTrailPoint(p, 1.0);
+  });
+  canvas.addEventListener('pointerup', () => { dragging = false; });
+  canvas.addEventListener('pointerleave', () => { potHoverTarget = 0; dragging = false; canvas.style.cursor = 'default'; });
 
-  let C = 0.2, pulses = [];          // coherence accumulator + rupture events
+  /* ── §5 coherence pool + a one-shot chime when the vessel opens ── */
+  let C = 0.2, pulses = [], chimes = [];
   let simT = 0, tPrev = performance.now() / 1000;
+
+  /* watercolour patch — the logo's own painter, reused verbatim */
+  function patch(c, x, y, sigma, col, a, flowAngle, tendrils) {
+    if (a < 0.006) return;
+    const g = c.createRadialGradient(x, y, 0, x, y, sigma);
+    g.addColorStop(0.00, rgba(col, a));
+    g.addColorStop(0.24, rgba(col, a * 0.86));
+    g.addColorStop(0.50, rgba(col, a * 0.55));
+    g.addColorStop(0.78, rgba(col, a * 0.22));
+    g.addColorStop(1.00, rgba(col, 0));
+    c.fillStyle = g;
+    c.fillRect(x - sigma, y - sigma, sigma * 2, sigma * 2);
+    for (let k = 0; k < tendrils; k++) {
+      const fan = (k - (tendrils - 1) / 2) * 0.55;
+      const L = sigma * PHI * 0.55;
+      const tx = x + cos(flowAngle + fan) * L, ty = y + sin(flowAngle + fan) * L;
+      const ts = sigma * 0.46;
+      const tg = c.createRadialGradient(tx, ty, 0, tx, ty, ts);
+      tg.addColorStop(0.00, rgba(col, a * 0.58));
+      tg.addColorStop(0.55, rgba(col, a * 0.20));
+      tg.addColorStop(1.00, rgba(col, 0));
+      c.fillStyle = tg;
+      c.fillRect(tx - ts, ty - ts, ts * 2, ts * 2);
+    }
+  }
+
+  /* currency motes in the outer stream — genuinely travel with the current,
+   * looping along the flow, fading in as they enter and out as they near
+   * the vessel, with a slow lateral wander across the ribbon's width. */
+  const GLYPH_FLOW_START = 0.26, GLYPH_FLOW_END = 1.03;
+  const glyphMotes = (() => {
+    let seed = 4471;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const N = 9;
+    const arr = [];
+    for (let i = 0; i < N; i++) {
+      arr.push({
+        speed: 0.045 + 0.050 * rnd(),      // fraction of the flow range per second
+        phase0: rnd(),
+        u: rnd(),
+        side: rnd() < 0.5 ? -1 : 1,
+        wanderAmp: 0.30 + 0.45 * rnd(),
+        wanderSpeed: 0.12 + 0.22 * rnd(),
+        glyph: CURRENCY_GLYPHS[i % CURRENCY_GLYPHS.length],
+        phase: rnd() * TAU,
+        breathSpeed: 0.25 + 0.30 * rnd(),
+        scale: 0.85 + 0.5 * rnd(),
+      });
+    }
+    return arr;
+  })();
+  function drawGlyphMotes(c, t) {
+    c.save();
+    c.globalCompositeOperation = 'screen';
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    for (const m of glyphMotes) {
+      const cyclePos = (t * m.speed + m.phase0) % 1;
+      const frac = GLYPH_FLOW_START + cyclePos * (GLYPH_FLOW_END - GLYPH_FLOW_START);
+      const travelFade = smooth(0, 0.14, cyclePos) * smooth(1, 0.82, cyclePos);
+      if (travelFade < 0.02) continue;
+      const cl = centerline(frac);
+      const pang = perpAngle(frac, cl);
+      const rw = ribbonHalf(cl.vt);
+      const wander = m.side * (0.35 + m.wanderAmp * 0.5 * (1 + sin(t * m.wanderSpeed + m.phase)));
+      const off = wander * rw * 1.3;
+      let px = cl.x + cos(pang) * off, py = cl.y + sin(pang) * off;
+      const stir = stirAt(px, py);
+      px += stir.dx; py += stir.dy;
+      const breath = 0.5 + 0.5 * sin(t * m.breathSpeed + m.phase);
+      const a = (0.20 + 0.20 * pow(max(0, breath), 1.4)) * travelFade;
+      const goldMix = goldMixAt(frac);
+      const col = blend(specAt(m.u), GOLD.light, 0.30 + 0.55 * goldMix);
+      const size = (10 * SCL + rw * 0.9) * m.scale;
+      c.save();
+      c.translate(px, py);
+      c.rotate(pang - PI/2 + 0.15 * sin(t * 0.2 + m.phase));
+      c.filter = 'blur(' + max(0.4, size * 0.028) + 'px)';
+      c.font = '600 ' + size.toFixed(1) + 'px Georgia, "Cormorant Garamond", serif';
+      c.fillStyle = rgba(col, a);
+      c.fillText(m.glyph, 0, 0);
+      c.restore();
+    }
+    c.restore();
+  }
 
   function draw(now) {
     const t = now / 1000;
     let dt = t - tPrev; tPrev = t;
-    if (!isFinite(dt) || dt < 0) dt = 1 / 60;
+    if (!isFinite(dt) || dt < 0) dt = 1/60;
     if (dt > 0.1) dt = 0.1;
-    simT += dt;
+    simT += dt; _simTRef = simT;
 
-    C += dt * 0.045;                                  // slow accumulation
-    if (C >= 1) { C = 0.15; pulses.push(simT); }       // rupture — release
+    // slow, dreamlike candling — matches the egg's own reveal pacing
+    const cspeed = 1 - exp(-dt / 0.90);
+    potHover += (potHoverTarget - potHover) * cspeed;
+    if (potHoverTarget && !wasHovering) chimes.push(simT);
+    wasHovering = !!potHoverTarget;
+    chimes = chimes.filter(ch => simT - ch < 1.0);
+
+    C += dt * 0.045;
+    if (C >= 1) { C = 0.15; pulses.push(simT); }
     pulses = pulses.filter(p => simT - p < 1.6);
 
+    stepInterior(interiorPatches, dt, simT);
+    pruneTrail();
+
     ctx.clearRect(0, 0, W, H);
-    const { x0, y0, x1, y1, cx, cy } = geom();
 
-    /* ── the arc: many small currents, converging ── */
+    /* ── the bow: liquid-light patches ARE the rainbow, start to finish —
+     * one fluid system, no separate clean band underneath. Colour position
+     * still comes straight from the real Cauchy-dispersion physics (s.u),
+     * so it's unmistakably a rainbow; multi-octave turbulence keeps the
+     * whole length moving, not just the vortex near the vessel. Past the
+     * rupture point it spins into the pot; hue drawn toward gold as it
+     * goes: R = φ·exp(C/Ω). Moving through it stirs it physically. ── */
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
-    BANDS.forEach((b, i) => {
-      const wob = 7 * SCL * sin(simT * 0.32 + b.ph);
-      const off = (i - (BANDS.length - 1) / 2) * 9 * SCL;
-      ctx.beginPath();
-      ctx.moveTo(x0, y0 + off * 0.4);
-      ctx.quadraticCurveTo(cx + wob, cy + off, x1 + off * 0.28, y1 - off * 0.18);
-      const grad = ctx.createLinearGradient(x0, y0, x1, y1);
-      grad.addColorStop(0.00, rgba(b.col, 0));
-      grad.addColorStop(0.32, rgba(b.col, 0.05));
-      grad.addColorStop(0.74, rgba(b.col, 0.30 * b.w));
-      grad.addColorStop(1.00, rgba(blend(b.col, PAL.amberCream, 0.4), 0.44 * b.w));
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = (6.5 - i * 0.45) * SCL;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-    });
-    ctx.restore();
-
-    /* ── the pool: breathing, glooping gold ── */
-    const breath = 0.5 + 0.5 * sin(simT * TAU / T_BREATH_BASE);
-    const rBase = 30 * SCL * (0.90 + 0.16 * breath) * (0.86 + 0.5 * C);
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    const N = 40;
-    ctx.beginPath();
-    for (let i = 0; i <= N; i++) {
-      const a = (i / N) * TAU;
-      const wob = 1 + 0.11 * sin(a * 3 + simT * 0.55) + 0.06 * sin(a * 5 - simT * 0.85);
-      const r = rBase * wob;
-      const px = x1 + r * cos(a), py = y1 + r * sin(a) * 0.60;   // squashed — a puddle, not a sphere
-      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    const RINGS = 12, PER_RING = 22, CALM_N = 14;
+    for (let ri = 0; ri < RINGS; ri++) {
+      const s = SPECTRUM[Math.round((ri / (RINGS - 1)) * (SPECTRUM.length - 1))];
+      for (let pj = 0; pj < PER_RING; pj++) {
+        let frac;
+        if (pj < CALM_N) {
+          frac = ((pj + 0.5) / CALM_N) * VORTEX_START;
+        } else {
+          const q = (pj - CALM_N + 0.5) / (PER_RING - CALM_N);
+          frac = VORTEX_START + q * (1.0 - VORTEX_START);
+        }
+        frac = clamp01(frac + 0.012 * sin(simT * 0.3 + ri * 1.7 + pj));
+        const cl = centerline(frac);
+        const pang = perpAngle(frac, cl);
+        const rw = ribbonHalf(cl.vt);
+        // multi-octave turbulence — the whole ribbon breathes and drifts,
+        // not just the section past the rupture point
+        const turb = 0.55 * sin(simT * 0.42 + ri * 1.9 + pj * 0.7)
+                   + 0.30 * sin(simT * 0.71 - ri * 1.1 + pj * 1.6 + 2.1)
+                   + 0.18 * sin(simT * 1.15 + ri * 0.5 - pj * 2.2 + 4.4);
+        const wob = turb * rw * 0.13;
+        const off = (0.5 - s.u) * rw * 2 + wob;
+        let px = cl.x + cos(pang) * off, py = cl.y + sin(pang) * off;
+        const breath = 0.55 + 0.45 * pow(cos(simT * TAU / T_BREATH_BASE + ri * 0.6 + pj * 0.4), 2);
+        const goldMix = goldMixAt(frac);
+        let col = goldMix > 0 ? blend(s.rgb, GOLD.mid, goldMix) : s.rgb;
+        const sigma = (rw * 0.88 + 4.5 * SCL) * (1 + 0.3 * (1 - cl.vt));
+        const stir = stirAt(px, py);
+        px += stir.dx; py += stir.dy;
+        const alphaMul = 1 + stir.mag * 0.7;
+        if (stir.mag > 0.02) col = blend(col, PAL.parchment, min(0.55, stir.mag * 0.6));
+        patch(ctx, px, py, sigma, col, 0.135 * breath * alphaMul, pang + PI/2, 2);
+      }
     }
-    ctx.closePath();
-    const pg = ctx.createRadialGradient(x1, y1, 0, x1, y1, rBase * 1.35);
-    pg.addColorStop(0.00, rgba(blend(PAL.amberCream, PAL.parchment, 0.2), 0.95));
-    pg.addColorStop(0.45, rgba(PAL.amberWarm, 0.72 + 0.16 * breath));
-    pg.addColorStop(1.00, rgba(PAL.lichenOchre, 0));
-    ctx.fillStyle = pg;
-    ctx.fill();
     ctx.restore();
 
-    /* ── rupture rings: coherence, released ── */
+    /* ── currency motes — sneaking into the mist near the vessel ── */
+    drawGlyphMotes(ctx, simT);
+
+    /* ── traveling beads: liquid actually running down the twist ── */
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    for (let k = 0; k < 3; k++) {
+      const ph = (simT * 0.17 + k / 3) % 1;
+      const cl = centerline(ph);
+      const a = 0.5 * smooth(0, 0.15, ph) * smooth(1, 0.85, ph);
+      if (a <= 0.005) continue;
+      const r = bandHalf * (1.5 - 0.9*cl.vt);
+      const g = ctx.createRadialGradient(cl.x, cl.y, 0, cl.x, cl.y, r);
+      g.addColorStop(0, rgba(PAL.parchment, a));
+      g.addColorStop(0.4, rgba(blend(PAL.amberCream, GOLD.hi, cl.vt), a * 0.4));
+      g.addColorStop(1, rgba(GOLD.light, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(cl.x - r, cl.y - r, r*2, r*2);
+    }
+    ctx.restore();
+
+    /* ── the vessel: candled exactly as the egg is — dark void first, then
+     * warm glow, then the swirl (luminous against the dark), then the gold
+     * wall itself painted translucent over all of it. ── */
+    ctx.save();
+    vesselPath(ctx);
+    ctx.clip();
+    if (potHover > 0.01) {
+      ctx.fillStyle = rgba([22, 16, 24], 0.22 * potHover);
+      ctx.fillRect(potCx - potW, potTopY, potW*2, potH);
+      drawCandleGlow(ctx, simT, potHover);
+      drawInterior(ctx, interiorPatches, simT, potHover);
+    }
+    ctx.restore();
+
+    const edgeA = paintGoldSurface(ctx, potHover);
+    drawCandleRim(ctx, potHover, simT);
+
+    /* rim ellipse — the opening. It reads as a solid lid at rest, but that
+     * flat isometric ellipse fights the reveal once the body's gone glassy,
+     * so it fades out with hover entirely, leaving the swirl unobstructed. */
+    const lidA = 1 - smooth(0, 0.85, potHover);
+    if (lidA > 0.01) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(potCx, potTopY, rimRX, rimRY, 0, 0, TAU);
+      const mouthGrad = ctx.createRadialGradient(potCx, potTopY, 0, potCx, potTopY, rimRX);
+      mouthGrad.addColorStop(0, rgba(blend(GOLD.shadow, PAL.ink, 0.3), 0.85 * lidA));
+      mouthGrad.addColorStop(1, rgba(GOLD.deep, 0.6 * lidA));
+      ctx.fillStyle = mouthGrad;
+      ctx.fill();
+      ctx.strokeStyle = rgba(GOLD.rim, 0.62 * lidA);
+      ctx.lineWidth = max(1, rimRY * 0.20);
+      ctx.stroke();
+      ctx.restore();
+    }
+    // a thin ring of light stays in the lid's place even at full reveal —
+    // just enough to mark the opening without reintroducing the flat disc
+    if (potHover > 0.05) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.beginPath();
+      ctx.ellipse(potCx, potTopY, rimRX, rimRY, 0, 0, TAU);
+      ctx.strokeStyle = rgba(GOLD.rim, 0.30 * potHover);
+      ctx.lineWidth = max(1, rimRY * 0.14);
+      ctx.filter = 'blur(' + max(0.5, rimRY * 0.12) + 'px)';
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    /* a few coins at the rim — part of the same lid, so they fade with it */
+    if (lidA > 0.01) {
+      ctx.save();
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * TAU + simT * 0.12;
+        const cxk = potCx + cos(a) * rimRX * 0.62, cyk = potTopY + sin(a) * rimRY * 0.62;
+        ctx.beginPath();
+        ctx.ellipse(cxk, cyk, 6.2*SCL, 3.2*SCL, 0, 0, TAU);
+        ctx.fillStyle = rgba(GOLD.mid, 0.95 * lidA);
+        ctx.fill();
+        ctx.strokeStyle = rgba(GOLD.deep, 0.7 * lidA);
+        ctx.lineWidth = 0.7 * SCL;
+        ctx.stroke();
+        const spark = 0.35 + 0.4 * pow(sin(simT*3 + i*2), 2);
+        const sg = ctx.createRadialGradient(cxk - 1.4*SCL, cyk - 1*SCL, 0, cxk, cyk, 4.2*SCL);
+        sg.addColorStop(0, rgba(GOLD.hi, spark*0.85*lidA));
+        sg.addColorStop(1, rgba(GOLD.hi, 0));
+        ctx.fillStyle = sg;
+        ctx.beginPath(); ctx.arc(cxk - 1.4*SCL, cyk - 1*SCL, 4.2*SCL, 0, TAU); ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    /* rupture rings + the chime that greets a hand reaching in */
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
     pulses.forEach(p => {
       const age = simT - p, k = age / 1.6;
       if (k > 1) return;
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
       ctx.beginPath();
-      ctx.ellipse(x1, y1, rBase * (1 + k * 1.9), rBase * (1 + k * 1.9) * 0.60, 0, 0, TAU);
-      ctx.strokeStyle = rgba(PAL.amberCream, 0.46 * (1 - k));
-      ctx.lineWidth = max(1, 2 * SCL * (1 - k));
+      ctx.ellipse(potCx, potTopY, rimRX*(1+k*1.8), rimRY*(1+k*1.8), 0, 0, TAU);
+      ctx.strokeStyle = rgba(GOLD.rim, 0.4*(1-k)*edgeA);
+      ctx.lineWidth = max(1, 2*SCL*(1-k));
       ctx.stroke();
-      ctx.restore();
     });
+    chimes.forEach(ch => {
+      const age = simT - ch, k = age / 1.0;
+      if (k > 1) return;
+      const g = ctx.createRadialGradient(potCx, potTopY, 0, potCx, potTopY, rimRX*(0.6+k*2.2));
+      g.addColorStop(0, rgba(GOLD.hi, 0.5*(1-k)));
+      g.addColorStop(1, rgba(GOLD.hi, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(potCx, potTopY, rimRX*(0.6+k*2.2), 0, TAU); ctx.fill();
+    });
+    ctx.restore();
 
     scheduleNext(canvas, draw);
   }
