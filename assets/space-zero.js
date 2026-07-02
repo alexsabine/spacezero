@@ -25,6 +25,16 @@
 (function () {
 'use strict';
 
+/* Site root, derived from this script's own URL, so header/footer links
+ * resolve correctly whether the page sits at the site root or in a
+ * subdirectory (e.g. trips/, October26/), and whether the site is served
+ * from a domain root or a GitHub Pages project subpath. */
+const SITE_ROOT = (function () {
+  const script = document.currentScript;
+  if (!script || !script.src) return '';
+  return script.src.replace(/assets\/space-zero(?:_2)?\.js(?:\?.*)?$/, '');
+})();
+
 const TAU = Math.PI * 2;
 const PI  = Math.PI;
 const PHI = (1 + Math.sqrt(5)) / 2;
@@ -1928,12 +1938,12 @@ const NAV = [
 function renderHeader(currentPage) {
   const links = NAV.map(n => {
     const active = n.key === currentPage ? ' class="active"' : '';
-    return `<a href="${n.href}"${active}>${n.label}</a>`;
+    return `<a href="${SITE_ROOT}${n.href}"${active}>${n.label}</a>`;
   }).join('');
   return `
 <header class="site-header">
   <div class="header-inner">
-    <a href="index.html" class="header-brand">Space Zero</a>
+    <a href="${SITE_ROOT}index.html" class="header-brand">Space Zero</a>
     <nav class="header-nav">${links}</nav>
   </div>
 </header>`;
