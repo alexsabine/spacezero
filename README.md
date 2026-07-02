@@ -1,6 +1,6 @@
 # Space Zero — site
 
-A four-page static site for [Space Zero](https://example.com), a not-for-profit
+A four-page static site for [Space Zero](https://www.space-zero.org), a not-for-profit
 somatic and embodied practice space in Crescent City, California. Designed to
 be hosted on GitHub Pages with no build step.
 
@@ -12,11 +12,22 @@ be hosted on GitHub Pages with no build step.
 ├── what.html            # What — river panorama, practices, weekly rhythm
 ├── who.html             # Who — Space Zero & HUM Lab adjacency, people
 ├── when-where.html      # When & Where — location, hours, calendar, contact
+├── favicon.ico          # Multi-resolution favicon (16/32/48px)
+├── site.webmanifest     # Web app manifest (name, theme colour, icons)
+├── robots.txt           # Crawler rules + sitemap pointer
+├── sitemap.xml          # Sitemap of the four public pages
 └── assets/
     ├── space-zero.css   # Shared styles (design tokens, header, footer, shared components)
     ├── space-zero.js    # Shared runtime (logo, element visuals, strapline, chrome loader)
-    └── river-pano.jpg   # Crescent City river panorama (hero on the What page)
+    ├── river-pano.jpg   # Crescent City river panorama (hero on the What page)
+    └── icons/           # Favicon PNGs (16–512px), apple-touch-icon, og-image.jpg
 ```
+
+Every page's `<head>` links the icon/manifest set in `assets/icons/` and
+`favicon.ico`, plus per-page canonical, Open Graph, and Twitter Card tags
+pointing at `https://www.space-zero.org`. If the production domain ever
+changes, update those `<link>`/`<meta>` tags along with `robots.txt` and
+`sitemap.xml`.
 
 Every page loads the same two asset files. There is no server-side templating;
 the header and footer are injected client-side by `space-zero.js`. This keeps
