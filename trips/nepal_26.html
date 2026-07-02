@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/space-zero.css">
+<link rel="stylesheet" href="../assets/space-zero.css">
 <style>
 /* ── Intro ── */
 .og-intro {
@@ -115,6 +115,10 @@
   margin: 0 0 20px; padding-left: 20px;
   border-left: 2px solid var(--iceplant);
   font-style: italic; color: var(--ink-soft);
+}
+
+.og-wide {
+  max-width: 960px; margin: 0 auto;
 }
 
 /* ── Photo interlude (reused pattern) ── */
@@ -373,14 +377,14 @@
 }
 </style>
 </head>
-<body data-page="what">
+<body data-page="what" data-root="../">
 
 <div id="site-header"></div>
 
 <!-- ── Intro ── -->
 <section class="og-intro">
   <div class="mini-logo"><canvas id="miniLogo" width="360" height="240"></canvas></div>
-  <div class="eyebrow"><a href="what.html#open-ground">Space Zero: Open Ground</a></div>
+  <div class="eyebrow"><a href="../what.html#open-ground">Space Zero: Open Ground</a></div>
   <h1>Meeting the Future</h1>
   <p class="subhead">AI &middot; Care &middot; Creativity &middot; Kathmandu &amp; Lumbini &middot; Oct 28&ndash;Nov 4</p>
   <p class="lede">A gathering of researchers, practitioners, and builders, meeting in Nepal to show each other how we actually work, and to ask what intelligent systems owe to the beings they touch.</p>
@@ -530,7 +534,7 @@
 
 <!-- ── 06 Join Us ── -->
 <section class="og-section">
-  <div class="og-grid" style="padding: 90px 40px;">
+  <div class="og-grid" style="padding: 90px 40px 0;">
     <div class="og-left">
       <div class="eyebrow">06</div>
       <h2>Join us</h2>
@@ -538,13 +542,15 @@
     </div>
     <div class="og-right">
       <p class="eoi-prompt-outer" style="font-size:17px;color:var(--ink-soft);line-height:1.7;margin:0 0 18px;">If the question of what intelligent systems owe the beings they touch is alive for you, we'd like to hear from you. Expressions of interest are open now; the full registration form follows for those confirmed.</p>
-      <div class="og-join-box">
-        <div class="field-label">Expression of interest</div>
-        <div class="og-form-embed">
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScUYvLtM9ryLn3O5jUGmK6Rf-Jqk67W2Xcr44nDb61rSWg98A/viewform?embedded=true" width="100%" height="1250" frameborder="0" marginheight="0" marginwidth="0" title="Open Ground: Nepal Expression of Interest">Loading&hellip;</iframe>
-        </div>
-        <p class="note">Prefer it full-page? <a href="https://docs.google.com/forms/d/e/1FAIpQLScUYvLtM9ryLn3O5jUGmK6Rf-Jqk67W2Xcr44nDb61rSWg98A/viewform" target="_blank" rel="noopener">Open the form directly</a> &middot; or write to <a href="mailto:info@space-zero.org?subject=Open%20Ground%3A%20Nepal">info@space-zero.org</a></p>
+    </div>
+  </div>
+  <div class="og-wide" style="padding: 0 40px 90px;">
+    <div class="og-join-box">
+      <div class="field-label">Expression of interest</div>
+      <div class="og-form-embed">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScUYvLtM9ryLn3O5jUGmK6Rf-Jqk67W2Xcr44nDb61rSWg98A/viewform?embedded=true" width="100%" height="1250" frameborder="0" marginheight="0" marginwidth="0" title="Open Ground: Nepal Expression of Interest">Loading&hellip;</iframe>
       </div>
+      <p class="note">Prefer it full-page? <a href="https://docs.google.com/forms/d/e/1FAIpQLScUYvLtM9ryLn3O5jUGmK6Rf-Jqk67W2Xcr44nDb61rSWg98A/viewform" target="_blank" rel="noopener">Open the form directly</a> &middot; or write to <a href="mailto:info@space-zero.org?subject=Open%20Ground%3A%20Nepal">info@space-zero.org</a></p>
     </div>
   </div>
 </section>
@@ -566,6 +572,6 @@
 
 <div id="site-footer"></div>
 
-<script src="assets/space-zero.js" defer></script>
+<script src="../assets/space-zero.js" defer></script>
 </body>
 </html>
