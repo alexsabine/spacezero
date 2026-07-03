@@ -1360,6 +1360,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+
+    // ─── Fallback coupling for isolated portraits ────────────────────
+    // A portrait ends up with zero row-neighbours in two cases: it's
+    // shown solo above its group (e.g. a lead figure in its own
+    // .people-grid), or the grid wraps to a final row of exactly one
+    // card at the current viewport width. Either way N=0 in the
+    // Kuramoto sum below, so its ring never entrains — it just
+    // breathes on its own private clock. Give it a coupling-ONLY link
+    // (no leftNeighbour/rightNeighbour, so no visual bridge or packets
+    // are spawned — those still require true physical adjacency) to
+    // the nearest other portrait in its group, so its phase still
+    // drifts toward the others.
+    const byGroup = new Map();
+    for (const p of portraits) {
+      if (!byGroup.has(p.group)) byGroup.set(p.group, []);
+      byGroup.get(p.group).push(p);
+    }
+    for (const p of portraits) {
+      if (p.neighbours.length > 0) continue;
+      let nearest = null, bestDist = Infinity;
+      for (const other of (byGroup.get(p.group) || [])) {
+        if (other === p) continue;
+        const dx = other._x - p._x, dy = other._y - p._y;
+        const d = dx * dx + dy * dy;
+        if (d < bestDist) { bestDist = d; nearest = other; }
+      }
+      if (nearest) p.neighbours = [nearest];
+    }
   }
   recomputeNeighbours();
 
