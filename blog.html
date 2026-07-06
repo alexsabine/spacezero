@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Space Zero &middot; Blog Zero</title>
+<meta name="description" content="Blog Zero — Emergent Stories from the Space Zero community: researchers, practitioners, artists, and wanderers. Read the latest, or submit your own.">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="assets/icons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="assets/icons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="assets/icons/favicon-96x96.png" sizes="96x96">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#f4f1eb">
+
+<link rel="canonical" href="https://www.space-zero.org/blog.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Space Zero">
+<meta property="og:title" content="Space Zero · Blog Zero">
+<meta property="og:description" content="Emergent Stories from the Space Zero community. Read the latest, or submit your own.">
+<meta property="og:url" content="https://www.space-zero.org/blog.html">
+<meta property="og:image" content="https://www.space-zero.org/assets/icons/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Space Zero · Blog Zero">
+<meta name="twitter:description" content="Emergent Stories from the Space Zero community. Read the latest, or submit your own.">
+<meta name="twitter:image" content="https://www.space-zero.org/assets/icons/og-image.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/space-zero.css">
+<style>
+/* ── Intro ── */
+.bz-intro {
+  padding: 120px 40px 56px;
+  text-align: center;
+}
+.bz-intro .mini-logo {
+  display: flex; justify-content: center;
+  margin-bottom: 34px;
+}
+.bz-intro .mini-logo canvas {
+  display: block; max-width: 100%;
+  width: 360px; height: 240px;
+}
+@media (max-width: 400px) {
+  .bz-intro .mini-logo canvas { width: 100%; height: auto; aspect-ratio: 3 / 2; }
+}
+.bz-intro .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.24em; color: var(--muted);
+  margin-bottom: 20px;
+}
+.bz-intro h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 400; margin: 0 0 22px;
+  letter-spacing: 0.005em; line-height: 1.2;
+}
+.bz-intro .lede {
+  max-width: 620px; margin: 0 auto 30px;
+  font-size: 19px; color: var(--ink-soft);
+  line-height: 1.7; font-weight: 300;
+  font-style: italic;
+}
+.bz-intro .top-links {
+  display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;
+}
+.bz-intro .top-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--muted);
+}
+.bz-intro .top-links a:hover { color: var(--iceplant); }
+
+/* ── Posts ── */
+.bz-posts {
+  border-top: 1px solid var(--rule);
+  background: rgba(237, 230, 212, 0.35);
+}
+.post-card {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 0;
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+  transition: border-color 0.25s ease;
+}
+.post-card:hover { border-color: var(--rule-strong); }
+.post-card + .post-card { margin-top: 36px; }
+.post-card-img {
+  display: block; position: relative; overflow: hidden;
+  min-height: 260px;
+}
+.post-card-img img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+}
+.post-card-body { padding: 40px 40px 36px; }
+.post-card-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.2em; color: var(--muted);
+  margin-bottom: 14px;
+}
+.post-card-body h3 {
+  font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+  font-weight: 400; margin: 0 0 6px;
+  line-height: 1.2; letter-spacing: 0.005em;
+}
+.post-card-body h3 a:hover { color: var(--iceplant); }
+.post-card-sub {
+  font-size: 17px; font-style: italic; font-weight: 300;
+  color: var(--muted); margin: 0 0 18px;
+}
+.post-card-excerpt {
+  font-size: 16px; color: var(--ink-soft);
+  line-height: 1.7; margin: 0 0 22px; font-weight: 400;
+}
+.post-card-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted-light);
+  margin-bottom: 22px;
+}
+.post-card-meta span + span::before { content: '\00b7'; margin: 0 8px; }
+.post-card-read {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--ink-soft);
+}
+.post-card-read:hover { color: var(--iceplant); }
+
+/* ── Submission ── */
+.bz-submit { border-top: 1px solid var(--rule); }
+.bz-submit-grid {
+  max-width: 960px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1.2fr;
+  gap: 64px; align-items: flex-start;
+}
+.bz-submit-left .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.22em; color: var(--muted);
+  margin-bottom: 16px;
+}
+.bz-submit-left h2 {
+  font-size: clamp(1.7rem, 3vw, 2.1rem);
+  font-weight: 400; margin: 0 0 20px;
+  letter-spacing: 0.005em; line-height: 1.2;
+}
+.bz-submit-left .tagline {
+  font-size: 17px; color: var(--muted);
+  line-height: 1.65; margin: 0 0 18px;
+  font-style: italic; font-weight: 300;
+}
+.bz-submit-left p.plain {
+  font-size: 15px; color: var(--muted);
+  line-height: 1.7; margin: 0;
+}
+
+.bz-form {
+  padding: 34px 32px;
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+}
+.bz-field { margin-bottom: 22px; }
+.bz-field label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--muted);
+  margin-bottom: 10px;
+}
+.bz-field label .opt {
+  text-transform: none; letter-spacing: 0.06em;
+  color: var(--muted-light);
+}
+.bz-field input[type="text"],
+.bz-field input[type="email"],
+.bz-field textarea {
+  width: 100%;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px; color: var(--ink);
+  background: rgba(244, 241, 235, 0.6);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  padding: 12px 14px;
+  transition: border-color 0.2s ease;
+}
+.bz-field input:focus, .bz-field textarea:focus {
+  outline: none; border-color: var(--iceplant-soft);
+}
+.bz-field textarea { resize: vertical; min-height: 96px; line-height: 1.55; }
+.bz-field .hint {
+  font-size: 13.5px; color: var(--muted-light);
+  font-style: italic; margin: 8px 0 0; line-height: 1.5;
+}
+.bz-field input[type="file"] {
+  display: block; width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted);
+  padding: 14px;
+  border: 1px dashed var(--rule-strong);
+  background: rgba(244, 241, 235, 0.5);
+}
+.bz-consent {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 18px 16px;
+  background: rgba(237, 230, 212, 0.5);
+  border: 1px solid var(--rule);
+  margin-bottom: 24px;
+}
+.bz-consent input[type="checkbox"] {
+  margin: 4px 0 0; flex-shrink: 0;
+  width: 16px; height: 16px;
+  accent-color: var(--iceplant);
+}
+.bz-consent label {
+  font-size: 14.5px; color: var(--muted);
+  line-height: 1.6; font-style: italic;
+}
+.bz-submit-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--parchment);
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-soft);
+  padding: 15px 32px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.bz-submit-btn:hover { background: var(--iceplant); border-color: var(--iceplant); }
+.bz-submit-btn:disabled { opacity: 0.55; cursor: wait; }
+.bz-form-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; letter-spacing: 0.04em;
+  line-height: 1.6; margin: 18px 0 0;
+  display: none;
+}
+.bz-form-status.ok { display: block; color: var(--water); }
+.bz-form-status.err { display: block; color: var(--iceplant); }
+/* honeypot — hidden from humans */
+.bz-nectar { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+
+/* ── Closing ── */
+.closing {
+  border-top: 1px solid var(--rule);
+  background: rgba(237, 230, 212, 0.4);
+  text-align: center;
+}
+.closing blockquote {
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  font-style: italic; font-weight: 400;
+  max-width: 680px; margin: 0 auto;
+  color: var(--ink-soft); line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .bz-intro { padding: 100px 22px 40px; }
+  .post-card { grid-template-columns: 1fr; }
+  .post-card-img { min-height: 220px; }
+  .post-card-body { padding: 28px 24px; }
+  .bz-submit-grid { grid-template-columns: 1fr; gap: 36px; }
+}
+</style>
+</head>
+<body data-page="blog">
+
+<div id="site-header"></div>
+
+<section class="bz-intro">
+  <div class="mini-logo"><canvas id="miniLogo" width="360" height="240"></canvas></div>
+  <div class="eyebrow">Emergent Stories</div>
+  <h1>Blog Zero</h1>
+  <p class="lede">Writing from the researchers, practitioners, artists, and wanderers who make up the Space Zero community. Field notes from the creative advance.</p>
+  <div class="top-links">
+    <a href="#stories">Read the stories &darr;</a>
+    <a href="#submit">Share your story &darr;</a>
+  </div>
+</section>
+
+<section class="section bz-posts" id="stories">
+  <div class="section-inner">
+    <div class="section-label">The stories</div>
+    <div class="section-rule"></div>
+
+    <article class="post-card">
+      <a class="post-card-img" href="blog/a-place-to-behold-and-be-held.html" aria-label="Read: A Place to Behold and Be Held">
+        <img src="assets/blog/behold-01.jpg" alt="Two figures at a wooden overlook, watching the sun over the Pacific." loading="lazy">
+      </a>
+      <div class="post-card-body">
+        <div class="post-card-eyebrow">No. 01</div>
+        <h3><a href="blog/a-place-to-behold-and-be-held.html">A Place to Behold and Be Held</a></h3>
+        <p class="post-card-sub">A Spring in Crescent City</p>
+        <div class="post-card-meta">
+          <span>Alexander Sabine</span>
+          <span>Summer 2026</span>
+        </div>
+        <p class="post-card-excerpt">How a child development lecturer from a small town on the Isle of Wight came to spend Spring on the far northern coast of California, and why he came home convinced that places like Space Zero are close to what this moment quietly asks of us.</p>
+        <a class="post-card-read" href="blog/a-place-to-behold-and-be-held.html">Read the story &rarr;</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="section bz-submit" id="submit">
+  <div class="bz-submit-grid">
+    <div class="bz-submit-left">
+      <div class="eyebrow">Write for Blog Zero</div>
+      <h2>Share your story</h2>
+      <p class="tagline">Emergent Stories belongs to the whole Space Zero and Emergent community. If something here resonates with your work, your practice, or your wandering, we would love to read it.</p>
+      <p class="plain">Tell us a little about yourself and the piece you have in mind, and attach a draft in whatever document format you write in. A member of the team reads every submission; if it is a good fit we will write to you with the next steps for preparing your draft together.</p>
+    </div>
+
+    <form class="bz-form" id="blogSubmitForm" novalidate>
+      <div class="bz-field">
+        <label for="bzName">Full name</label>
+        <input type="text" id="bzName" name="fullName" autocomplete="name" required>
+      </div>
+      <div class="bz-field">
+        <label for="bzEmail">Email</label>
+        <input type="email" id="bzEmail" name="email" autocomplete="email" required>
+      </div>
+      <div class="bz-field">
+        <label for="bzAbout">About you</label>
+        <textarea id="bzAbout" name="about" required></textarea>
+        <p class="hint">A few lines; who you are, what you do, where you wander.</p>
+      </div>
+      <div class="bz-field">
+        <label for="bzTitle">Proposed blog title</label>
+        <input type="text" id="bzTitle" name="title" required>
+      </div>
+      <div class="bz-field">
+        <label for="bzRelation">How does your blog relate to Space Zero?</label>
+        <textarea id="bzRelation" name="relation" required></textarea>
+      </div>
+      <div class="bz-field">
+        <label for="bzFile">Upload blog</label>
+        <input type="file" id="bzFile" name="file" required
+               accept=".doc,.docx,.pdf,.odt,.rtf,.txt,.md,.pages,.gdoc">
+        <p class="hint">Word, Google Doc export, PDF, OpenDocument, rich text, plain text or Markdown &middot; up to 10&nbsp;MB.</p>
+      </div>
+      <div class="bz-field">
+        <label for="bzPubs">Prior publications <span class="opt">(if applicable)</span></label>
+        <textarea id="bzPubs" name="publications"></textarea>
+      </div>
+
+      <!-- honeypot: humans never see this field; bots fill it in -->
+      <div class="bz-nectar" aria-hidden="true">
+        <label for="bzWebsite">Website</label>
+        <input type="text" id="bzWebsite" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="bz-consent">
+        <input type="checkbox" id="bzConsent" required>
+        <label for="bzConsent">By clicking Submit you agree that Space Zero may keep the details you share here, contact you about your submission, and add you to the Space Zero mailing list for occasional news of gatherings and events. We write rarely, never share your details with anyone else, and you can leave the list at any time with a single reply.</label>
+      </div>
+
+      <button type="submit" class="bz-submit-btn" id="bzSubmitBtn">Submit your story</button>
+      <p class="bz-form-status" id="bzStatus" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<section class="section closing">
+  <div class="section-inner">
+    <blockquote>Every story widens the field. Thank you for adding yours.</blockquote>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="assets/space-zero.js" defer></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+ *  BLOG SUBMISSION → Google Apps Script web app
+ *  Paste the /exec URL of the deployed web app between the quotes below.
+ *  Setup instructions: apps-script/blog-zero/SETUP.md in the site repo.
+ *  While the URL is empty the form falls back to a friendly email prompt.
+ * ═════════════════════════════════════════════════════════════════════════ */
+const BLOG_SUBMIT_URL = '';
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+document.getElementById('blogSubmitForm').addEventListener('submit', async function (ev) {
+  ev.preventDefault();
+  const form = this;
+  const btn = document.getElementById('bzSubmitBtn');
+  const status = document.getElementById('bzStatus');
+  const show = (msg, cls) => { status.textContent = msg; status.className = 'bz-form-status ' + cls; };
+
+  if (!form.reportValidity()) return;
+
+  if (!BLOG_SUBMIT_URL) {
+    show('The submission form is being connected. For now, please email your piece and the details above to info@space-zero.org with the subject "Blog Zero submission" — we will read it just the same.', 'err');
+    return;
+  }
+
+  const file = document.getElementById('bzFile').files[0];
+  if (!file) { show('Please attach your draft before submitting.', 'err'); return; }
+  if (file.size > MAX_FILE_BYTES) { show('That file is over 10 MB. Please attach a smaller version, or email it to info@space-zero.org.', 'err'); return; }
+
+  btn.disabled = true;
+  show('Sending your story…', 'ok');
+
+  try {
+    const fileBase64 = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+
+    const payload = {
+      fullName:     document.getElementById('bzName').value.trim(),
+      email:        document.getElementById('bzEmail').value.trim(),
+      about:        document.getElementById('bzAbout').value.trim(),
+      title:        document.getElementById('bzTitle').value.trim(),
+      relation:     document.getElementById('bzRelation').value.trim(),
+      publications: document.getElementById('bzPubs').value.trim(),
+      website:      document.getElementById('bzWebsite').value, /* honeypot */
+      fileName:     file.name,
+      fileType:     file.type || 'application/octet-stream',
+      fileBase64:   fileBase64,
+    };
+
+    /* Content-Type text/plain keeps the request "simple" so the browser
+     * skips the CORS preflight that Apps Script web apps cannot answer. */
+    const res = await fetch(BLOG_SUBMIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || 'Submission failed');
+
+    form.reset();
+    show('Thank you — your story has arrived safely. We read every submission and will be in touch by email.', 'ok');
+  } catch (err) {
+    show('Something went wrong sending your submission. Please try again in a moment, or email it to info@space-zero.org.', 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
